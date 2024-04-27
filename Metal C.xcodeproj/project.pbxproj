@@ -1,0 +1,588 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BF07542A2C0E8A27009BA850 /* testTexture.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF0754292C0E8A27009BA850 /* testTexture.png */; };
+		BF07542C2C0E8A37009BA850 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF07542B2C0E8A37009BA850 /* Cocoa.framework */; };
+		BF07542D2C0E8A3D009BA850 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF384A912BDD0141004B2938 /* Foundation.framework */; };
+		BF07542E2C0E8A57009BA850 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF384A932BDD0149004B2938 /* QuartzCore.framework */; };
+		BF36F7372C0CB62A00D67CCA /* shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = BF36F7362C0CB62A00D67CCA /* shaders.metal */; };
+		BF36F7432C0D260F00D67CCA /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF384A952BDD0150004B2938 /* Metal.framework */; };
+		BF384A8A2BDD006B004B2938 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = BF384A892BDD006B004B2938 /* main.c */; };
+		BF683AF22DF33418002105F1 /* my_cube.mtl in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF683AF02DF3340C002105F1 /* my_cube.mtl */; };
+		BF683AF32DF33418002105F1 /* my_cube.obj in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF683AF12DF3340C002105F1 /* my_cube.obj */; };
+		BF683B662DF36FA9002105F1 /* my_hammer.obj in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF683B652DF36F5D002105F1 /* my_hammer.obj */; };
+		BF683B682DF37186002105F1 /* my_hammer2.obj in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF683B672DF37177002105F1 /* my_hammer2.obj */; };
+		BF683B6A2DF38D40002105F1 /* gizmo_shader.metal in Sources */ = {isa = PBXBuildFile; fileRef = BF683B692DF38D36002105F1 /* gizmo_shader.metal */; };
+		BF683B6C2DF3905F002105F1 /* gizmo_shader.metallib in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF683B6B2DF39057002105F1 /* gizmo_shader.metallib */; };
+		BF90EDF62BE4380E001F890E /* platform_macos.m in Sources */ = {isa = PBXBuildFile; fileRef = BF90EDF52BE4380E001F890E /* platform_macos.m */; };
+		BF90EDF82BE43B58001F890E /* ApplicationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BF90EDF72BE43B58001F890E /* ApplicationDelegate.m */; };
+		BF90EDFC2BE43DF9001F890E /* WindowDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BF90EDFB2BE43DF9001F890E /* WindowDelegate.m */; };
+		BF90EE012BE44424001F890E /* ContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = BF90EE002BE44424001F890E /* ContentView.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		BF384A842BDD006B004B2938 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				BF683B6C2DF3905F002105F1 /* gizmo_shader.metallib in CopyFiles */,
+				BF683B682DF37186002105F1 /* my_hammer2.obj in CopyFiles */,
+				BF683B662DF36FA9002105F1 /* my_hammer.obj in CopyFiles */,
+				BF683AF22DF33418002105F1 /* my_cube.mtl in CopyFiles */,
+				BF683AF32DF33418002105F1 /* my_cube.obj in CopyFiles */,
+				BF07542A2C0E8A27009BA850 /* testTexture.png in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		BF01B6F62C05F70600148C29 /* MTAutoreleasePool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTAutoreleasePool.h; sourceTree = "<group>"; };
+		BF07541A2C0E5661009BA850 /* MTTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTTypes.h; sourceTree = "<group>"; };
+		BF07541C2C0E5D1E009BA850 /* stb_image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
+		BF07541F2C0E67EA009BA850 /* MTSampler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTSampler.h; sourceTree = "<group>"; };
+		BF0754202C0E6913009BA850 /* MTVersion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTVersion.h; sourceTree = "<group>"; };
+		BF0754292C0E8A27009BA850 /* testTexture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testTexture.png; sourceTree = "<group>"; };
+		BF07542B2C0E8A37009BA850 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		BF0754302C0F8518009BA850 /* GMath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GMath.h; sourceTree = "<group>"; };
+		BF1B63CF2BE47F2900C68903 /* libvulkan.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvulkan.1.dylib; path = ../libvulkan.1.dylib; sourceTree = "<group>"; };
+		BF1B63D32BE4808100C68903 /* libvulkan.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvulkan.1.dylib; path = ../../VulkanSDK/vulkan/macOS/lib/libvulkan.1.dylib; sourceTree = "<group>"; };
+		BF2168CB2DF0CF2600B02D9D /* CAMetalLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CAMetalLayer.h; sourceTree = "<group>"; };
+		BF2168CC2DF1AF6B00B02D9D /* MTIOCommandQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTIOCommandQueue.h; sourceTree = "<group>"; };
+		BF2168CD2DF1B17600B02D9D /* MTIOCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTIOCommandBuffer.h; sourceTree = "<group>"; };
+		BF2168CE2DF2189B00B02D9D /* MTIOCompressor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTIOCompressor.h; sourceTree = "<group>"; };
+		BF2168CF2DF231DD00B02D9D /* MTBinaryArchive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTBinaryArchive.h; sourceTree = "<group>"; };
+		BF2168D12DF2D5D200B02D9D /* MTFunctionConstantValues.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTFunctionConstantValues.h; sourceTree = "<group>"; };
+		BF2168D22DF2D64000B02D9D /* MTArgument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTArgument.h; sourceTree = "<group>"; };
+		BF2168D32DF2E5A900B02D9D /* MTFunctionDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTFunctionDescriptor.h; sourceTree = "<group>"; };
+		BF344B512C10715800EACF1C /* MTHeap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTHeap.h; sourceTree = "<group>"; };
+		BF344B522C10F9A300EACF1C /* MTDepthStencil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTDepthStencil.h; sourceTree = "<group>"; };
+		BF344B532C111A4900EACF1C /* MTStageInputOutputDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTStageInputOutputDescriptor.h; sourceTree = "<group>"; };
+		BF36F7302C0C7E4200D67CCA /* MTLibrary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLibrary.h; sourceTree = "<group>"; };
+		BF36F7312C0C816D00D67CCA /* MTError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTError.h; sourceTree = "<group>"; };
+		BF36F7322C0C9D5F00D67CCA /* MTBundle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTBundle.h; sourceTree = "<group>"; };
+		BF36F7332C0CAA4000D67CCA /* shaders.metallib */ = {isa = PBXFileReference; lastKnownFileType = "archive.metal-library"; path = shaders.metallib; sourceTree = "<group>"; };
+		BF36F7342C0CAAFA00D67CCA /* MTURL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTURL.h; sourceTree = "<group>"; };
+		BF36F7362C0CB62A00D67CCA /* shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = shaders.metal; sourceTree = "<group>"; };
+		BF36F7382C0CB66900D67CCA /* shaderInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = shaderInterface.h; sourceTree = "<group>"; };
+		BF36F73C2C0CB8CD00D67CCA /* MTString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTString.h; sourceTree = "<group>"; };
+		BF36F73E2C0CCAF500D67CCA /* MTVertexDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTVertexDescriptor.h; sourceTree = "<group>"; };
+		BF36F73F2C0CEE5D00D67CCA /* MTPixelFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTPixelFormat.h; sourceTree = "<group>"; };
+		BF36F7402C0CFBAA00D67CCA /* Metal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Metal.h; sourceTree = "<group>"; };
+		BF36F7412C0CFD1700D67CCA /* Foundation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Foundation.h; sourceTree = "<group>"; };
+		BF384A862BDD006B004B2938 /* Metal C */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Metal C"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF384A892BDD006B004B2938 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		BF384A912BDD0141004B2938 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		BF384A932BDD0149004B2938 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		BF384A952BDD0150004B2938 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		BF384A972BDD0155004B2938 /* MetalFX.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalFX.framework; path = System/Library/Frameworks/MetalFX.framework; sourceTree = SDKROOT; };
+		BF683AF02DF3340C002105F1 /* my_cube.mtl */ = {isa = PBXFileReference; lastKnownFileType = text; path = my_cube.mtl; sourceTree = "<group>"; };
+		BF683AF12DF3340C002105F1 /* my_cube.obj */ = {isa = PBXFileReference; lastKnownFileType = text; path = my_cube.obj; sourceTree = "<group>"; };
+		BF683B652DF36F5D002105F1 /* my_hammer.obj */ = {isa = PBXFileReference; lastKnownFileType = text; path = my_hammer.obj; sourceTree = "<group>"; };
+		BF683B672DF37177002105F1 /* my_hammer2.obj */ = {isa = PBXFileReference; lastKnownFileType = text; path = my_hammer2.obj; sourceTree = "<group>"; };
+		BF683B692DF38D36002105F1 /* gizmo_shader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = gizmo_shader.metal; sourceTree = "<group>"; };
+		BF683B6B2DF39057002105F1 /* gizmo_shader.metallib */ = {isa = PBXFileReference; lastKnownFileType = "archive.metal-library"; path = gizmo_shader.metallib; sourceTree = "<group>"; };
+		BF90EDE42BDFF293001F890E /* MTDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTDevice.h; sourceTree = "<group>"; };
+		BF90EDE52BDFF318001F890E /* MTResource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTResource.h; sourceTree = "<group>"; };
+		BF90EDE72BDFF366001F890E /* Objectivec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Objectivec.h; sourceTree = "<group>"; };
+		BF90EDE82BDFF4E0001F890E /* MTCommandQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTCommandQueue.h; sourceTree = "<group>"; };
+		BF90EDE92BDFF8C7001F890E /* MTRenderCommandEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTRenderCommandEncoder.h; sourceTree = "<group>"; };
+		BF90EDEF2BDFFE1B001F890E /* MTDrawable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTDrawable.h; sourceTree = "<group>"; };
+		BF90EDF02BE02F07001F890E /* MTCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTCommandBuffer.h; sourceTree = "<group>"; };
+		BF90EDF12BE034DD001F890E /* MTBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTBuffer.h; sourceTree = "<group>"; };
+		BF90EDF22BE042A8001F890E /* MTRenderPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTRenderPass.h; sourceTree = "<group>"; };
+		BF90EDF42BE437AE001F890E /* platform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = platform.h; sourceTree = "<group>"; };
+		BF90EDF52BE4380E001F890E /* platform_macos.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = platform_macos.m; sourceTree = "<group>"; };
+		BF90EDF72BE43B58001F890E /* ApplicationDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ApplicationDelegate.m; sourceTree = "<group>"; };
+		BF90EDF92BE43B8F001F890E /* ApplicationDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplicationDelegate.h; sourceTree = "<group>"; };
+		BF90EDFB2BE43DF9001F890E /* WindowDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WindowDelegate.m; sourceTree = "<group>"; };
+		BF90EDFD2BE43E08001F890E /* WindowDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowDelegate.h; sourceTree = "<group>"; };
+		BF90EDFE2BE43EAB001F890E /* NSDefines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSDefines.h; sourceTree = "<group>"; };
+		BF90EDFF2BE4437C001F890E /* ContentView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContentView.h; sourceTree = "<group>"; };
+		BF90EE002BE44424001F890E /* ContentView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContentView.m; sourceTree = "<group>"; };
+		BF90EE022BE46C66001F890E /* libvulkan.1.3.280.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvulkan.1.3.280.dylib; path = ../../VulkanSDK/vulkan/macOS/lib/libvulkan.1.3.280.dylib; sourceTree = "<group>"; };
+		BFA366632C069A39002E9B0F /* MTUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTUtils.h; sourceTree = "<group>"; };
+		BFA366642C06A97D002E9B0F /* MTTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTTexture.h; sourceTree = "<group>"; };
+		BFA366652C06B8F4002E9B0F /* MTRenderPipeline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTRenderPipeline.h; sourceTree = "<group>"; };
+		BFE160792DF32FB100BE7780 /* obj_loader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = obj_loader.h; sourceTree = "<group>"; };
+		BFF1875F2DEA1BA000B2D71E /* MTPipeline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTPipeline.h; sourceTree = "<group>"; };
+		BFF187602DEAD87D00B2D71E /* MTBlitCommandEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTBlitCommandEncoder.h; sourceTree = "<group>"; };
+		BFF187612DEADDCF00B2D71E /* MTIndirectCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTIndirectCommandBuffer.h; sourceTree = "<group>"; };
+		BFF187622DEAEB9A00B2D71E /* MTIndirectCommandEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTIndirectCommandEncoder.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BF384A832BDD006B004B2938 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF07542E2C0E8A57009BA850 /* QuartzCore.framework in Frameworks */,
+				BF07542D2C0E8A3D009BA850 /* Foundation.framework in Frameworks */,
+				BF07542C2C0E8A37009BA850 /* Cocoa.framework in Frameworks */,
+				BF36F7432C0D260F00D67CCA /* Metal.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		BF01B6F52C05F6CB00148C29 /* Foundation */ = {
+			isa = PBXGroup;
+			children = (
+				BF01B6F62C05F70600148C29 /* MTAutoreleasePool.h */,
+				BF36F7312C0C816D00D67CCA /* MTError.h */,
+				BF36F7322C0C9D5F00D67CCA /* MTBundle.h */,
+				BF36F7342C0CAAFA00D67CCA /* MTURL.h */,
+				BF36F73C2C0CB8CD00D67CCA /* MTString.h */,
+				BF36F7412C0CFD1700D67CCA /* Foundation.h */,
+			);
+			path = Foundation;
+			sourceTree = "<group>";
+		};
+		BF07541B2C0E5D0E009BA850 /* vendors */ = {
+			isa = PBXGroup;
+			children = (
+				BF07541C2C0E5D1E009BA850 /* stb_image.h */,
+			);
+			path = vendors;
+			sourceTree = "<group>";
+		};
+		BF07542F2C0F8503009BA850 /* Math */ = {
+			isa = PBXGroup;
+			children = (
+				BF0754302C0F8518009BA850 /* GMath.h */,
+			);
+			path = Math;
+			sourceTree = "<group>";
+		};
+		BF2168CA2DF0CEF100B02D9D /* QuartzCore */ = {
+			isa = PBXGroup;
+			children = (
+				BF2168CB2DF0CF2600B02D9D /* CAMetalLayer.h */,
+			);
+			path = QuartzCore;
+			sourceTree = "<group>";
+		};
+		BF36F7352C0CB61700D67CCA /* shaders */ = {
+			isa = PBXGroup;
+			children = (
+				BF36F7362C0CB62A00D67CCA /* shaders.metal */,
+				BF36F7382C0CB66900D67CCA /* shaderInterface.h */,
+				BF683B692DF38D36002105F1 /* gizmo_shader.metal */,
+			);
+			path = shaders;
+			sourceTree = "<group>";
+		};
+		BF384A7D2BDD006B004B2938 = {
+			isa = PBXGroup;
+			children = (
+				BF683AF02DF3340C002105F1 /* my_cube.mtl */,
+				BF683AF12DF3340C002105F1 /* my_cube.obj */,
+				BF683B652DF36F5D002105F1 /* my_hammer.obj */,
+				BF683B672DF37177002105F1 /* my_hammer2.obj */,
+				BF683B6B2DF39057002105F1 /* gizmo_shader.metallib */,
+				BF0754292C0E8A27009BA850 /* testTexture.png */,
+				BF36F7332C0CAA4000D67CCA /* shaders.metallib */,
+				BF384A882BDD006B004B2938 /* Metal C */,
+				BF384A872BDD006B004B2938 /* Products */,
+				BF384A902BDD0141004B2938 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		BF384A872BDD006B004B2938 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BF384A862BDD006B004B2938 /* Metal C */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BF384A882BDD006B004B2938 /* Metal C */ = {
+			isa = PBXGroup;
+			children = (
+				BFE160782DF32FA800BE7780 /* loaders */,
+				BF07542F2C0F8503009BA850 /* Math */,
+				BF07541B2C0E5D0E009BA850 /* vendors */,
+				BF36F7352C0CB61700D67CCA /* shaders */,
+				BF90EDE62BDFF349001F890E /* ObjectiveCCore */,
+				BF90EDE32BDFF26B001F890E /* Metal */,
+				BF384A892BDD006B004B2938 /* main.c */,
+				BF90EDF32BE43790001F890E /* Platform */,
+			);
+			path = "Metal C";
+			sourceTree = "<group>";
+		};
+		BF384A902BDD0141004B2938 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BF07542B2C0E8A37009BA850 /* Cocoa.framework */,
+				BF1B63CF2BE47F2900C68903 /* libvulkan.1.dylib */,
+				BF1B63D32BE4808100C68903 /* libvulkan.1.dylib */,
+				BF90EE022BE46C66001F890E /* libvulkan.1.3.280.dylib */,
+				BF384A972BDD0155004B2938 /* MetalFX.framework */,
+				BF384A952BDD0150004B2938 /* Metal.framework */,
+				BF384A932BDD0149004B2938 /* QuartzCore.framework */,
+				BF384A912BDD0141004B2938 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BF90EDE32BDFF26B001F890E /* Metal */ = {
+			isa = PBXGroup;
+			children = (
+				BF2168CA2DF0CEF100B02D9D /* QuartzCore */,
+				BF01B6F52C05F6CB00148C29 /* Foundation */,
+				BF90EDE42BDFF293001F890E /* MTDevice.h */,
+				BF2168CF2DF231DD00B02D9D /* MTBinaryArchive.h */,
+				BFF1875F2DEA1BA000B2D71E /* MTPipeline.h */,
+				BF2168CC2DF1AF6B00B02D9D /* MTIOCommandQueue.h */,
+				BF2168CD2DF1B17600B02D9D /* MTIOCommandBuffer.h */,
+				BF2168CE2DF2189B00B02D9D /* MTIOCompressor.h */,
+				BF2168D12DF2D5D200B02D9D /* MTFunctionConstantValues.h */,
+				BFF187612DEADDCF00B2D71E /* MTIndirectCommandBuffer.h */,
+				BF2168D22DF2D64000B02D9D /* MTArgument.h */,
+				BFF187622DEAEB9A00B2D71E /* MTIndirectCommandEncoder.h */,
+				BF90EDE52BDFF318001F890E /* MTResource.h */,
+				BF90EDE82BDFF4E0001F890E /* MTCommandQueue.h */,
+				BFA366642C06A97D002E9B0F /* MTTexture.h */,
+				BF90EDF02BE02F07001F890E /* MTCommandBuffer.h */,
+				BF2168D32DF2E5A900B02D9D /* MTFunctionDescriptor.h */,
+				BFF187602DEAD87D00B2D71E /* MTBlitCommandEncoder.h */,
+				BF90EDE92BDFF8C7001F890E /* MTRenderCommandEncoder.h */,
+				BFA366652C06B8F4002E9B0F /* MTRenderPipeline.h */,
+				BF90EDF22BE042A8001F890E /* MTRenderPass.h */,
+				BF90EDEF2BDFFE1B001F890E /* MTDrawable.h */,
+				BF90EDF12BE034DD001F890E /* MTBuffer.h */,
+				BFA366632C069A39002E9B0F /* MTUtils.h */,
+				BF36F7302C0C7E4200D67CCA /* MTLibrary.h */,
+				BF36F73E2C0CCAF500D67CCA /* MTVertexDescriptor.h */,
+				BF36F73F2C0CEE5D00D67CCA /* MTPixelFormat.h */,
+				BF36F7402C0CFBAA00D67CCA /* Metal.h */,
+				BF07541A2C0E5661009BA850 /* MTTypes.h */,
+				BF07541F2C0E67EA009BA850 /* MTSampler.h */,
+				BF0754202C0E6913009BA850 /* MTVersion.h */,
+				BF344B512C10715800EACF1C /* MTHeap.h */,
+				BF344B522C10F9A300EACF1C /* MTDepthStencil.h */,
+				BF344B532C111A4900EACF1C /* MTStageInputOutputDescriptor.h */,
+			);
+			path = Metal;
+			sourceTree = "<group>";
+		};
+		BF90EDE62BDFF349001F890E /* ObjectiveCCore */ = {
+			isa = PBXGroup;
+			children = (
+				BF90EDE72BDFF366001F890E /* Objectivec.h */,
+			);
+			path = ObjectiveCCore;
+			sourceTree = "<group>";
+		};
+		BF90EDF32BE43790001F890E /* Platform */ = {
+			isa = PBXGroup;
+			children = (
+				BF90EDFA2BE43DBC001F890E /* macos */,
+				BF90EDF42BE437AE001F890E /* platform.h */,
+			);
+			path = Platform;
+			sourceTree = "<group>";
+		};
+		BF90EDFA2BE43DBC001F890E /* macos */ = {
+			isa = PBXGroup;
+			children = (
+				BF90EDFE2BE43EAB001F890E /* NSDefines.h */,
+				BF90EDF92BE43B8F001F890E /* ApplicationDelegate.h */,
+				BF90EDF72BE43B58001F890E /* ApplicationDelegate.m */,
+				BF90EDFB2BE43DF9001F890E /* WindowDelegate.m */,
+				BF90EDFD2BE43E08001F890E /* WindowDelegate.h */,
+				BF90EDF52BE4380E001F890E /* platform_macos.m */,
+				BF90EDFF2BE4437C001F890E /* ContentView.h */,
+				BF90EE002BE44424001F890E /* ContentView.m */,
+			);
+			path = macos;
+			sourceTree = "<group>";
+		};
+		BFE160782DF32FA800BE7780 /* loaders */ = {
+			isa = PBXGroup;
+			children = (
+				BFE160792DF32FB100BE7780 /* obj_loader.h */,
+			);
+			path = loaders;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		BF384A852BDD006B004B2938 /* Metal C */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BF384A8D2BDD006B004B2938 /* Build configuration list for PBXNativeTarget "Metal C" */;
+			buildPhases = (
+				BF384A822BDD006B004B2938 /* Sources */,
+				BF384A832BDD006B004B2938 /* Frameworks */,
+				BF384A842BDD006B004B2938 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Metal C";
+			productName = "Metal C";
+			productReference = BF384A862BDD006B004B2938 /* Metal C */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BF384A7E2BDD006B004B2938 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1530;
+				TargetAttributes = {
+					BF384A852BDD006B004B2938 = {
+						CreatedOnToolsVersion = 15.3;
+						LastSwiftMigration = 1610;
+					};
+				};
+			};
+			buildConfigurationList = BF384A812BDD006B004B2938 /* Build configuration list for PBXProject "Metal C" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = BF384A7D2BDD006B004B2938;
+			productRefGroup = BF384A872BDD006B004B2938 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				BF384A852BDD006B004B2938 /* Metal C */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BF384A822BDD006B004B2938 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF683B6A2DF38D40002105F1 /* gizmo_shader.metal in Sources */,
+				BF90EDF62BE4380E001F890E /* platform_macos.m in Sources */,
+				BF384A8A2BDD006B004B2938 /* main.c in Sources */,
+				BF36F7372C0CB62A00D67CCA /* shaders.metal in Sources */,
+				BF90EE012BE44424001F890E /* ContentView.m in Sources */,
+				BF90EDFC2BE43DF9001F890E /* WindowDelegate.m in Sources */,
+				BF90EDF82BE43B58001F890E /* ApplicationDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		BF384A8B2BDD006B004B2938 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"-fblocks",
+					"-lobjc",
+					"-lSystem",
+					"-fobjc-arc",
+				);
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		BF384A8C2BDD006B004B2938 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = (
+					"-fblocks",
+					"-lobjc",
+					"-lSystem",
+					"-fobjc-arc",
+				);
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		BF384A8E2BDD006B004B2938 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4P5CDH4GR2;
+				ENABLE_HARDENED_RUNTIME = YES;
+				HEADER_SEARCH_PATHS = /Users/luthecoder/VulkanSDK/vulkan/macOS/include;
+				LIBRARY_SEARCH_PATHS = /Users/luthecoder/VulkanSDK/vulkan/macOS/lib;
+				OTHER_CFLAGS = (
+					"-ObjC",
+					"-O3",
+					"-fblocks",
+					"-lobjc",
+					"-lSystem",
+					"-fobjc-arc",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		BF384A8F2BDD006B004B2938 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4P5CDH4GR2;
+				ENABLE_HARDENED_RUNTIME = YES;
+				HEADER_SEARCH_PATHS = /Users/luthecoder/VulkanSDK/vulkan/macOS/include;
+				LIBRARY_SEARCH_PATHS = /Users/luthecoder/VulkanSDK/vulkan/macOS/lib;
+				OTHER_CFLAGS = (
+					"-ObjC",
+					"-O3",
+					"-fblocks",
+					"-lobjc",
+					"-lSystem",
+					"-fobjc-arc",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		BF384A812BDD006B004B2938 /* Build configuration list for PBXProject "Metal C" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BF384A8B2BDD006B004B2938 /* Debug */,
+				BF384A8C2BDD006B004B2938 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BF384A8D2BDD006B004B2938 /* Build configuration list for PBXNativeTarget "Metal C" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BF384A8E2BDD006B004B2938 /* Debug */,
+				BF384A8F2BDD006B004B2938 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BF384A7E2BDD006B004B2938 /* Project object */;
+}

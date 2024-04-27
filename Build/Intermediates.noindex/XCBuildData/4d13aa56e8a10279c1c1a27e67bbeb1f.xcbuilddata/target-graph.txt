@@ -1,0 +1,2 @@
+Target dependency graph (1 target)
+Target 'Metal C' in project 'Metal C' (no dependencies)
