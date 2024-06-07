@@ -12,25 +12,25 @@
 #include "MTHeap.h"
 
 typedef enum MTTextureType{
-    TextureType1D = 0,
-    TextureType1DArray = 1,
-    TextureType2D = 2,
-    TextureType2DArray = 3,
-    TextureType2DMultisample = 4,
-    TextureTypeCube = 5,
-    TextureTypeCubeArray = 6,
-    TextureType3D = 7,
-    TextureType2DMultisampleArray = 8,
-    TextureTypeTextureBuffer = 9,
+    MTTextureType1D = 0,
+    MTTextureType1DArray = 1,
+    MTTextureType2D = 2,
+    MTTextureType2DArray = 3,
+    MTTextureType2DMultisample = 4,
+    MTTextureTypeCube = 5,
+    MTTextureTypeCubeArray = 6,
+    MTTextureType3D = 7,
+    MTTextureType2DMultisampleArray = 8,
+    MTTextureTypeTextureBuffer = 9,
 }MTTextureType;
 
 typedef enum MTTextureSwizzle {
-    TextureSwizzleZero = 0,
-    TextureSwizzleOne = 1,
-    TextureSwizzleRed = 2,
-    TextureSwizzleGreen = 3,
-    TextureSwizzleBlue = 4,
-    TextureSwizzleAlpha = 5,
+    MTTextureSwizzleZero = 0,
+    MTTextureSwizzleOne = 1,
+    MTTextureSwizzleRed = 2,
+    MTTextureSwizzleGreen = 3,
+    MTTextureSwizzleBlue = 4,
+    MTTextureSwizzleAlpha = 5,
 }MTTextureSwizzle;
 
 typedef enum MTTextureUsage{

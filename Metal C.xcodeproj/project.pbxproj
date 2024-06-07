@@ -11,6 +11,10 @@
 		BF07542C2C0E8A37009BA850 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF07542B2C0E8A37009BA850 /* Cocoa.framework */; };
 		BF07542D2C0E8A3D009BA850 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF384A912BDD0141004B2938 /* Foundation.framework */; };
 		BF07542E2C0E8A57009BA850 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF384A932BDD0149004B2938 /* QuartzCore.framework */; };
+		BF344B592C11BD3600EACF1C /* input.c in Sources */ = {isa = PBXBuildFile; fileRef = BF344B582C11BD3600EACF1C /* input.c */; };
+		BF344B5D2C11F79F00EACF1C /* event.c in Sources */ = {isa = PBXBuildFile; fileRef = BF344B5C2C11F79F00EACF1C /* event.c */; };
+		BF344B612C12806600EACF1C /* MathUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = BF344B602C12806600EACF1C /* MathUtilities.c */; };
+		BF344B632C12848800EACF1C /* mc_grass.jpeg in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF344B622C12848800EACF1C /* mc_grass.jpeg */; };
 		BF36F7372C0CB62A00D67CCA /* shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = BF36F7362C0CB62A00D67CCA /* shaders.metal */; };
 		BF36F7432C0D260F00D67CCA /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF384A952BDD0150004B2938 /* Metal.framework */; };
 		BF384A8A2BDD006B004B2938 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = BF384A892BDD006B004B2938 /* main.c */; };
@@ -27,6 +31,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
+				BF344B632C12848800EACF1C /* mc_grass.jpeg in CopyFiles */,
 				BF07542A2C0E8A27009BA850 /* testTexture.png in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -47,6 +52,15 @@
 		BF344B512C10715800EACF1C /* MTHeap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTHeap.h; sourceTree = "<group>"; };
 		BF344B522C10F9A300EACF1C /* MTDepthStencil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTDepthStencil.h; sourceTree = "<group>"; };
 		BF344B532C111A4900EACF1C /* MTStageInputOutputDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTStageInputOutputDescriptor.h; sourceTree = "<group>"; };
+		BF344B572C11BD3600EACF1C /* input.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = input.h; sourceTree = "<group>"; };
+		BF344B582C11BD3600EACF1C /* input.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = input.c; sourceTree = "<group>"; };
+		BF344B5A2C11BEA700EACF1C /* input_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = input_types.h; sourceTree = "<group>"; };
+		BF344B5B2C11F78100EACF1C /* event.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = event.h; sourceTree = "<group>"; };
+		BF344B5C2C11F79F00EACF1C /* event.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = event.c; sourceTree = "<group>"; };
+		BF344B5E2C1261BE00EACF1C /* VertexData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VertexData.h; sourceTree = "<group>"; };
+		BF344B5F2C12806600EACF1C /* MathUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MathUtilities.h; sourceTree = "<group>"; };
+		BF344B602C12806600EACF1C /* MathUtilities.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MathUtilities.c; sourceTree = "<group>"; };
+		BF344B622C12848800EACF1C /* mc_grass.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = mc_grass.jpeg; sourceTree = "<group>"; };
 		BF36F7302C0C7E4200D67CCA /* MTLibrary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLibrary.h; sourceTree = "<group>"; };
 		BF36F7312C0C816D00D67CCA /* MTError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTError.h; sourceTree = "<group>"; };
 		BF36F7322C0C9D5F00D67CCA /* MTBundle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTBundle.h; sourceTree = "<group>"; };
@@ -133,6 +147,34 @@
 			path = Math;
 			sourceTree = "<group>";
 		};
+		BF344B542C11BCC900EACF1C /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				BF344B562C11BCD900EACF1C /* utils */,
+				BF344B552C11BCD000EACF1C /* core */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+		BF344B552C11BCD000EACF1C /* core */ = {
+			isa = PBXGroup;
+			children = (
+				BF344B572C11BD3600EACF1C /* input.h */,
+				BF344B582C11BD3600EACF1C /* input.c */,
+				BF344B5A2C11BEA700EACF1C /* input_types.h */,
+				BF344B5B2C11F78100EACF1C /* event.h */,
+				BF344B5C2C11F79F00EACF1C /* event.c */,
+			);
+			path = core;
+			sourceTree = "<group>";
+		};
+		BF344B562C11BCD900EACF1C /* utils */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = utils;
+			sourceTree = "<group>";
+		};
 		BF36F7352C0CB61700D67CCA /* shaders */ = {
 			isa = PBXGroup;
 			children = (
@@ -145,6 +187,7 @@
 		BF384A7D2BDD006B004B2938 = {
 			isa = PBXGroup;
 			children = (
+				BF344B622C12848800EACF1C /* mc_grass.jpeg */,
 				BF0754292C0E8A27009BA850 /* testTexture.png */,
 				BF36F7332C0CAA4000D67CCA /* shaders.metallib */,
 				BF384A882BDD006B004B2938 /* Metal C */,
@@ -164,6 +207,7 @@
 		BF384A882BDD006B004B2938 /* Metal C */ = {
 			isa = PBXGroup;
 			children = (
+				BF344B542C11BCC900EACF1C /* Engine */,
 				BF07542F2C0F8503009BA850 /* Math */,
 				BF07541B2C0E5D0E009BA850 /* vendors */,
 				BF36F7352C0CB61700D67CCA /* shaders */,
@@ -171,6 +215,9 @@
 				BF90EDE32BDFF26B001F890E /* Metal */,
 				BF384A892BDD006B004B2938 /* main.c */,
 				BF90EDF32BE43790001F890E /* Platform */,
+				BF344B5E2C1261BE00EACF1C /* VertexData.h */,
+				BF344B5F2C12806600EACF1C /* MathUtilities.h */,
+				BF344B602C12806600EACF1C /* MathUtilities.c */,
 			);
 			path = "Metal C";
 			sourceTree = "<group>";
@@ -309,11 +356,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF90EDF62BE4380E001F890E /* platform_macos.m in Sources */,
+				BF344B592C11BD3600EACF1C /* input.c in Sources */,
+				BF344B5D2C11F79F00EACF1C /* event.c in Sources */,
 				BF384A8A2BDD006B004B2938 /* main.c in Sources */,
 				BF36F7372C0CB62A00D67CCA /* shaders.metal in Sources */,
 				BF90EE012BE44424001F890E /* ContentView.m in Sources */,
 				BF90EDFC2BE43DF9001F890E /* WindowDelegate.m in Sources */,
 				BF90EDF82BE43B58001F890E /* ApplicationDelegate.m in Sources */,
+				BF344B612C12806600EACF1C /* MathUtilities.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -43,6 +43,7 @@ void (*void_ms_send_ptr)(void*, SEL, void*) = (void (*)(void*, SEL, void*)) objc
 void (*void_ms_send_bool)(void*, SEL, unsigned long) = (void (*)(void*, SEL, unsigned long)) objc_msgSend;
 void (*void_ms_send_uint)(void*, SEL, unsigned long) = (void (*)(void*, SEL, unsigned long)) objc_msgSend;
 void (*void_ms_send_float)(void*, SEL, float) = (void (*)(void*, SEL, float)) objc_msgSend;
+void (*void_ms_send_double)(void*, SEL, double) = (void (*)(void*, SEL, double)) objc_msgSend;
 void (*void_ms_send_float4)(void*, SEL, float, float, float, float) = (void (*)(void*, SEL, float, float, float, float)) objc_msgSend;
 void (*void_ms_send_uint32)(void*, SEL, uint32_t) = (void (*)(void*, SEL, uint32_t)) objc_msgSend;
 bool (*bool_ms_send)(void*, SEL) = (bool (*)(void*, SEL)) objc_msgSend;

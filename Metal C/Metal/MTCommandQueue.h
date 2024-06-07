@@ -13,7 +13,7 @@
 typedef void MTCommandQueue;
 
 
-MTCommandQueue* mt_commandQueue_new(MTDevice* device){
+MTCommandQueue* mt_device_commandQueue_new(MTDevice* device){
     return (MTCommandQueue*)ms_send(device, sel_getUid("newCommandQueue"));
 }
 

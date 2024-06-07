@@ -9,28 +9,37 @@
 
 using namespace metal;
 
-#include "shaderInterface.h"
-//#include "../Math/GMath.h"
+#include "../VertexData.h"
 
-struct VertexInput {
-    float2 position [[attribute(VertexAttributeIndex_Position)]];
-};
-
-struct ShaderInOut {
+struct VertexOut {
+    // The [[position]] attribute of this member indicates that this value
+    // is the clip space position of the vertex when this structure is
+    // returned from the vertex function.
     float4 position [[position]];
-    float4 color;
+
+    // Since this member does not have a special attribute, the rasterizer
+    // interpolates its value with the values of the other triangle vertices
+    // and then passes the interpolated value to the fragment shader for each
+    // fragment in the triangle.
+    float2 textureCoordinate;
 };
 
-vertex ShaderInOut vert(VertexInput in [[stage_in]],
-                        constant Uniforms& uniforms [[buffer(VertexBufferIndex_Uniforms)]])
+vertex VertexOut vertexShader(uint vertexID [[vertex_id]],
+             constant VertexData* vertexData,
+             constant TransformationData* transformationData)
 {
-    ShaderInOut out;
-    out.position = float4(in.position.x + uniforms.pos.x, in.position.y + uniforms.pos.y, 0.0, 1.0);
-    out.color = float4(uniforms.color.r, uniforms.color.g, uniforms.color.b, uniforms.color.a);
+    VertexOut out;
+    out.position = transformationData->perspectiveMatrix * transformationData->viewMatrix * transformationData->modelMatrix * vertexData[vertexID].position;
+    out.textureCoordinate.x = vertexData[vertexID].textureCoordinate.x;
+    out.textureCoordinate.y = vertexData[vertexID].textureCoordinate.y;
     return out;
 }
 
-fragment float4 frag(ShaderInOut in [[stage_in]])
-{
-    return in.color;
+fragment float4 fragmentShader(VertexOut in [[stage_in]],
+                               texture2d<float> colorTexture [[texture(0)]]) {
+    constexpr sampler textureSampler (mag_filter::linear,
+                                      min_filter::linear);
+    // Sample the texture to obtain a color
+    const float4 colorSample = colorTexture.sample(textureSampler, in.textureCoordinate);
+    return colorSample;
 }

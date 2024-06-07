@@ -73,7 +73,7 @@ MT_INLINE void mt_renderPipeline_descriptor_set_raster_sample_count(MTRenderPipe
     void_ms_send_uint(renderPipelineDesc, sel_registerName("setRasterSampleCount:"), count);
 }
 
-MT_INLINE void mt_rendePipeline_descriptor_set_depth_attachment_pixel_format(MTRenderPipelineDescriptor* desc, MTPixelFormat format) {
+MT_INLINE void mt_renderPipeline_descriptor_set_depth_attachment_pixel_format(MTRenderPipelineDescriptor* desc, MTPixelFormat format) {
     SEL sel = sel_registerName("setDepthAttachmentPixelFormat:");
 //    MTRenderPipelineColorAttachmentDescriptor* color_attachments = mtRenderPipelineColorAttachments(renderPipelineDesc);
     void_ms_send_uint(desc, sel, format);
