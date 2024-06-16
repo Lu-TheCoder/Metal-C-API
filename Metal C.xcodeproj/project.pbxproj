@@ -18,6 +18,7 @@
 		BF36F7372C0CB62A00D67CCA /* shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = BF36F7362C0CB62A00D67CCA /* shaders.metal */; };
 		BF36F7432C0D260F00D67CCA /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF384A952BDD0150004B2938 /* Metal.framework */; };
 		BF384A8A2BDD006B004B2938 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = BF384A892BDD006B004B2938 /* main.c */; };
+		BF3FF2042C1F08280020F040 /* dynlist.c in Sources */ = {isa = PBXBuildFile; fileRef = BF3FF2032C1F08280020F040 /* dynlist.c */; };
 		BF90EDF62BE4380E001F890E /* platform_macos.m in Sources */ = {isa = PBXBuildFile; fileRef = BF90EDF52BE4380E001F890E /* platform_macos.m */; };
 		BF90EDF82BE43B58001F890E /* ApplicationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BF90EDF72BE43B58001F890E /* ApplicationDelegate.m */; };
 		BF90EDFC2BE43DF9001F890E /* WindowDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BF90EDFB2BE43DF9001F890E /* WindowDelegate.m */; };
@@ -79,6 +80,8 @@
 		BF384A932BDD0149004B2938 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		BF384A952BDD0150004B2938 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		BF384A972BDD0155004B2938 /* MetalFX.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalFX.framework; path = System/Library/Frameworks/MetalFX.framework; sourceTree = SDKROOT; };
+		BF3FF2022C1F08280020F040 /* dynlist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dynlist.h; sourceTree = "<group>"; };
+		BF3FF2032C1F08280020F040 /* dynlist.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dynlist.c; sourceTree = "<group>"; };
 		BF90EDE42BDFF293001F890E /* MTDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTDevice.h; sourceTree = "<group>"; };
 		BF90EDE52BDFF318001F890E /* MTResource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTResource.h; sourceTree = "<group>"; };
 		BF90EDE72BDFF366001F890E /* Objectivec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Objectivec.h; sourceTree = "<group>"; };
@@ -150,6 +153,7 @@
 		BF344B542C11BCC900EACF1C /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				BF3FF2012C1F080E0020F040 /* containers */,
 				BF344B562C11BCD900EACF1C /* utils */,
 				BF344B552C11BCD000EACF1C /* core */,
 			);
@@ -235,6 +239,15 @@
 				BF384A912BDD0141004B2938 /* Foundation.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BF3FF2012C1F080E0020F040 /* containers */ = {
+			isa = PBXGroup;
+			children = (
+				BF3FF2022C1F08280020F040 /* dynlist.h */,
+				BF3FF2032C1F08280020F040 /* dynlist.c */,
+			);
+			path = containers;
 			sourceTree = "<group>";
 		};
 		BF90EDE32BDFF26B001F890E /* Metal */ = {
@@ -325,7 +338,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastUpgradeCheck = 1530;
+				LastUpgradeCheck = 1540;
 				TargetAttributes = {
 					BF384A852BDD006B004B2938 = {
 						CreatedOnToolsVersion = 15.3;
@@ -360,6 +373,7 @@
 				BF344B5D2C11F79F00EACF1C /* event.c in Sources */,
 				BF384A8A2BDD006B004B2938 /* main.c in Sources */,
 				BF36F7372C0CB62A00D67CCA /* shaders.metal in Sources */,
+				BF3FF2042C1F08280020F040 /* dynlist.c in Sources */,
 				BF90EE012BE44424001F890E /* ContentView.m in Sources */,
 				BF90EDFC2BE43DF9001F890E /* WindowDelegate.m in Sources */,
 				BF90EDF82BE43B58001F890E /* ApplicationDelegate.m in Sources */,
@@ -404,11 +418,12 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -427,6 +442,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-std=c99";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -465,11 +481,12 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -481,6 +498,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "-std=c99";
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -490,6 +508,7 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = NO;
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 4P5CDH4GR2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				HEADER_SEARCH_PATHS = /Users/luthecoder/VulkanSDK/vulkan/macOS/include;
@@ -507,6 +526,7 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = NO;
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 4P5CDH4GR2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				HEADER_SEARCH_PATHS = /Users/luthecoder/VulkanSDK/vulkan/macOS/include;

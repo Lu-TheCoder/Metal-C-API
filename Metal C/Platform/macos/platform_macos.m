@@ -6,12 +6,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "platform.h"
+#import "../platform.h"
 #import "ApplicationDelegate.h"
 #import "WindowDelegate.h"
 #import "ContentView.h"
 #import <Metal/Metal.h>
 #import <QuartzCore/CoreAnimation.h>
+#import "../../Engine/core/event.h"
 
 static platform_state* state_ptr;
 
@@ -126,6 +127,13 @@ bool platform_system_startup(platform_system_config* config){
 //        
         [NSApp finishLaunching];
         
+        // Fire off a resize event to make sure the framebuffer is the right size.
+        // Again, this should be the actual backing framebuffer size (taking into account pixel density).
+        event_context context;
+        context.data.u16[0] = (uint16_t)state_ptr->handle.layer.drawableSize.width;
+        context.data.u16[1] = (uint16_t)state_ptr->handle.layer.drawableSize.height;
+        event_fire(EVENT_CODE_RESIZED, 0, context);
+        
         return true;
     }
     
@@ -134,24 +142,12 @@ bool platform_system_startup(platform_system_config* config){
 void platform_system_shutdown(void){
     if (state_ptr){
         @autoreleasepool {
-            [state_ptr->window orderOut:nil];
-            
-            [state_ptr->window setDelegate:nil];
             [state_ptr->wnd_delegate release];
-            
             [state_ptr->view release];
-            state_ptr->view = nil;
-            
-            [state_ptr->window close];
-            state_ptr->window = nil;
-            
-            [NSApp setDelegate:nil];
             [state_ptr->app_delegate release];
-            state_ptr->app_delegate = nil;
-            
-            
         }
     }
+    free(state_ptr);
     state_ptr = 0;
 }
 
@@ -175,8 +171,6 @@ bool platform_pump_messages(void){
             }
             
         } // autoreleasepool
-        
-        //         platform_update_watches();
         
         return !state_ptr->quit_flagged;
     }
@@ -202,3 +196,4 @@ unsigned long platform_get_drawable_pixelFormat(void) {
 void* platform_get_next_drawable_texture(void* drawable) {
     return [((id<CAMetalDrawable>)drawable) texture];
 }
+

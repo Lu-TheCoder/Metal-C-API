@@ -6,18 +6,98 @@
 //
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "Metal/Metal.h"
 #include "Platform/platform.h"
 #include "Metal/Foundation/Foundation.h"
 #include "shaders/shaderInterface.h"
-#include <dispatch/semaphore.h>
+#include <dispatch/dispatch.h>
 #include <mach/mach_time.h>
 #include <simd/simd.h>
 #include "VertexData.h"
 #include "MathUtilities.h"
+#include "Engine/core/event.h"
+#include "Engine/core/input.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "vendors/stb_image.h"
+
+typedef struct Systems {
+    uint64_t event_system_memory_requirement;
+    struct event_state* event_system;
+    uint64_t input_system_memory_requirement;
+    struct input_state* input_system;
+}Systems;
+
+typedef struct Engine_State {
+    MTDevice* device;
+    MTRenderPipelineState* renderPipelineState;
+    MTRenderPassDescriptor* renderPassDescriptor;
+    MTRenderPassColorAttachmentDescriptorArray* colorAttachments;
+    MTRenderPassDepthAttachmentDescriptor* depthAttachment;
+    void* drawable;
+    uint32_t sampleCount;
+    MTTexture* msaaRenderTargetTexture;
+    MTTexture* depthTexture;
+}Engine_State;
+
+static Engine_State* engine;
+
+void create_depth_and_msaa_textures(void){
+    // Create Depth & MSAA Textures
+    MTTextureDescriptor* msaaTextureDescriptor = mt_textureDescriptor_new();
+    mt_textureDescriptor_set_textureType(msaaTextureDescriptor, MTTextureType2DMultisample);
+    mt_textureDescriptor_set_pixelFormat(msaaTextureDescriptor, MTPixelFormatBGRA8Unorm);
+    mt_textureDescriptor_set_width(msaaTextureDescriptor, platform_get_drawable_width());
+    mt_textureDescriptor_set_height(msaaTextureDescriptor, platform_get_drawable_height());
+    mt_textureDescriptor_set_usage(msaaTextureDescriptor, MTTextureUsageRenderTarget);
+    mt_textureDescriptor_set_sampleCount(msaaTextureDescriptor, engine->sampleCount);
+    
+    engine->msaaRenderTargetTexture = mt_device_texture_new_texture_with_descriptor(engine->device, msaaTextureDescriptor);
+    
+    MTTextureDescriptor* depthTextureDescriptor = mt_textureDescriptor_new();
+    mt_textureDescriptor_set_textureType(depthTextureDescriptor, MTTextureType2DMultisample);
+    mt_textureDescriptor_set_pixelFormat(depthTextureDescriptor, MTPixelFormatDepth32Float);
+    mt_textureDescriptor_set_width(depthTextureDescriptor, platform_get_drawable_width());
+    mt_textureDescriptor_set_height(depthTextureDescriptor, platform_get_drawable_height());
+    mt_textureDescriptor_set_usage(depthTextureDescriptor, MTTextureUsageRenderTarget);
+    mt_textureDescriptor_set_sampleCount(depthTextureDescriptor, engine->sampleCount);
+    
+    engine->depthTexture = mt_device_texture_new_texture_with_descriptor(engine->device, depthTextureDescriptor);
+    
+    mt_release(msaaTextureDescriptor);
+    mt_release(depthTextureDescriptor);
+}
+
+void update_renderPass_descriptor(void) {
+    MTRenderPassColorAttachmentDescriptor* colorAttachment = mt_renderpass_get_color_attachment_at_index(engine->colorAttachments, 0);
+    mt_renderpass_color_attachment_set_texture(colorAttachment, engine->msaaRenderTargetTexture);
+    mt_renderpass_color_attachment_set_resolve_texture(colorAttachment, platform_get_next_drawable_texture(engine->drawable));
+    mt_renderpass_depth_attachment_set_texture(engine->depthAttachment, engine->depthTexture);
+}
+
+bool engine_on_application_quit(uint16_t code, void* sender, void* listener_inst, event_context data){
+    return true;
+}
+
+bool engine_on_window_resized(uint16_t code, void* sender, void* listener_inst, event_context data) {
+    
+    printf("Window Resized!! drawable Width: %d \n", data.data.u16[0]);
+    printf("Window Resized!! drawable Height: %d \n", data.data.u16[1]);
+    
+    if (engine->msaaRenderTargetTexture){
+        mt_release(engine->msaaRenderTargetTexture);
+    }
+    
+    if (engine->depthTexture){
+        mt_release(engine->depthTexture);
+    }
+    
+    create_depth_and_msaa_textures();
+    engine->drawable = platform_get_next_drawable();
+    update_renderPass_descriptor();
+    return true;
+}
 
 //#include <sys/sysctl.h>
 double osxGetCurrentTimeInSeconds(mach_timebase_info_data_t tb)
@@ -57,15 +137,45 @@ Texture* create_texture(const char* path, MTDevice* device) {
     return texture;
 }
 
-//void update_renderpass_descriptor(MTRenderPassDescriptor* renderpass, MTTexture* texture, void* drawable){
-//    MTRenderPassColorAttachmentDescriptorArray* colorAttachments = mt_renderpass_color_attachment_get_color_attachments(renderpass);
-//    MTRenderPassColorAttachmentDescriptor* colorAttachment = mt_renderpass_get_color_attachment_at_index(colorAttachments, 0);
-//    mt_renderpass_color_attachment_set_texture(colorAttachment, texture);
-//    mt_renderpass_color_attachment_set_resolve_texture(colorAttachment, drawable);
-//}
+typedef struct GameObject {
+    VertexData* vertexData;
+    MTBuffer* vertexBuffer;
+    MTBuffer* transformationBuffer;
+    Texture* texture;
+}GameObject;
+
+GameObject create_gameObject(VertexData* data, MTDevice* device);
+
+GameObject create_gameObject(VertexData* data, MTDevice* device) {
+    GameObject obj;
+    
+    obj.vertexData = data;
+    
+    obj.vertexBuffer = mt_device_buffer_new_buffer_with_bytes(device, data, sizeof(obj.vertexData), MTResourceStorageModeShared);
+    
+    obj.transformationBuffer = mt_device_buffer_new_buffer_with_length(device, sizeof(TransformationData), MTResourceStorageModeShared);
+    
+    obj.texture = malloc(sizeof(Texture));
+    obj.texture = create_texture("mc_grass.jpeg", device);
+    
+    return obj;
+}
+
 
 int main(int argc, const char * argv[]) {
     
+    engine = malloc(sizeof(Engine_State));
+    engine->sampleCount = 4;
+    
+    Systems* systems = malloc(sizeof(Systems));
+//    
+    event_system_initialize(&systems->event_system_memory_requirement, 0);
+    systems->event_system = malloc(systems->event_system_memory_requirement);
+    if (!event_system_initialize(&systems->event_system_memory_requirement, systems->event_system)) {
+        printf("Failed to initialize event system.");
+        return false;
+    }
+
     platform_system_config config = {
         .application_name = "Engine",
         .width = 1024,
@@ -77,7 +187,12 @@ int main(int argc, const char * argv[]) {
         printf("Failed to startup platform.\n");
     }
     
-    MTDevice* device = mt_create_system_default_device();
+    if(systems->event_system){
+        event_register(EVENT_CODE_RESIZED, systems->event_system, engine_on_window_resized);
+        event_register(EVENT_CODE_APPLICATION_QUIT, systems->event_system, engine_on_application_quit);
+    }
+
+    engine->device = mt_create_system_default_device();
 
     bool isRunning = true;
     
@@ -86,7 +201,8 @@ int main(int argc, const char * argv[]) {
     MTURL* fileURL = mt_url_init_with_path(lib_path);
     
     MTError* error = NULL;
-    MTLibrary* library = mt_library_new_library_withURL(device, fileURL, &error);
+    MTLibrary* library = mt_library_new_library_withURL(engine->device, fileURL, &error);
+    mt_release(fileURL);
 
     if(!library){
         printf("Failed to load library. Error %s\n", mt_error_get_localized_description(error));
@@ -152,13 +268,15 @@ int main(int argc, const char * argv[]) {
         {{0.5, -0.5, 0.5, 1.0}, {0.0, 0.0}},
     };
     
-    MTBuffer* cubeVertexBuffer = mt_device_buffer_new_buffer_with_bytes(device, cubeVertices, sizeof(cubeVertices), MTResourceStorageModeShared);
+//    GameObject cube = create_gameObject(cubeVertices, device);
+//    
+    MTBuffer* cubeVertexBuffer = mt_device_buffer_new_buffer_with_bytes(engine->device, cubeVertices, sizeof(cubeVertices), MTResourceStorageModeShared);
     
-    Texture* grassTexture = create_texture("mc_grass.jpeg", device);
+    Texture* grassTexture = create_texture("mc_grass.jpeg", engine->device);
     
-    MTBuffer* transformationBuffer = mt_device_buffer_new_buffer_with_length(device, sizeof(TransformationData), MTResourceStorageModeShared);
+    MTBuffer* transformationBuffer = mt_device_buffer_new_buffer_with_length(engine->device, sizeof(TransformationData), MTResourceStorageModeShared);
     
-    MTCommandQueue* cmd_queue = mt_device_commandQueue_new(device);
+    MTCommandQueue* cmd_queue = mt_device_commandQueue_new(engine->device);
     
     int sampleCount = 4;
     MTRenderPipelineDescriptor* renderPipelineDescriptor = mt_renderPipeline_descriptor_new();
@@ -170,9 +288,9 @@ int main(int argc, const char * argv[]) {
     mt_renderPipeline_descriptor_set_sample_count(renderPipelineDescriptor, sampleCount);
     mt_renderPipeline_descriptor_set_depth_attachment_pixel_format(renderPipelineDescriptor, MTPixelFormatDepth32Float);
     
-    MTRenderPipelineState* renderPipelineState = mt_device_renderPipeline_state_new(device, renderPipelineDescriptor, &error);
+    engine->renderPipelineState = mt_device_renderPipeline_state_new(engine->device, renderPipelineDescriptor, &error);
     
-    if (!renderPipelineState) {
+    if (!engine->renderPipelineState) {
         printf("Failed to create render pipeline state:: %s\n", mt_error_get_localized_description(error));
         return -1;
     }
@@ -181,54 +299,33 @@ int main(int argc, const char * argv[]) {
     mt_depth_stencil_descriptor_set_depth_compare_function(depthStencilDescriptor, MTCompareFunctionLessEqual);
     mt_depth_stencil_descriptor_set_is_depth_write_enabled(depthStencilDescriptor, true);
     
-    MTDepthStencilState* depthStencilState = mt_device_depth_stencil_sate_new(device, depthStencilDescriptor);
+    MTDepthStencilState* depthStencilState = mt_device_depth_stencil_sate_new(engine->device, depthStencilDescriptor);
+    mt_release(depthStencilDescriptor);
     
     mt_release(renderPipelineDescriptor);
     mt_release(vertFunction);
     mt_release(fragFunction);
     
-    // Create Depth & MSAA Textures
-    MTTextureDescriptor* msaaTextureDescriptor = mt_textureDescriptor_new();
-    mt_textureDescriptor_set_textureType(msaaTextureDescriptor, MTTextureType2DMultisample);
-    mt_textureDescriptor_set_pixelFormat(msaaTextureDescriptor, MTPixelFormatBGRA8Unorm);
-    mt_textureDescriptor_set_width(msaaTextureDescriptor, platform_get_drawable_width());
-    mt_textureDescriptor_set_height(msaaTextureDescriptor, platform_get_drawable_height());
-    mt_textureDescriptor_set_usage(msaaTextureDescriptor, MTTextureUsageRenderTarget);
-    mt_textureDescriptor_set_sampleCount(msaaTextureDescriptor, sampleCount);
+    create_depth_and_msaa_textures();
+
+    engine->renderPassDescriptor = mt_renderpass_descriptor_new();
     
-    MTTexture* msaaRenderTargetTexture = mt_device_texture_new_texture_with_descriptor(device, msaaTextureDescriptor);
+    engine->colorAttachments = mt_renderpass_color_attachment_get_color_attachments(engine->renderPassDescriptor);
+    MTRenderPassColorAttachmentDescriptor* colorAttachment = mt_renderpass_get_color_attachment_at_index(engine->colorAttachments, 0);
+    engine->depthAttachment = mt_renderpass_depth_attachment_get_depth_attachment(engine->renderPassDescriptor);
     
-    MTTextureDescriptor* depthTextureDescriptor = mt_textureDescriptor_new();
-    mt_textureDescriptor_set_textureType(depthTextureDescriptor, MTTextureType2DMultisample);
-    mt_textureDescriptor_set_pixelFormat(depthTextureDescriptor, MTPixelFormatDepth32Float);
-    mt_textureDescriptor_set_width(depthTextureDescriptor, platform_get_drawable_width());
-    mt_textureDescriptor_set_height(depthTextureDescriptor, platform_get_drawable_height());
-    mt_textureDescriptor_set_usage(depthTextureDescriptor, MTTextureUsageRenderTarget);
-    mt_textureDescriptor_set_sampleCount(depthTextureDescriptor, sampleCount);
+    engine->drawable = platform_get_next_drawable();
     
-    MTTexture* depthTexture = mt_device_texture_new_texture_with_descriptor(device, depthTextureDescriptor);
-    
-    mt_release(msaaTextureDescriptor);
-    mt_release(depthTextureDescriptor);
-    
-    MTRenderPassDescriptor* renderpassDescriptor = mt_renderpass_descriptor_new();
-    
-    MTRenderPassColorAttachmentDescriptorArray* colorAttachments = mt_renderpass_color_attachment_get_color_attachments(renderpassDescriptor);
-    MTRenderPassColorAttachmentDescriptor* colorAttachment = mt_renderpass_get_color_attachment_at_index(colorAttachments, 0);
-    MTRenderPassDepthAttachmentDescriptor* depthAttachment = mt_renderpass_depth_attachment_get_depth_attachment(renderpassDescriptor);
-    
-    void* drawable = platform_get_next_drawable();
-    
-    mt_renderpass_color_attachment_set_texture(colorAttachment, msaaRenderTargetTexture);
-    mt_renderpass_color_attachment_set_resolve_texture(colorAttachment, platform_get_next_drawable_texture(drawable));
+    mt_renderpass_color_attachment_set_texture(colorAttachment, engine->msaaRenderTargetTexture);
+    mt_renderpass_color_attachment_set_resolve_texture(colorAttachment, platform_get_next_drawable_texture(engine->drawable));
     mt_renderpass_color_attachment_set_loadAction(colorAttachment, MTLoadActionClear);
     mt_renderpass_color_attachment_set_storeAction(colorAttachment, MTStoreActionMultisampleResolve);
     mt_renderpass_color_attachment_set_clearColor(colorAttachment, mt_clear_color_make(41.0f/255.0f, 42.0f/255.0f, 48.0f/255.0f, 1.0));
     
-    mt_renderpass_depth_attachment_set_texture(depthAttachment, depthTexture);
-    mt_renderpass_depth_attachment_set_loadAction(depthAttachment, MTLoadActionClear);
-    mt_renderpass_depth_attachment_set_storeAction(depthAttachment, MTStoreActionDontCare);
-    mt_renderpass_depth_attachment_set_clear_depth(depthAttachment, 1.0);
+    mt_renderpass_depth_attachment_set_texture(engine->depthAttachment, engine->depthTexture);
+    mt_renderpass_depth_attachment_set_loadAction(engine->depthAttachment, MTLoadActionClear);
+    mt_renderpass_depth_attachment_set_storeAction(engine->depthAttachment, MTStoreActionDontCare);
+    mt_renderpass_depth_attachment_set_clear_depth(engine->depthAttachment, 1.0);
     
 
     // Timing
@@ -277,17 +374,13 @@ int main(int argc, const char * argv[]) {
         MTAutoreleasePool* pool =  mt_autoreleasepool_new();
         mt_autoreleasepool_init(pool);
         
-        void* drawable = platform_get_next_drawable();
+        engine->drawable = platform_get_next_drawable();
         
         MTCommandBuffer* cmdBuffer = mt_commandBuffer_new(cmd_queue);
         
-//        update_renderpass_descriptor(renderpassDescriptor, msaaTextureDescriptor, drawable);
-        MTRenderPassColorAttachmentDescriptorArray* colorAttachments = mt_renderpass_color_attachment_get_color_attachments(renderpassDescriptor);
-        MTRenderPassColorAttachmentDescriptor* colorAttachment = mt_renderpass_get_color_attachment_at_index(colorAttachments, 0);
-        mt_renderpass_color_attachment_set_texture(colorAttachment, msaaRenderTargetTexture);
-        mt_renderpass_color_attachment_set_resolve_texture(colorAttachment, platform_get_next_drawable_texture(drawable));
+        update_renderPass_descriptor();
         
-        MTRenderCommandEncoder* renderCommandEncoder = mt_renderCommand_encoder_new(cmdBuffer, renderpassDescriptor);
+        MTRenderCommandEncoder* renderCommandEncoder = mt_renderCommand_encoder_new(cmdBuffer,  engine->renderPassDescriptor);
         
         mt_renderCommand_encoder_set_viewport(renderCommandEncoder, mt_viewport_make(0, 0,
                                                                            platform_get_drawable_width(),
@@ -299,7 +392,7 @@ int main(int argc, const char * argv[]) {
         simd_float4x4 translationMatrix =  matrix4x4_translation(0, 0.0,-1.0);
 
     //    float angleInDegrees = glfwGetTime()/2.0 * 45;
-        float angleInDegrees = (currentTimeInSeconds/2) * 45;
+        float angleInDegrees = (currentTimeInSeconds / 2.0f) * 45.0;
         float angleInRadians = angleInDegrees * M_PI / 180.0f;
         matrix_float4x4 rotationMatrix = matrix4x4_rotation(angleInRadians, 0.0, 1.0, 0.0);
 
@@ -330,17 +423,18 @@ int main(int argc, const char * argv[]) {
         memcpy(mt_buffer_get_contents(transformationBuffer), &transformationData, sizeof(transformationData));
         
         mt_renderCommand_encoder_set_front_facing_winding(renderCommandEncoder, MTWindingCounterClockwise);
-        mt_renderCommand_encoder_set_cull_mode(renderCommandEncoder, MTCullModeBack);
-        mt_renderCommand_encoder_set_pipeline_state(renderCommandEncoder, renderPipelineState);
+//        mt_renderCommand_encoder_set_cull_mode(renderCommandEncoder, MTCullModeBack);
+        mt_renderCommand_encoder_set_pipeline_state(renderCommandEncoder, engine->renderPipelineState);
         mt_renderCommand_encoder_set_depth_stencil_state(renderCommandEncoder, depthStencilState);
         mt_renderCommand_encoder_set_vertex_buffer(renderCommandEncoder, cubeVertexBuffer, 0, 0);
         mt_renderCommand_encoder_set_vertex_buffer(renderCommandEncoder, transformationBuffer, 0, 1);
         mt_renderCommand_encoder_set_fragment_texture_at_index(renderCommandEncoder, grassTexture->texture, 0);
+//        mt_renderCommand_encoder_set_triangle_fill_mode(renderCommandEncoder, MTTriangleFillModeLines);
         mt_renderCommand_encoder_draw_primitives(renderCommandEncoder, MTPrimitiveTypeTriangle, 0, sizeof(cubeVertices)/sizeof(cubeVertices[0]));
      
         mt_renderCommand_encoder_end_encoding(renderCommandEncoder);
         
-        mt_commandBuffer_present_drawable(cmdBuffer, drawable);
+        mt_commandBuffer_present_drawable(cmdBuffer, engine->drawable);
         
 //        dispatch_semaphore_signal(uniformBufferSemaphore);
         
@@ -353,7 +447,27 @@ int main(int argc, const char * argv[]) {
 //        currentUniformBufferIndex = (currentUniformBufferIndex + 1) % MAX_FRAMES_IN_FLIGHT;
     }
     
-//    platform_system_shutdown();
+    mt_release(engine->renderPassDescriptor);
+    mt_release(cmd_queue);
+    mt_release(engine->renderPipelineState);
+    free(grassTexture);
+    
+    free(systems->event_system);
+    free(systems);
+    
+    platform_system_shutdown();
+    event_system_shutdown(0);
     
     return 0;
 }
+
+/**
+    DEBUG NOTE:
+    To check for memory leaks using the terminal.
+    cd into the executable directory and ENABLE MallocStackLogging by running:
+    export MallocStackLogging=1
+    Then RUN:
+    leaks --atExit --list -- ./"Metal C"
+    
+    __This will list out any memory leaks in the terminal the moment you terminate the application.
+ */

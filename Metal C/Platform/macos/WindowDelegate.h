@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "NSDefines.h"
 #import <QuartzCore/CAMetalLayer.h>
+#import "../platform.h"
 
 @class ApplicationDelegate;
 @class WindowDelegate;
@@ -29,6 +30,7 @@ typedef struct platform_state{
     macos_handle_info handle;
     bool quit_flagged;
     float device_pixel_ratio;
+    platform_window_resized_callback window_resized_callback;
 }platform_state;
 
 

@@ -7,7 +7,7 @@
 
 #pragma once
 #import <Cocoa/Cocoa.h>
-#import "platform.h"
+#import "../platform.h"
 
 @interface ApplicationDelegate: NSObject <NSApplicationDelegate>{}
 -(instancetype)init;
