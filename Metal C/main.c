@@ -39,6 +39,12 @@ int main(int argc, const char * argv[]) {
     
     MTDevice* device = mt_create_system_default_device();
     
+    if (device) {
+        printf("✅ Got a Metal device: %p\n", device);
+    } else {
+        printf("❌ Failed to get Metal device\n");
+    }
+    
     MTCommandQueue* queue = mt_commandQueue_new(device);
 
 //    char buffer[256];
@@ -78,13 +84,13 @@ int main(int argc, const char * argv[]) {
         {0.5f,  0.5f}
     };
     
-    MTBuffer* vertexBuffer = mt_device_buffer_new_buffer_with_bytes(device, vertexData, sizeof(vertexData), MTResourceCPUCacheModeDefaultCache);
+    MTBuffer* vertexBuffer = mt_device_create_buffer_with_bytes(device, vertexData, sizeof(vertexData), MTResourceCPUCacheModeDefaultCache);
     
     // Create uniform Buffers
     const uint32_t MAX_FRAMES_IN_FLIGHT = 2;
     MTBuffer** uniformBuffers = malloc(sizeof(MTBuffer*)* MAX_FRAMES_IN_FLIGHT);
-    uniformBuffers[0] = mt_device_buffer_new_buffer_with_length(device, sizeof(Uniforms), MTResourceCPUCacheModeWriteCombined);
-    uniformBuffers[1] = mt_device_buffer_new_buffer_with_length(device, sizeof(Uniforms), MTResourceCPUCacheModeWriteCombined);
+    uniformBuffers[0] = mt_device_create_buffer_with_length(device, sizeof(Uniforms), MTResourceCPUCacheModeWriteCombined);
+    uniformBuffers[1] = mt_device_create_buffer_with_length(device, sizeof(Uniforms), MTResourceCPUCacheModeWriteCombined);
     int currentUniformBufferIndex = 0;
     
     dispatch_semaphore_t uniformBufferSemaphore = dispatch_semaphore_create(MAX_FRAMES_IN_FLIGHT);
@@ -96,7 +102,7 @@ int main(int argc, const char * argv[]) {
     
     MTTextureDescriptor* texture_desc2 = mt_textureDescriptor_new_2D_descriptor(MTPixelFormatRGBA8Unorm, texWidth, texHeight, false);
     
-    MTTexture* texture = mt_device_texture_new_texture_with_descriptor(device, texture_desc2);
+    MTTexture* texture = mt_device_create_texture_with_descriptor(device, texture_desc2);
     mt_release(texture_desc2);
     
     // Copy loaded image into MTTextureObject
@@ -109,7 +115,7 @@ int main(int argc, const char * argv[]) {
     mt_samplerDescriptor_set_minFilter(samplerDesc, MTSamplerMinMagFilterLinear);
     mt_samplerDescriptor_set_magFilter(samplerDesc, MTSamplerMinMagFilterLinear);
 
-    MTSamplerState* samplerState = mt_device_sampler_state_new(device, samplerDesc);
+    MTSamplerState* samplerState = mt_device_create_sampler_state(device, samplerDesc);
     
     mt_release(samplerDesc);
     
@@ -131,7 +137,7 @@ int main(int argc, const char * argv[]) {
     mt_renderPipeline_descriptor_set_vertex_descriptor(renderPipelineDesc, vertDesc);
     mt_renderPipeline_descriptor_set_color_attachments_pixel_format(renderPipelineDesc, 0, (MTPixelFormat)platform_get_drawable_pixelFormat());
     
-    MTRenderPipelineState* renderPipelineState = mt_device_renderPipeline_state_new(device, renderPipelineDesc, &error);
+    MTRenderPipelineState* renderPipelineState = mt_device_create_render_pipeline_state(device, renderPipelineDesc, &error);
     
     if (!renderPipelineState) {
         printf("Failed to create pipeline state. Error: %s\n", mt_error_get_localized_description(error));

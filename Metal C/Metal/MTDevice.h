@@ -16,7 +16,7 @@
 #include "MTSampler.h"
 #include "MTDepthStencil.h"
 
-typedef void MTDevice;
+typedef void* MTDevice;
 
 extern MTDevice* MTLCreateSystemDefaultDevice(void);
 
@@ -138,57 +138,77 @@ typedef struct MTSizeAndAlign {
     uintptr_t align;
 }MTSizeAndAlign;
 
-//FIXME: Not Completed..
-typedef struct MTArgumentDescriptor{
-    void (*alloc)(void);
-    void (*init)(void);
-
-}MTArgumentDescriptor;
-
 MTDevice* mt_create_system_default_device(void){
     return (MTDevice*) MTLCreateSystemDefaultDevice();
 }
 
-const char* mt_device_Name(MTDevice* device){
+const char* mt_device_get_name(MTDevice* device){
    return ns_toString(ns_mtDeviceName(device));
 }
 
 typedef void MTBuffer;
 
-void* (*ms_send_buff_bytes)(void*, SEL, void*, uintptr_t, MTResourceOptions) = (void* (*)(void*, SEL, void*, uintptr_t, MTResourceOptions)) objc_msgSend;
-
-MT_INLINE MTBuffer* mt_device_buffer_new_buffer_with_bytes(MTDevice* device, void* ptr, uintptr_t length, MTResourceOptions options){
-    SEL sel = sel_registerName("newBufferWithBytes:length:options:");
-    return ms_send_buff_bytes(device, sel, ptr, length, options);
-}
-
-void* (*ms_send_buff_length)(void*, SEL, uintptr_t, MTResourceOptions) = (void* (*)(void*, SEL, uintptr_t, MTResourceOptions)) objc_msgSend;
-
-MT_INLINE MTBuffer* mt_device_buffer_new_buffer_with_length(MTDevice* device, uintptr_t length, MTResourceOptions options){
-    SEL sel = sel_registerName("newBufferWithLength:options:");
-    return ms_send_buff_length(device, sel, length, options);
-}
-
-void* (*ms_send_void2)(void*, SEL, MTRenderPipelineDescriptor*, MTError*) = (void* (*)(void*, SEL, MTRenderPipelineDescriptor*, MTError*)) objc_msgSend;
-
-MT_INLINE MTRenderPipelineState* mt_device_renderPipeline_state_new(MTDevice* device, MTRenderPipelineDescriptor* render_desc, MTError** error){
-    SEL sel = sel_registerName("newRenderPipelineStateWithDescriptor:error:");
+MT_INLINE MTBuffer* mt_device_create_buffer_with_bytes(MTDevice* device, void* ptr, uintptr_t length, MTResourceOptions options) {
+    typedef void* (*MTNewBufferWithBytesMsgSend)(void*, SEL, void*, uintptr_t, MTResourceOptions);
+    MTNewBufferWithBytesMsgSend msgSend = (MTNewBufferWithBytesMsgSend)objc_msgSend;
     
-    // Ensure the ms_send_void2 function pointer is cast to the correct type
-    void* (*objc_msgSendTyped)(void*, SEL, MTRenderPipelineDescriptor*, MTError*) = (void* (*)(void*, SEL, MTRenderPipelineDescriptor*, MTError*))objc_msgSend;
-
-    // Call the method
-    return (void*)objc_msgSendTyped(device, sel, render_desc, error);
+    SEL sel = sel_getUid("newBufferWithBytes:length:options:");
+    return msgSend(device, sel, ptr, length, options);
 }
 
-MT_INLINE MTTexture* mt_device_texture_new_texture_with_descriptor(MTDevice* device, MTTextureDescriptor* texture_desc) {
-   return ms_send_void(device, sel_registerName("newTextureWithDescriptor:"), texture_desc);
+MT_INLINE MTBuffer* mt_device_create_buffer_with_length(
+    MTDevice* device,
+    uintptr_t length,
+    MTResourceOptions options
+) {
+    typedef void* (*MTNewBufferMsgSend)(void*, SEL, uintptr_t, MTResourceOptions);
+    MTNewBufferMsgSend msgSend = (MTNewBufferMsgSend)objc_msgSend;
+    
+    SEL sel = sel_getUid("newBufferWithLength:options:");
+    return msgSend(device, sel, length, options);
 }
 
-MT_INLINE MTSamplerState* mt_device_sampler_state_new(MTDevice* device, MTSamplerDescriptor* sampler_desc) {
-    return ms_send_void(device, sel_registerName("newSamplerStateWithDescriptor:"), sampler_desc);
+MT_INLINE MTRenderPipelineState* mt_device_create_render_pipeline_state(
+    MTDevice* device,
+    MTRenderPipelineDescriptor* render_desc,
+    MTError** error
+) {
+    typedef void* (*MTNewRenderPipelineStateMsgSend)(
+        void*, SEL, MTRenderPipelineDescriptor*, MTError**
+    );
+
+    MTNewRenderPipelineStateMsgSend msgSend = (MTNewRenderPipelineStateMsgSend)objc_msgSend;
+
+    SEL sel = sel_getUid("newRenderPipelineStateWithDescriptor:error:");
+    return (MTRenderPipelineState*)msgSend(device, sel, render_desc, error);
 }
 
-MT_INLINE MTDepthStencilState* mt_device_depth_stencil_sate_new(MTDevice* device, MTDepthStencilDescriptor* desc) {
-    return ptr_ms_send_ptr(device, sel_registerName("newDepthStencilStateWithDescriptor:"), desc);
+MT_INLINE MTTexture* mt_device_create_texture_with_descriptor(
+    MTDevice* device,
+    MTTextureDescriptor* texture_desc
+) {
+    typedef void* (*MsgSendFn)(void*, SEL, MTTextureDescriptor*);
+    MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
+    SEL sel = sel_getUid("newTextureWithDescriptor:");
+    return (MTTexture*)msgSend(device, sel, texture_desc);
+}
+
+MT_INLINE MTSamplerState* mt_device_create_sampler_state(
+    MTDevice* device,
+    MTSamplerDescriptor* sampler_desc
+) {
+    typedef void* (*MsgSendFn)(void*, SEL, MTSamplerDescriptor*);
+    MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
+    SEL sel = sel_getUid("newSamplerStateWithDescriptor:");
+    return (MTSamplerState*)msgSend(device, sel, sampler_desc);
+}
+
+MT_INLINE MTDepthStencilState* mt_device_create_depth_stencil_state(
+    MTDevice* device,
+    MTDepthStencilDescriptor* desc
+) {
+    typedef void* (*MsgSendFn)(void*, SEL, MTDepthStencilDescriptor*);
+    MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
+    SEL sel = sel_getUid("newDepthStencilStateWithDescriptor:");
+    return (MTDepthStencilState*)msgSend(device, sel, desc);
 }

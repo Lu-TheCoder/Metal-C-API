@@ -11,7 +11,7 @@
 #include "Foundation/MTURL.h"
 #include "Foundation/MTString.h"
 
-typedef void MTDevice;
+typedef void* MTDevice;
 
 typedef enum MTPatchType {
     MTPatchTypeNone = 0,
