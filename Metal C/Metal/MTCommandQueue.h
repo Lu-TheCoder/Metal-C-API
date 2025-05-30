@@ -12,12 +12,13 @@
 
 typedef void MTCommandQueue;
 
+MT_INLINE MTCommandQueue* mt_device_create_command_queue(MTDevice* device) {
+    typedef void* (*MTNewCommandQueueMsgSend)(void*, SEL);
+    MTNewCommandQueueMsgSend msgSend = (MTNewCommandQueueMsgSend)objc_msgSend;
 
-MTCommandQueue* mt_commandQueue_new(MTDevice* device){
-    return (MTCommandQueue*)ms_send(device, sel_getUid("newCommandQueue"));
+    SEL sel = sel_getUid("newCommandQueue");
+    return (MTCommandQueue*)msgSend(device, sel);
 }
-
-
 
 //FIXME: Crashes
 //MTCommandQueue* mtNewCommandQueueWithMaxCommandBufferCount(MTDevice* device, uintptr_t count){

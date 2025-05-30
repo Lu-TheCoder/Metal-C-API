@@ -193,6 +193,16 @@ MT_INLINE MTTexture* mt_device_create_texture_with_descriptor(
     return (MTTexture*)msgSend(device, sel, texture_desc);
 }
 
+MT_INLINE MTTexture* mt_device_create_shared_texture_with_descriptor(
+    MTDevice* device,
+    MTTextureDescriptor* texture_desc
+) {
+    typedef void* (*MsgSendFn)(void*, SEL, MTTextureDescriptor*);
+    MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
+    SEL sel = sel_getUid("newSharedTextureWithDescriptor:");
+    return (MTTexture*)msgSend(device, sel, texture_desc);
+}
+
 MT_INLINE MTSamplerState* mt_device_create_sampler_state(
     MTDevice* device,
     MTSamplerDescriptor* sampler_desc
@@ -211,4 +221,125 @@ MT_INLINE MTDepthStencilState* mt_device_create_depth_stencil_state(
     MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
     SEL sel = sel_getUid("newDepthStencilStateWithDescriptor:");
     return (MTDepthStencilState*)msgSend(device, sel, desc);
+}
+
+MT_INLINE bool mt_device_supports_family(
+    MTDevice* device,
+    MTGPUFamily gpu_family
+) {
+    typedef bool (*MsgSendFn)(void*, SEL, MTGPUFamily);
+    MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
+    SEL sel = sel_getUid("supportsFamily:");
+    return msgSend(device, sel, gpu_family);
+}
+
+MT_INLINE bool mt_device_supports_texture_sample_count(
+    MTDevice* device,
+    uintptr_t count
+) {
+    typedef bool (*MsgSendFn)(void*, SEL, uintptr_t);
+    MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
+    SEL sel = sel_getUid("supportsTextureSampleCount:");
+    return msgSend(device, sel, count);
+}
+
+MT_INLINE uintptr_t mt_device_max_buffer_length(
+    MTDevice* device
+) {
+    typedef uintptr_t (*MsgSendFn)(void*, SEL);
+    MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
+    SEL sel = sel_getUid("maxBufferLength");
+    return msgSend(device, sel);
+}
+
+MT_INLINE bool mt_device_supports_counter_sampling(
+    MTDevice* device,
+    MTCounterSamplingPoint sampling_point
+) {
+    typedef bool (*MsgSendFn)(void*, SEL, MTCounterSamplingPoint);
+    MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
+    SEL sel = sel_getUid("supportsCounterSampling:");
+    return msgSend(device, sel, sampling_point);
+}
+
+MT_INLINE bool mt_device_supports_vertex_amplification_count(
+    MTDevice* device,
+    uintptr_t count
+) {
+    typedef bool (*MsgSendFn)(void*, SEL, uintptr_t);
+    MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
+    SEL sel = sel_getUid("supportsVertexAmplificationCount:");
+    return msgSend(device, sel, count);
+}
+
+MT_INLINE bool mt_device_supports_dynamic_libraries(
+    MTDevice* device
+) {
+    typedef bool (*MsgSendFn)(void*, SEL);
+    MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
+    SEL sel = sel_getUid("supportsDynamicLibraries");
+    return msgSend(device, sel);
+}
+
+MT_INLINE bool mt_device_supports_render_dynamic_libraries(
+    MTDevice* device
+) {
+    typedef bool (*MsgSendFn)(void*, SEL);
+    MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
+    SEL sel = sel_getUid("supportsRenderDynamicLibraries");
+    return msgSend(device, sel);
+}
+
+MT_INLINE bool mt_device_supports_ray_tracing(
+    MTDevice* device
+) {
+    typedef bool (*MsgSendFn)(void*, SEL);
+    MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
+    SEL sel = sel_getUid("supportsRaytracing");
+    return msgSend(device, sel);
+}
+
+MT_INLINE bool mt_device_supports_ray_tracing_from_render(
+    MTDevice* device
+) {
+    typedef bool (*MsgSendFn)(void*, SEL);
+    MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
+    SEL sel = sel_getUid("supportsRaytracingFromRender");
+    return msgSend(device, sel);
+}
+
+MT_INLINE bool mt_device_supports_function_pointers(
+    MTDevice* device
+) {
+    typedef bool (*MsgSendFn)(void*, SEL);
+    MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
+    SEL sel = sel_getUid("supportsFunctionPointers");
+    return msgSend(device, sel);
+}
+
+MT_INLINE bool mt_device_supports_function_pointers_from_render(
+    MTDevice* device
+) {
+    typedef bool (*MsgSendFn)(void*, SEL);
+    MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
+    SEL sel = sel_getUid("supportsFunctionPointersFromRender");
+    return msgSend(device, sel);
+}
+
+MT_INLINE bool mt_device_supports_primitive_motion_blur(
+    MTDevice* device
+) {
+    typedef bool (*MsgSendFn)(void*, SEL);
+    MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
+    SEL sel = sel_getUid("supportsPrimitiveMotionBlur");
+    return msgSend(device, sel);
+}
+
+MT_INLINE uintptr_t mt_device_maximum_concurrent_compilation_task_count(
+    MTDevice* device
+) {
+    typedef uintptr_t (*MsgSendFn)(void*, SEL);
+    MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
+    SEL sel = sel_getUid("maximumConcurrentCompilationTaskCount");
+    return msgSend(device, sel);
 }

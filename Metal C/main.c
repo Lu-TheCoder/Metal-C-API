@@ -39,13 +39,11 @@ int main(int argc, const char * argv[]) {
     
     MTDevice* device = mt_create_system_default_device();
     
-    if (device) {
-        printf("✅ Got a Metal device: %p\n", device);
-    } else {
-        printf("❌ Failed to get Metal device\n");
-    }
+    MTCompileOptions* opts = mt_compile_options_create();
+    mt_compile_options_set_fast_math_enabled(opts, true);
+    mt_compile_options_set_language_version(opts, MTLanguageVersion1_2);
     
-    MTCommandQueue* queue = mt_commandQueue_new(device);
+    MTCommandQueue* queue = mt_device_create_command_queue(device);
 
 //    char buffer[256];
 //    size_t buffer_len = 256;
@@ -60,15 +58,15 @@ int main(int argc, const char * argv[]) {
     MTURL* fileURL = mt_url_init_with_path(lib_path);
     
     MTError* error = NULL;
-    MTLibrary* library = mt_library_new_library_withURL(device, fileURL, &error);
+    MTLibrary* library = mt_device_create_library_withURL(device, fileURL, &error);
 //    MTLibrary* library = mtNewDefaultLibrary(device);
 
     if(!library){
         printf("Failed to load library. Error %s\n", mt_error_get_localized_description(error));
     }
     
-    MTFunction* vertFunction = mt_library_new_function(library, mt_string_utf8String("vert"));
-    MTFunction* fragFunction = mt_library_new_function(library, mt_string_utf8String("frag"));
+    MTFunction* vertFunction = mt_library_create_function(library, mt_string_utf8String("vert"));
+    MTFunction* fragFunction = mt_library_create_function(library, mt_string_utf8String("frag"));
     
     assert(vertFunction);
     assert(fragFunction);
