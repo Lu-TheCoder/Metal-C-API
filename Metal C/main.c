@@ -93,7 +93,34 @@ int main(int argc, const char * argv[]) {
     mt_compile_options_set_language_version(opts, MTLanguageVersion1_2);
     
     MTCommandQueue* queue = mt_device_create_command_queue(device);
+    
+    MTHeapDescriptor* hDesc = mt_heap_descriptor_create();
+    mt_heap_descriptor_set_size(hDesc,  2 * 1024 * 1024);
+    mt_heap_descriptor_set_heapType(hDesc, MTHeapTypePlacement);
+    mt_heap_descriptor_set_storageMode(hDesc, MTStorageModeShared);
+    mt_heap_descriptor_set_cpu_cacheMode(hDesc,  MTCPUCacheModeDefaultCache);
+    
+    printf("Heap size: %lu \n", mt_heap_descriptor_get_size(hDesc));
+    printf("Storage Mode: %u \n", mt_heap_descriptor_get_storageMode(hDesc));
+    printf("CPU Cache Mode: %u \n", mt_heap_descriptor_get_cpu_cacheMode(hDesc));
+    
+    MTHeap heap = mt_device_create_heap_with_descriptor(device, hDesc);
+    
+    MTResourceOptions options = MTResourceStorageModeShared | MTResourceCPUCacheModeDefaultCache;
 
+    MTSizeAndAlign alignInfo = mt_device_heap_buffer_size_and_align(device, 8192, options);
+
+    // Choose an aligned offset
+    NSUInteger offset = alignInfo.align; // or a multiple of alignInfo.align
+
+    MTBuffer buffer = mt_heap_create_buffer_at_offset(heap, 8192, options, offset);
+
+    if (buffer) {
+        printf("Buffer allocated at offset %lu\n", offset);
+    } else {
+        printf("Failed to allocate buffer at specified offset\n");
+    }
+    
 //    char buffer[256];
 //    size_t buffer_len = 256;
 //    if (sysctlbyname("machdep.cpu.brand_string", &buffer, &buffer_len, 0, 0) == 0) {
@@ -144,12 +171,34 @@ int main(int argc, const char * argv[]) {
     
     int texWidth, texHeight, texNumChannels;
     int texForceNumChannels = 4;
-    unsigned char* textureBytes = stbi_load("testTexture.png", &texWidth, &texHeight, &texNumChannels, texForceNumChannels);
+    unsigned char* textureBytes = stbi_load("./testTexture.png", &texWidth, &texHeight, &texNumChannels, texForceNumChannels);
     int texBytesPerRow = 4 * texWidth;
     
     MTTextureDescriptor* texture_desc2 = mt_texture_descriptor_create(MTPixelFormatRGBA8Unorm, texWidth, texHeight, false);
+    mt_textureDescriptor_set_storageMode(texture_desc2, MTStorageModeShared);
     
-    MTTexture* texture = mt_device_create_texture_with_descriptor(device, texture_desc2);
+    MTSizeAndAlign texInfo = mt_device_heap_texture_size_and_align(device, texture_desc2);
+    printf("Texture Heap Size: %lu, Align: %lu\n", texInfo.size, texInfo.align);
+
+    MTSizeAndAlign bufInfo = mt_device_heap_buffer_size_and_align(device, 4096, MTResourceStorageModePrivate);
+    printf("Buffer Heap Size: %lu, Align: %lu\n", bufInfo.size, bufInfo.align);
+    
+//   MTTexture* texture = mt_device_create_texture_with_descriptor(device, texture_desc2);
+//    MTTexture* texture = mt_heap_create_texture_with_descriptor(heap, texture_desc2);
+    
+    MTSizeAndAlign sizeAlign = mt_device_heap_texture_size_and_align(device, texture_desc2);
+    uintptr_t offset2 = sizeAlign.align; // must be multiple of align
+
+    // Create texture at offset
+    MTTexture texture = mt_heap_create_texture_at_offset(heap, texture_desc2, offset2);
+//    mt_release(texture_desc2);
+
+    if (texture) {
+        printf("Texture created at offset %lu\n", offset);
+    } else {
+        printf("Failed to create texture in heap\n");
+    }
+    
     mt_release(texture_desc2);
   
     // Copy loaded image into MTTextureObject

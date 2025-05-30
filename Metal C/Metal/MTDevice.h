@@ -146,7 +146,7 @@ const char* mt_device_get_name(MTDevice* device){
    return ns_toString(ns_mtDeviceName(device));
 }
 
-typedef void MTBuffer;
+typedef void* MTBuffer;
 
 MT_INLINE MTBuffer* mt_device_create_buffer_with_bytes(MTDevice* device, void* ptr, uintptr_t length, MTResourceOptions options) {
     typedef void* (*MTNewBufferWithBytesMsgSend)(void*, SEL, void*, uintptr_t, MTResourceOptions);
@@ -221,6 +221,24 @@ MT_INLINE MTDepthStencilState* mt_device_create_depth_stencil_state(
     MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
     SEL sel = sel_getUid("newDepthStencilStateWithDescriptor:");
     return (MTDepthStencilState*)msgSend(device, sel, desc);
+}
+
+MT_INLINE MTSizeAndAlign mt_device_heap_texture_size_and_align(MTDevice* device, MTTextureDescriptor* desc) {
+    typedef MTSizeAndAlign (*HeapTextureSizeAlignFunc)(void*, SEL, void*);
+    HeapTextureSizeAlignFunc func = (HeapTextureSizeAlignFunc)objc_msgSend;
+    return func(device, sel_getUid("heapTextureSizeAndAlignWithDescriptor:"), desc);
+}
+
+MT_INLINE MTSizeAndAlign mt_device_heap_buffer_size_and_align(MTDevice* device, NSUInteger length, MTResourceOptions options) {
+    typedef MTSizeAndAlign (*HeapBufferSizeAlignFunc)(void*, SEL, NSUInteger, MTResourceOptions);
+    HeapBufferSizeAlignFunc func = (HeapBufferSizeAlignFunc)objc_msgSend;
+    return func(device, sel_getUid("heapBufferSizeAndAlignWithLength:options:"), length, options);
+}
+
+MT_INLINE MTHeap mt_device_create_heap_with_descriptor(MTDevice device, MTHeapDescriptor descriptor) {
+    typedef id (*NewHeapFunc)(id, SEL, MTHeapDescriptor);
+    NewHeapFunc func = (NewHeapFunc)objc_msgSend;
+    return (MTHeap)func((id)device, sel_getUid("newHeapWithDescriptor:"), descriptor);
 }
 
 MT_INLINE bool mt_device_supports_family(

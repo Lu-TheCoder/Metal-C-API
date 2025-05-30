@@ -10,7 +10,7 @@
 #include "../ObjectiveCCore/Objectivec.h"
 #include "MTResource.h"
 
-typedef void MTBuffer;
+typedef void* MTBuffer;
 
 MT_INLINE void* mt_buffer_get_contents(MTBuffer* buffer) {
     return ms_send_sel(buffer, sel_getUid("contents"));
