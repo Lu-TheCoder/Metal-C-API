@@ -202,7 +202,7 @@ int main(int argc, const char * argv[]) {
         mt_renderpass_color_attachment_set_texture(colorAttachment, platform_get_next_drawable_texture(drawable));
         mt_renderpass_color_attachment_set_loadAction(colorAttachment, MTLoadActionClear);
         mt_renderpass_color_attachment_set_storeAction(colorAttachment, MTStoreActionStore);
-        mt_renderpass_color_attachment_set_clearColor(colorAttachment, mt_clear_color_make(0.2f, 0.22f, 0.24f, 1.0f));
+        mt_renderpass_color_attachment_set_clearColor(colorAttachment, mt_clear_color_make(0.1f, 0.1f, 0.1f, 1.0f));
         
         MTRenderCommandEncoder* renderCommandEncoder = mt_renderCommand_encoder_new(cmdBuffer, renderPass);
         mt_release(renderPass);
