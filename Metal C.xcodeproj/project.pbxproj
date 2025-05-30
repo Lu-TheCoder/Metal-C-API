@@ -87,6 +87,7 @@
 		BFA366632C069A39002E9B0F /* MTUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTUtils.h; sourceTree = "<group>"; };
 		BFA366642C06A97D002E9B0F /* MTTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTTexture.h; sourceTree = "<group>"; };
 		BFA366652C06B8F4002E9B0F /* MTRenderPipeline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTRenderPipeline.h; sourceTree = "<group>"; };
+		BFF1875F2DEA1BA000B2D71E /* MTPipeline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTPipeline.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -195,6 +196,7 @@
 			children = (
 				BF01B6F52C05F6CB00148C29 /* Foundation */,
 				BF90EDE42BDFF293001F890E /* MTDevice.h */,
+				BFF1875F2DEA1BA000B2D71E /* MTPipeline.h */,
 				BF90EDE52BDFF318001F890E /* MTResource.h */,
 				BF90EDE82BDFF4E0001F890E /* MTCommandQueue.h */,
 				BFA366642C06A97D002E9B0F /* MTTexture.h */,

@@ -71,19 +71,19 @@ typedef struct MTDrawPrimitivesIndirectArguments {
     NSUInteger baseInstance;
 }MTDrawPrimitivesIndirectArguments;
 
-typedef void MTRenderCommandEncoder;
+typedef void* MTRenderCommandEncoder;
 
-MTRenderCommandEncoder* mt_renderCommand_encoder_new(MTCommandBuffer* cmdBuf, MTRenderPassDescriptor* renderpassDesc){
+MTRenderCommandEncoder mt_renderCommand_encoder_new(MTCommandBuffer cmdBuf, MTRenderPassDescriptor* renderpassDesc){
     SEL selRCEWDescSel = sel_getUid("renderCommandEncoderWithDescriptor:");
     return ms_send_void(cmdBuf, selRCEWDescSel, renderpassDesc);
 }
 
-void mt_renderCommand_encoder_end_encoding(MTRenderCommandEncoder* renderCmdEncoder){
+void mt_renderCommand_encoder_end_encoding(MTRenderCommandEncoder renderCmdEncoder){
     SEL sel = sel_getUid("endEncoding");
      ms_send(renderCmdEncoder, sel);
 }
 
-void mt_renderCommand_encoder_set_pipeline_state(MTRenderCommandEncoder* render_cmd_enc, MTRenderPipelineState* pipeline_state){
+void mt_renderCommand_encoder_set_pipeline_state(MTRenderCommandEncoder render_cmd_enc, MTRenderPipelineState* pipeline_state){
     ms_send_void(render_cmd_enc, sel_getUid("setRenderPipelineState:"), pipeline_state);
 }
 
@@ -105,25 +105,25 @@ void* (*ms_send_vertBuf)(void*, SEL, void*, NSUInteger, NSUInteger) = (void* (*)
 void* (*ms_send_bytes)(void*, SEL, const void*, NSUInteger, NSUInteger) = (void* (*)(void*, SEL, const void*, NSUInteger, NSUInteger)) objc_msgSend;
 
 
-void mt_renderCommand_encoder_set_vertex_buffer(MTRenderCommandEncoder* render_cmd_enc, MTBuffer* buffer, NSUInteger offset, NSUInteger at_index){
+void mt_renderCommand_encoder_set_vertex_buffer(MTRenderCommandEncoder render_cmd_enc, MTBuffer* buffer, NSUInteger offset, NSUInteger at_index){
     ms_send_vertBuf(render_cmd_enc, sel_getUid("setVertexBuffer:offset:atIndex:"), buffer, offset, at_index);
 }
 
-void mt_renderCommand_encoder_set_vertex_bytes(MTRenderCommandEncoder* render_cmd_enc, const void* bytes, NSUInteger length, NSUInteger at_index){
+void mt_renderCommand_encoder_set_vertex_bytes(MTRenderCommandEncoder render_cmd_enc, const void* bytes, NSUInteger length, NSUInteger at_index){
     ms_send_bytes(render_cmd_enc, sel_getUid("setVertexBytes:length:atIndex:"), bytes, length, at_index);
 }
 
-void mt_renderCommand_encoder_set_fragment_buffer(MTRenderCommandEncoder* render_cmd_enc, MTBuffer* buffer, NSUInteger offset, NSUInteger at_index){
+void mt_renderCommand_encoder_set_fragment_buffer(MTRenderCommandEncoder render_cmd_enc, MTBuffer* buffer, NSUInteger offset, NSUInteger at_index){
     ms_send_vertBuf(render_cmd_enc, sel_getUid("setFragmentBuffer:offset:atIndex:"), buffer, offset, at_index);
 }
 
-void mt_renderCommand_encoder_set_fragment_bytes(MTRenderCommandEncoder* render_cmd_enc, const void* bytes, NSUInteger length, NSUInteger at_index){
+void mt_renderCommand_encoder_set_fragment_bytes(MTRenderCommandEncoder render_cmd_enc, const void* bytes, NSUInteger length, NSUInteger at_index){
     ms_send_bytes(render_cmd_enc, sel_getUid("setFragmentBytes:length:atIndex:"), bytes, length, at_index);
 }
 
 void* (*ms_send_viewport)(void*, SEL, MTViewport) = (void* (*)(void*, SEL, MTViewport)) objc_msgSend;
 
-void mt_renderCommand_encoder_set_viewport(MTRenderCommandEncoder* render_cmd_enc, MTViewport viewport) {
+void mt_renderCommand_encoder_set_viewport(MTRenderCommandEncoder render_cmd_enc, MTViewport viewport) {
     ms_send_viewport(render_cmd_enc, sel_getUid("setViewport:"), viewport);
 }
 
@@ -134,7 +134,7 @@ void* (*ms_send_drawIndxPrim)(void*, SEL, NSUInteger, NSUInteger, NSUInteger, co
 void* (*ms_send_drawIndxPrimInst)(void*, SEL, NSUInteger, NSUInteger, NSUInteger, const MTBuffer*, NSUInteger, NSUInteger) = (void* (*)(void*, SEL, NSUInteger, NSUInteger, NSUInteger, const MTBuffer*, NSUInteger, NSUInteger)) objc_msgSend;
 
 
-void mt_renderCommand_encoder_draw_primitives(MTRenderCommandEncoder* render_cmd_enc, MTPrimitiveType type, NSUInteger vertex_start, NSUInteger vertex_count){
+void mt_renderCommand_encoder_draw_primitives(MTRenderCommandEncoder render_cmd_enc, MTPrimitiveType type, NSUInteger vertex_start, NSUInteger vertex_count){
     ms_send_drawPrim(render_cmd_enc, sel_getUid("drawPrimitives:vertexStart:vertexCount:"), type, vertex_start, vertex_count);
 }
 
@@ -163,54 +163,54 @@ void mt_renderCommand_encoder_draw_indexed_primitives(MTRenderCommandEncoder* re
 
 void* (*ms_send_fragTex)(void*, SEL, void*, unsigned long) = (void* (*)(void*, SEL, void*, unsigned long)) objc_msgSend;
 
-void mt_renderCommand_encoder_set_fragment_texture_at_index(MTRenderCommandEncoder* render_cmd_enc, MTTexture* texture, NSUInteger index) {
+void mt_renderCommand_encoder_set_fragment_texture_at_index(MTRenderCommandEncoder render_cmd_enc, MTTexture* texture, NSUInteger index) {
     ms_send_fragTex(render_cmd_enc, sel_getUid("setFragmentTexture:atIndex:"), texture, index);
 }
 
-void mt_renderCommand_encoder_set_fragment_sampler_state_at_index(MTRenderCommandEncoder* render_cmd_enc, MTSamplerState* sampler_state, NSUInteger index) {
+void mt_renderCommand_encoder_set_fragment_sampler_state_at_index(MTRenderCommandEncoder render_cmd_enc, MTSamplerState* sampler_state, NSUInteger index) {
     ms_send_fragTex(render_cmd_enc, sel_getUid("setFragmentSamplerState:atIndex:"), sampler_state, index);
 }
 
-void mt_renderCommand_encoder_set_depth_stencil_state(MTRenderCommandEncoder* render_cmd_enc, MTDepthStencilState* depth_state) {
+void mt_renderCommand_encoder_set_depth_stencil_state(MTRenderCommandEncoder render_cmd_enc, MTDepthStencilState* depth_state) {
     void_ms_send_ptr(render_cmd_enc, sel_getUid("setDepthStencilState:"), depth_state);
 }
 
-void mt_renderCommand_encoder_set_cull_mode(MTRenderCommandEncoder* render_cmd_enc, MTCullMode mode) {
+void mt_renderCommand_encoder_set_cull_mode(MTRenderCommandEncoder render_cmd_enc, MTCullMode mode) {
     void_ms_send_uint(render_cmd_enc, sel_getUid("setCullMode:"), mode);
 }
 
-void mt_renderCommand_encoder_set_triangle_fill_mode(MTRenderCommandEncoder* render_cmd_enc, MTTriangleFillMode mode) {
+void mt_renderCommand_encoder_set_triangle_fill_mode(MTRenderCommandEncoder render_cmd_enc, MTTriangleFillMode mode) {
     void_ms_send_uint(render_cmd_enc, sel_getUid("setTriangleFillMode:"), mode);
 }
 
-void mt_renderCommand_encoder_set_depth_clip_mode(MTRenderCommandEncoder* render_cmd_enc, MTDepthClipMode mode) {
+void mt_renderCommand_encoder_set_depth_clip_mode(MTRenderCommandEncoder render_cmd_enc, MTDepthClipMode mode) {
     void_ms_send_uint(render_cmd_enc, sel_getUid("setDepthClipMode:"), mode);
 }
 
-void mt_renderCommand_encoder_set_front_facing_winding(MTRenderCommandEncoder* render_cmd_enc, MTWinding winding) {
+void mt_renderCommand_encoder_set_front_facing_winding(MTRenderCommandEncoder render_cmd_enc, MTWinding winding) {
     void_ms_send_uint(render_cmd_enc, sel_getUid("setFrontFacingWinding:"), winding);
 }
 
-void mt_renderCommand_encoder_set_depth_store_action(MTRenderCommandEncoder* render_cmd_enc, MTStoreAction store_action) {
+void mt_renderCommand_encoder_set_depth_store_action(MTRenderCommandEncoder render_cmd_enc, MTStoreAction store_action) {
     void_ms_send_uint(render_cmd_enc, sel_getUid("setDepthStoreAction:"), store_action);
 }
 
-void mt_renderCommand_encoder_set_stencil_store_action(MTRenderCommandEncoder* render_cmd_enc, MTStoreAction store_action) {
+void mt_renderCommand_encoder_set_stencil_store_action(MTRenderCommandEncoder render_cmd_enc, MTStoreAction store_action) {
     void_ms_send_uint(render_cmd_enc, sel_getUid("setStencilStoreAction:"), store_action);
 }
 
-void mt_renderCommand_encoder_set_depth_store_action_options(MTRenderCommandEncoder* render_cmd_enc, MTStoreActionOptions options) {
+void mt_renderCommand_encoder_set_depth_store_action_options(MTRenderCommandEncoder render_cmd_enc, MTStoreActionOptions options) {
     void_ms_send_uint(render_cmd_enc, sel_getUid("setDepthStoreActionOptions:"), options);
 }
 
-void mt_renderCommand_encoder_set_stencil_store_action_options(MTRenderCommandEncoder* render_cmd_enc, MTStoreActionOptions options) {
+void mt_renderCommand_encoder_set_stencil_store_action_options(MTRenderCommandEncoder render_cmd_enc, MTStoreActionOptions options) {
     void_ms_send_uint(render_cmd_enc, sel_getUid("setStencilStoreActionOptions:"), options);
 }
 
-void mt_renderCommand_encoder_set_tessellation_factor_scale(MTRenderCommandEncoder* render_cmd_enc, float scale) {
+void mt_renderCommand_encoder_set_tessellation_factor_scale(MTRenderCommandEncoder render_cmd_enc, float scale) {
     void_ms_send_float(render_cmd_enc, sel_getUid("setTessellationFactorScale:"), scale);
 }
 
-void mt_renderCommand_encoder_set_blend_color(MTRenderCommandEncoder* render_cmd_enc, float r, float g, float b, float a) {
+void mt_renderCommand_encoder_set_blend_color(MTRenderCommandEncoder render_cmd_enc, float r, float g, float b, float a) {
     void_ms_send_float4(render_cmd_enc, sel_getUid("setBlendColorRed:green:blue:alpha:"), r, g, b, a);
 }

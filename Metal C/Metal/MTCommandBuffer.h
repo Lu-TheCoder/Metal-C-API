@@ -50,7 +50,7 @@ typedef enum MTCommandEncoderErrorState {
     MTCommandEncoderErrorStateFaulted = 4,
 }MTCommandEncoderErrorState;
 
-MT_INLINE MTCommandBuffer* mt_commandBuffer_new(MTCommandQueue* cmdQueue){
+MT_INLINE MTCommandBuffer mt_commandBuffer_new(MTCommandQueue* cmdQueue){
     return (void*) ms_send(cmdQueue, sel_getUid("commandBuffer"));
 }
 
@@ -59,7 +59,7 @@ MT_INLINE MTCommandBuffer* mt_commandBuffer_new(MTCommandQueue* cmdQueue){
  *
  * NOTE: Should be released using mtRelease().
  */
-MT_INLINE MTCommandBufferDescriptor* mt_commandBuffer_descriptor_new(void) {
+MT_INLINE MTCommandBufferDescriptor mt_commandBuffer_descriptor_new(void) {
     Class cmdBufDescClass = objc_getClass("MTLCommandBufferDescriptor");
     SEL allocSel = sel_getUid("alloc");
     SEL initSel = sel_getUid("init");
@@ -72,19 +72,19 @@ MT_INLINE MTCommandBufferDescriptor* mt_commandBuffer_descriptor_new(void) {
     return (MTCommandBufferDescriptor*)obj;
 }
 
-MT_INLINE void mt_commandBuffer_present_drawable(MTCommandBuffer* cmdBuffer, MTDrawable* drawable) {
+MT_INLINE void mt_commandBuffer_present_drawable(MTCommandBuffer cmdBuffer, MTDrawable* drawable) {
     void (*msgSend)(void*, SEL, void*) = (void (*)(void*, SEL, void*))objc_msgSend;
     SEL sel = sel_getUid("presentDrawable:");
     msgSend(cmdBuffer, sel, drawable);
 }
 
-MT_INLINE void mt_commandBuffer_commit(MTCommandBuffer* cmdBuffer) {
+MT_INLINE void mt_commandBuffer_commit(MTCommandBuffer cmdBuffer) {
     void (*msgSend)(void*, SEL) = (void (*)(void*, SEL))objc_msgSend;
     SEL sel = sel_getUid("commit");
     msgSend(cmdBuffer, sel);
 }
 
-MT_INLINE void mt_commandBuffer_wait_until_completed(MTCommandBuffer* cmdBuffer) {
+MT_INLINE void mt_commandBuffer_wait_until_completed(MTCommandBuffer cmdBuffer) {
     void (*msgSend)(void*, SEL) = (void (*)(void*, SEL))objc_msgSend;
     SEL sel = sel_getUid("waitUntilCompleted");
     msgSend(cmdBuffer, sel);

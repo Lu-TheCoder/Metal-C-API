@@ -72,13 +72,13 @@ typedef enum MTVertexStepFunction {
     MTVertexStepFunctionPerPatchControlPoint = 4,
 }MTVertexStepFunction;
 
-typedef void MTVertexBufferLayoutDescriptor;
-typedef void MTVertexBufferLayoutDescriptorArray;
-typedef void MTVertexAttributeDescriptor;
-typedef void MTVertexAttributeDescriptorArray;
-typedef void MTVertexDescriptor;
+typedef void* MTVertexBufferLayoutDescriptor;
+typedef void* MTVertexBufferLayoutDescriptorArray;
+typedef void* MTVertexAttributeDescriptor;
+typedef void* MTVertexAttributeDescriptorArray;
+typedef void* MTVertexDescriptor;
 
-MT_INLINE MTVertexAttributeDescriptorArray* mt_vertexAttribute_new_descriptorArray(void) {
+MT_INLINE MTVertexAttributeDescriptorArray mt_vertexAttribute_new_descriptorArray(void) {
     Class vertDesc = objc_getClass("MTLVertexAttributeDescriptorArray");
     SEL allocSel = sel_getUid("alloc");
     
@@ -87,27 +87,27 @@ MT_INLINE MTVertexAttributeDescriptorArray* mt_vertexAttribute_new_descriptorArr
     return ms_send(desc, initSel);
 }
 
-MT_INLINE MTVertexAttributeDescriptor* mt_vertexAttribute_at_index(MTVertexAttributeDescriptorArray* vaa, unsigned long attrib_index) {
+MT_INLINE MTVertexAttributeDescriptor mt_vertexAttribute_at_index(MTVertexAttributeDescriptorArray vaa, unsigned long attrib_index) {
     SEL selIndex = sel_getUid("objectAtIndexedSubscript:");
     return  ms_send_uint(vaa, selIndex, attrib_index);
 }
 
-MT_INLINE void mt_vertexAttribute_set_format(MTVertexAttributeDescriptorArray** attributes_array, unsigned long index, MTVertexFormat format) {
+MT_INLINE void mt_vertexAttribute_set_format(MTVertexAttributeDescriptorArray attributes_array, unsigned long index, MTVertexFormat format) {
     SEL sel = sel_getUid("setFormat:");
     ms_send_uint(mt_vertexAttribute_at_index(attributes_array, index), sel, format);
 }
 
-MT_INLINE void mt_vertexAttribute_set_offset(MTVertexAttributeDescriptorArray** attributes_array, unsigned long index, unsigned long offset) {
+MT_INLINE void mt_vertexAttribute_set_offset(MTVertexAttributeDescriptorArray attributes_array, unsigned long index, unsigned long offset) {
     SEL sel = sel_getUid("setOffset:");
     ms_send_uint(mt_vertexAttribute_at_index(attributes_array, index), sel, offset);
 }
 
-MT_INLINE void mt_vertexAttribute_set_buffer_index(MTVertexAttributeDescriptorArray** attributes_array, unsigned long index, unsigned long buffer_index) {
+MT_INLINE void mt_vertexAttribute_set_buffer_index(MTVertexAttributeDescriptorArray attributes_array, unsigned long index, unsigned long buffer_index) {
     SEL sel = sel_getUid("setBufferIndex:");
     ms_send_uint(mt_vertexAttribute_at_index(attributes_array, index), sel, buffer_index);
 }
 
-MT_INLINE MTVertexDescriptor* mt_vertexDescriptor_new(void){
+MT_INLINE MTVertexDescriptor mt_vertexDescriptor_new(void){
     Class vertDesc = objc_getClass("MTLVertexDescriptor");
     SEL allocSel = sel_getUid("alloc");
     
@@ -116,38 +116,38 @@ MT_INLINE MTVertexDescriptor* mt_vertexDescriptor_new(void){
     return ms_send(desc, initSel);
 }
 
-MT_INLINE MTVertexBufferLayoutDescriptorArray* mt_vertexDescriptor_get_layouts(MTVertexDescriptor* vertex_desc){
+MT_INLINE MTVertexBufferLayoutDescriptorArray mt_vertexDescriptor_get_layouts(MTVertexDescriptor vertex_desc){
     SEL sel = sel_getUid("layouts");
     return ms_send(vertex_desc, sel);
 }
 
-MT_INLINE MTVertexBufferLayoutDescriptor* mt_vertexBufferLayout_at_index(MTVertexBufferLayoutDescriptorArray* vbla, unsigned long attrib_index) {
+MT_INLINE MTVertexBufferLayoutDescriptor mt_vertexBufferLayout_at_index(MTVertexBufferLayoutDescriptorArray vbla, unsigned long attrib_index) {
     SEL selIndex = sel_getUid("objectAtIndexedSubscript:");
     return  ms_send_uint(vbla, selIndex, attrib_index);
 }
 
-MT_INLINE void mt_vertexBufferLayout_set_stride(MTVertexAttributeDescriptorArray** attributes_array, unsigned long index, unsigned long stride) {
+MT_INLINE void mt_vertexBufferLayout_set_stride(MTVertexBufferLayoutDescriptorArray layout_array, unsigned long index, unsigned long stride) {
     SEL sel = sel_getUid("setStride:");
-    ms_send_uint(mt_vertexAttribute_at_index(attributes_array, index), sel, stride);
+    ms_send_uint(mt_vertexAttribute_at_index(layout_array, index), sel, stride);
 }
 
-MT_INLINE void mt_vertexBufferLayout_set_stepFunction(MTVertexAttributeDescriptorArray** attributes_array, unsigned long index, MTVertexStepFunction step_func) {
+MT_INLINE void mt_vertexBufferLayout_set_stepFunction(MTVertexBufferLayoutDescriptorArray layout_array, unsigned long index, MTVertexStepFunction step_func) {
     SEL sel = sel_getUid("setStepFunction:");
-    ms_send_uint(mt_vertexAttribute_at_index(attributes_array, index), sel, step_func);
+    ms_send_uint(mt_vertexAttribute_at_index(layout_array, index), sel, step_func);
 }
 
-MT_INLINE void mt_vertexBufferLayout_set_stepRate(MTVertexAttributeDescriptorArray** attributes_array, unsigned long index, unsigned long step_rate) {
+MT_INLINE void mt_vertexBufferLayout_set_stepRate(MTVertexBufferLayoutDescriptorArray layout_array, unsigned long index, unsigned long step_rate) {
     SEL sel = sel_getUid("setStepRate:");
-    ms_send_uint(mt_vertexAttribute_at_index(attributes_array, index), sel, step_rate);
+    ms_send_uint(mt_vertexAttribute_at_index(layout_array, index), sel, step_rate);
 }
 
 
-MT_INLINE MTVertexAttributeDescriptorArray* mt_vertexDescriptor_get_attributes(MTVertexDescriptor* vertex_desc){
+MT_INLINE MTVertexAttributeDescriptorArray mt_vertexDescriptor_get_attributes(MTVertexDescriptor vertex_desc){
     SEL sel = sel_getUid("attributes");
     return ms_send(vertex_desc, sel);
 }
 
-MT_INLINE void mt_vertexDescriptor_reset(MTVertexDescriptor* vertex_desc) {
+MT_INLINE void mt_vertexDescriptor_reset(MTVertexDescriptor vertex_desc) {
     SEL sel = sel_getUid("reset");
     ms_send(vertex_desc, sel);
 }

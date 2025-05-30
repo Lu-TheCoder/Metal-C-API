@@ -20,6 +20,7 @@
 #include "MTPixelFormat.h"
 #include "MTRenderPass.h"
 #include "MTRenderPipeline.h"
+#include "MTPipeline.h"
 #include "MTResource.h"
 #include "MTStageInputOutputDescriptor.h"
 #include "MTSampler.h"

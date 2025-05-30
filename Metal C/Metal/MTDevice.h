@@ -148,7 +148,7 @@ const char* mt_device_get_name(MTDevice* device){
 
 typedef void* MTBuffer;
 
-MT_INLINE MTBuffer* mt_device_create_buffer_with_bytes(MTDevice* device, void* ptr, uintptr_t length, MTResourceOptions options) {
+MT_INLINE MTBuffer mt_device_create_buffer_with_bytes(MTDevice device, void* ptr, uintptr_t length, MTResourceOptions options) {
     typedef void* (*MTNewBufferWithBytesMsgSend)(void*, SEL, void*, uintptr_t, MTResourceOptions);
     MTNewBufferWithBytesMsgSend msgSend = (MTNewBufferWithBytesMsgSend)objc_msgSend;
     
@@ -156,8 +156,8 @@ MT_INLINE MTBuffer* mt_device_create_buffer_with_bytes(MTDevice* device, void* p
     return msgSend(device, sel, ptr, length, options);
 }
 
-MT_INLINE MTBuffer* mt_device_create_buffer_with_length(
-    MTDevice* device,
+MT_INLINE MTBuffer mt_device_create_buffer_with_length(
+    MTDevice device,
     uintptr_t length,
     MTResourceOptions options
 ) {
@@ -168,8 +168,8 @@ MT_INLINE MTBuffer* mt_device_create_buffer_with_length(
     return msgSend(device, sel, length, options);
 }
 
-MT_INLINE MTRenderPipelineState* mt_device_create_render_pipeline_state(
-    MTDevice* device,
+MT_INLINE MTRenderPipelineState mt_device_create_render_pipeline_state(
+    MTDevice device,
     MTRenderPipelineDescriptor* render_desc,
     MTError** error
 ) {
@@ -183,8 +183,8 @@ MT_INLINE MTRenderPipelineState* mt_device_create_render_pipeline_state(
     return (MTRenderPipelineState*)msgSend(device, sel, render_desc, error);
 }
 
-MT_INLINE MTTexture* mt_device_create_texture_with_descriptor(
-    MTDevice* device,
+MT_INLINE MTTexture mt_device_create_texture_with_descriptor(
+    MTDevice device,
     MTTextureDescriptor* texture_desc
 ) {
     typedef void* (*MsgSendFn)(void*, SEL, MTTextureDescriptor*);
@@ -193,8 +193,8 @@ MT_INLINE MTTexture* mt_device_create_texture_with_descriptor(
     return (MTTexture*)msgSend(device, sel, texture_desc);
 }
 
-MT_INLINE MTTexture* mt_device_create_shared_texture_with_descriptor(
-    MTDevice* device,
+MT_INLINE MTTexture mt_device_create_shared_texture_with_descriptor(
+    MTDevice device,
     MTTextureDescriptor* texture_desc
 ) {
     typedef void* (*MsgSendFn)(void*, SEL, MTTextureDescriptor*);
@@ -203,8 +203,8 @@ MT_INLINE MTTexture* mt_device_create_shared_texture_with_descriptor(
     return (MTTexture*)msgSend(device, sel, texture_desc);
 }
 
-MT_INLINE MTSamplerState* mt_device_create_sampler_state(
-    MTDevice* device,
+MT_INLINE MTSamplerState mt_device_create_sampler_state(
+    MTDevice device,
     MTSamplerDescriptor* sampler_desc
 ) {
     typedef void* (*MsgSendFn)(void*, SEL, MTSamplerDescriptor*);
@@ -213,8 +213,8 @@ MT_INLINE MTSamplerState* mt_device_create_sampler_state(
     return (MTSamplerState*)msgSend(device, sel, sampler_desc);
 }
 
-MT_INLINE MTDepthStencilState* mt_device_create_depth_stencil_state(
-    MTDevice* device,
+MT_INLINE MTDepthStencilState mt_device_create_depth_stencil_state(
+    MTDevice device,
     MTDepthStencilDescriptor* desc
 ) {
     typedef void* (*MsgSendFn)(void*, SEL, MTDepthStencilDescriptor*);
@@ -223,13 +223,13 @@ MT_INLINE MTDepthStencilState* mt_device_create_depth_stencil_state(
     return (MTDepthStencilState*)msgSend(device, sel, desc);
 }
 
-MT_INLINE MTSizeAndAlign mt_device_heap_texture_size_and_align(MTDevice* device, MTTextureDescriptor* desc) {
+MT_INLINE MTSizeAndAlign mt_device_heap_texture_size_and_align(MTDevice device, MTTextureDescriptor* desc) {
     typedef MTSizeAndAlign (*HeapTextureSizeAlignFunc)(void*, SEL, void*);
     HeapTextureSizeAlignFunc func = (HeapTextureSizeAlignFunc)objc_msgSend;
     return func(device, sel_getUid("heapTextureSizeAndAlignWithDescriptor:"), desc);
 }
 
-MT_INLINE MTSizeAndAlign mt_device_heap_buffer_size_and_align(MTDevice* device, NSUInteger length, MTResourceOptions options) {
+MT_INLINE MTSizeAndAlign mt_device_heap_buffer_size_and_align(MTDevice device, NSUInteger length, MTResourceOptions options) {
     typedef MTSizeAndAlign (*HeapBufferSizeAlignFunc)(void*, SEL, NSUInteger, MTResourceOptions);
     HeapBufferSizeAlignFunc func = (HeapBufferSizeAlignFunc)objc_msgSend;
     return func(device, sel_getUid("heapBufferSizeAndAlignWithLength:options:"), length, options);
@@ -242,7 +242,7 @@ MT_INLINE MTHeap mt_device_create_heap_with_descriptor(MTDevice device, MTHeapDe
 }
 
 MT_INLINE bool mt_device_supports_family(
-    MTDevice* device,
+    MTDevice device,
     MTGPUFamily gpu_family
 ) {
     typedef bool (*MsgSendFn)(void*, SEL, MTGPUFamily);
@@ -252,7 +252,7 @@ MT_INLINE bool mt_device_supports_family(
 }
 
 MT_INLINE bool mt_device_supports_texture_sample_count(
-    MTDevice* device,
+    MTDevice device,
     uintptr_t count
 ) {
     typedef bool (*MsgSendFn)(void*, SEL, uintptr_t);
@@ -262,7 +262,7 @@ MT_INLINE bool mt_device_supports_texture_sample_count(
 }
 
 MT_INLINE uintptr_t mt_device_max_buffer_length(
-    MTDevice* device
+    MTDevice device
 ) {
     typedef uintptr_t (*MsgSendFn)(void*, SEL);
     MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
@@ -271,7 +271,7 @@ MT_INLINE uintptr_t mt_device_max_buffer_length(
 }
 
 MT_INLINE bool mt_device_supports_counter_sampling(
-    MTDevice* device,
+    MTDevice device,
     MTCounterSamplingPoint sampling_point
 ) {
     typedef bool (*MsgSendFn)(void*, SEL, MTCounterSamplingPoint);
@@ -281,7 +281,7 @@ MT_INLINE bool mt_device_supports_counter_sampling(
 }
 
 MT_INLINE bool mt_device_supports_vertex_amplification_count(
-    MTDevice* device,
+    MTDevice device,
     uintptr_t count
 ) {
     typedef bool (*MsgSendFn)(void*, SEL, uintptr_t);
@@ -291,7 +291,7 @@ MT_INLINE bool mt_device_supports_vertex_amplification_count(
 }
 
 MT_INLINE bool mt_device_supports_dynamic_libraries(
-    MTDevice* device
+    MTDevice device
 ) {
     typedef bool (*MsgSendFn)(void*, SEL);
     MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
@@ -300,7 +300,7 @@ MT_INLINE bool mt_device_supports_dynamic_libraries(
 }
 
 MT_INLINE bool mt_device_supports_render_dynamic_libraries(
-    MTDevice* device
+    MTDevice device
 ) {
     typedef bool (*MsgSendFn)(void*, SEL);
     MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
@@ -309,7 +309,7 @@ MT_INLINE bool mt_device_supports_render_dynamic_libraries(
 }
 
 MT_INLINE bool mt_device_supports_ray_tracing(
-    MTDevice* device
+    MTDevice device
 ) {
     typedef bool (*MsgSendFn)(void*, SEL);
     MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
@@ -318,7 +318,7 @@ MT_INLINE bool mt_device_supports_ray_tracing(
 }
 
 MT_INLINE bool mt_device_supports_ray_tracing_from_render(
-    MTDevice* device
+    MTDevice device
 ) {
     typedef bool (*MsgSendFn)(void*, SEL);
     MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
@@ -327,7 +327,7 @@ MT_INLINE bool mt_device_supports_ray_tracing_from_render(
 }
 
 MT_INLINE bool mt_device_supports_function_pointers(
-    MTDevice* device
+    MTDevice device
 ) {
     typedef bool (*MsgSendFn)(void*, SEL);
     MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
@@ -336,7 +336,7 @@ MT_INLINE bool mt_device_supports_function_pointers(
 }
 
 MT_INLINE bool mt_device_supports_function_pointers_from_render(
-    MTDevice* device
+    MTDevice device
 ) {
     typedef bool (*MsgSendFn)(void*, SEL);
     MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
@@ -345,7 +345,7 @@ MT_INLINE bool mt_device_supports_function_pointers_from_render(
 }
 
 MT_INLINE bool mt_device_supports_primitive_motion_blur(
-    MTDevice* device
+    MTDevice device
 ) {
     typedef bool (*MsgSendFn)(void*, SEL);
     MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
@@ -354,7 +354,7 @@ MT_INLINE bool mt_device_supports_primitive_motion_blur(
 }
 
 MT_INLINE uintptr_t mt_device_maximum_concurrent_compilation_task_count(
-    MTDevice* device
+    MTDevice device
 ) {
     typedef uintptr_t (*MsgSendFn)(void*, SEL);
     MsgSendFn msgSend = (MsgSendFn)objc_msgSend;

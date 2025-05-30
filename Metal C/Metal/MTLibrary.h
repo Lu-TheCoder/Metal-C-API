@@ -67,40 +67,40 @@ typedef enum MTLibraryError {
     MTLibraryErrorFileNotFound = 6,
 }MTLibraryError;
 
-typedef void MTVertexAttribute;
+typedef void* MTVertexAttribute;
 
-typedef void MTAttribute;
+typedef void* MTAttribute;
 
-typedef void MTLFunctionConstant;
+typedef void* MTLFunctionConstant;
 
-typedef void MTFunction;
+typedef void* MTFunction;
 
-typedef void MTCompileOptions;
+typedef void* MTCompileOptions;
 
-typedef void MTLibrary;
+typedef void* MTLibrary;
 
-MT_INLINE MTLibrary* mt_device_create_default_library(MTDevice* device) {
+MT_INLINE MTLibrary mt_device_create_default_library(MTDevice* device) {
     typedef void* (*MsgSendFn)(void*, SEL);
     MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
     SEL sel = sel_getUid("newDefaultLibrary");
     return (MTLibrary*)msgSend(device, sel);
 }
 
-MT_INLINE MTLibrary* mt_device_create_library_withURL(MTDevice* device, MTURL* url, MTError** error) {
+MT_INLINE MTLibrary mt_device_create_library_withURL(MTDevice* device, MTURL* url, MTError** error) {
     typedef void* (*MsgSendFn)(void*, SEL, MTURL*, MTError**);
     MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
     SEL sel = sel_getUid("newLibraryWithURL:error:");
     return (MTLibrary*)msgSend(device, sel, url, error);
 }
 
-MT_INLINE MTLibrary* mt_device_create_library_with_data(MTDevice* device, dispatch_data_t data, MTError** error) {
+MT_INLINE MTLibrary mt_device_create_library_with_data(MTDevice* device, dispatch_data_t data, MTError** error) {
     typedef void* (*MsgSendFn)(void*, SEL, dispatch_data_t, MTError**);
     MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
     SEL sel = sel_getUid("newLibraryWithData:error:");
     return (MTLibrary*)msgSend(device, sel, data, error);
 }
 
-MT_INLINE MTLibrary* mt_device_create_library_with_source(
+MT_INLINE MTLibrary mt_device_create_library_with_source(
     MTDevice* device,
     MTString* source,
     MTCompileOptions* options,
@@ -112,14 +112,14 @@ MT_INLINE MTLibrary* mt_device_create_library_with_source(
     return (MTLibrary*)msgSend(device, sel, source, options, error);
 }
 
-MT_INLINE MTFunction* mt_library_create_function(MTLibrary* library, MTString* name) {
+MT_INLINE MTFunction mt_library_create_function(MTLibrary* library, MTString* name) {
     typedef void* (*MsgSendFn)(void*, SEL, MTString*);
     MsgSendFn msgSend = (MsgSendFn)objc_msgSend;
     SEL sel = sel_getUid("newFunctionWithName:");
     return (MTFunction*)msgSend(library, sel, name);
 }
 
-MT_INLINE MTCompileOptions* mt_compile_options_create(void) {
+MT_INLINE MTCompileOptions mt_compile_options_create(void) {
     Class cls = (Class)objc_getClass("MTLCompileOptions");
     SEL allocSel = sel_getUid("alloc");
     SEL initSel = sel_getUid("init");

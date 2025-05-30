@@ -86,15 +86,15 @@ int main(int argc, const char * argv[]) {
         printf("Failed to startup platform.\n");
     }
     
-    MTDevice* device = mt_create_system_default_device();
+    MTDevice device = mt_create_system_default_device();
     
-    MTCompileOptions* opts = mt_compile_options_create();
+    MTCompileOptions opts = mt_compile_options_create();
     mt_compile_options_set_fast_math_enabled(opts, true);
     mt_compile_options_set_language_version(opts, MTLanguageVersion1_2);
     
-    MTCommandQueue* queue = mt_device_create_command_queue(device);
+    MTCommandQueue queue = mt_device_create_command_queue(device);
     
-    MTHeapDescriptor* hDesc = mt_heap_descriptor_create();
+    MTHeapDescriptor hDesc = mt_heap_descriptor_create();
     mt_heap_descriptor_set_size(hDesc,  2 * 1024 * 1024);
     mt_heap_descriptor_set_heapType(hDesc, MTHeapTypePlacement);
     mt_heap_descriptor_set_storageMode(hDesc, MTStorageModeShared);
@@ -134,15 +134,15 @@ int main(int argc, const char * argv[]) {
     MTURL* fileURL = mt_url_init_with_path(lib_path);
     
     MTError* error = NULL;
-    MTLibrary* library = mt_device_create_library_withURL(device, fileURL, &error);
+    MTLibrary library = mt_device_create_library_withURL(device, fileURL, &error);
 //    MTLibrary* library = mtNewDefaultLibrary(device);
 
     if(!library){
         printf("Failed to load library. Error %s\n", mt_error_get_localized_description(error));
     }
     
-    MTFunction* vertFunction = mt_library_create_function(library, mt_string_utf8String("vert"));
-    MTFunction* fragFunction = mt_library_create_function(library, mt_string_utf8String("frag"));
+    MTFunction vertFunction = mt_library_create_function(library, mt_string_utf8String("vert"));
+    MTFunction fragFunction = mt_library_create_function(library, mt_string_utf8String("frag"));
     
     assert(vertFunction);
     assert(fragFunction);
@@ -158,7 +158,7 @@ int main(int argc, const char * argv[]) {
         {0.5f,  0.5f}
     };
     
-    MTBuffer* vertexBuffer = mt_device_create_buffer_with_bytes(device, vertexData, sizeof(vertexData), MTResourceCPUCacheModeDefaultCache);
+    MTBuffer vertexBuffer = mt_device_create_buffer_with_bytes(device, vertexData, sizeof(vertexData), MTResourceCPUCacheModeDefaultCache);
     
     // Create uniform Buffers
     const uint32_t MAX_FRAMES_IN_FLIGHT = 2;
@@ -174,7 +174,7 @@ int main(int argc, const char * argv[]) {
     unsigned char* textureBytes = stbi_load("./testTexture.png", &texWidth, &texHeight, &texNumChannels, texForceNumChannels);
     int texBytesPerRow = 4 * texWidth;
     
-    MTTextureDescriptor* texture_desc2 = mt_texture_descriptor_create(MTPixelFormatRGBA8Unorm, texWidth, texHeight, false);
+    MTTextureDescriptor texture_desc2 = mt_texture_descriptor_create(MTPixelFormatRGBA8Unorm, texWidth, texHeight, false);
     mt_textureDescriptor_set_storageMode(texture_desc2, MTStorageModeShared);
     
     MTSizeAndAlign texInfo = mt_device_heap_texture_size_and_align(device, texture_desc2);
@@ -215,9 +215,9 @@ int main(int argc, const char * argv[]) {
     
     mt_release(samplerDesc);
     
-    MTVertexDescriptor* vertDesc = mt_vertexDescriptor_new();
-    MTVertexAttributeDescriptorArray* attributes = mt_vertexDescriptor_get_attributes(vertDesc);
-    MTVertexBufferLayoutDescriptorArray* layouts = mt_vertexDescriptor_get_layouts(vertDesc);
+    MTVertexDescriptor vertDesc = mt_vertexDescriptor_new();
+    MTVertexAttributeDescriptorArray attributes = mt_vertexDescriptor_get_attributes(vertDesc);
+    MTVertexBufferLayoutDescriptorArray layouts = mt_vertexDescriptor_get_layouts(vertDesc);
     
     mt_vertexAttribute_set_format(attributes, VertexAttributeIndex_Position, MTVertexFormatFloat2);
     mt_vertexAttribute_set_offset(attributes, VertexAttributeIndex_Position, 0);
@@ -227,13 +227,13 @@ int main(int argc, const char * argv[]) {
     mt_vertexBufferLayout_set_stepRate(layouts, VertexBufferIndex_Attributes, 1);
     mt_vertexBufferLayout_set_stepFunction(layouts, VertexBufferIndex_Attributes, MTVertexStepFunctionPerVertex);
     
-    MTRenderPipelineDescriptor* renderPipelineDesc = mt_renderPipeline_descriptor_new();
+    MTRenderPipelineDescriptor renderPipelineDesc = mt_renderPipeline_descriptor_new();
     mt_renderPipeline_descriptor_set_vertex_function(renderPipelineDesc, vertFunction);
     mt_renderPipeline_descriptor_set_fragment_function(renderPipelineDesc, fragFunction);
     mt_renderPipeline_descriptor_set_vertex_descriptor(renderPipelineDesc, vertDesc);
     mt_renderPipeline_descriptor_set_color_attachments_pixel_format(renderPipelineDesc, 0, (MTPixelFormat)platform_get_drawable_pixelFormat());
     
-    MTRenderPipelineState* renderPipelineState = mt_device_create_render_pipeline_state(device, renderPipelineDesc, &error);
+    MTRenderPipelineState renderPipelineState = mt_device_create_render_pipeline_state(device, renderPipelineDesc, &error);
     
     if (!renderPipelineState) {
         printf("Failed to create pipeline state. Error: %s\n", mt_error_get_localized_description(error));
@@ -292,17 +292,17 @@ int main(int argc, const char * argv[]) {
         
         void* drawable = platform_get_next_drawable();
         
-        MTRenderPassDescriptor* renderPass = mt_renderpass_descriptor_new();
-        MTCommandBuffer* cmdBuffer = mt_commandBuffer_new(queue);
+        MTRenderPassDescriptor renderPass = mt_renderpass_descriptor_new();
+        MTCommandBuffer cmdBuffer = mt_commandBuffer_new(queue);
         
-        MTRenderPassColorAttachmentDescriptorArray* colorAttachments = mt_renderpass_color_attachment_get_color_attachments(renderPass);
-        MTRenderPassColorAttachmentDescriptor* colorAttachment = mt_renderpass_get_color_attachment_at_index(colorAttachments, 0);
+        MTRenderPassColorAttachmentDescriptorArray colorAttachments = mt_renderpass_color_attachment_get_color_attachments(renderPass);
+        MTRenderPassColorAttachmentDescriptor colorAttachment = mt_renderpass_get_color_attachment_at_index(colorAttachments, 0);
         mt_renderpass_color_attachment_set_texture(colorAttachment, platform_get_next_drawable_texture(drawable));
         mt_renderpass_color_attachment_set_loadAction(colorAttachment, MTLoadActionClear);
         mt_renderpass_color_attachment_set_storeAction(colorAttachment, MTStoreActionStore);
         mt_renderpass_color_attachment_set_clearColor(colorAttachment, mt_clear_color_make(0.1f, 0.1f, 0.1f, 1.0f));
         
-        MTRenderCommandEncoder* renderCommandEncoder = mt_renderCommand_encoder_new(cmdBuffer, renderPass);
+        MTRenderCommandEncoder renderCommandEncoder = mt_renderCommand_encoder_new(cmdBuffer, renderPass);
         mt_release(renderPass);
         
         mt_renderCommand_encoder_set_viewport(renderCommandEncoder, mt_viewport_make(0, 0,
