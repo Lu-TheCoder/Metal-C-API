@@ -47,3 +47,4 @@ MT_INLINE void mt_set_retained_references(void* ptr){
     SEL retRefSel = sel_getUid("setRetainedReferences:");
     ms_send_bool(ptr, retRefSel, true);
 }
+

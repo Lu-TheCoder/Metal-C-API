@@ -35,6 +35,11 @@ typedef struct MTResourceID {
     uint64_t _impl;
 }MTResourceID;
 
+typedef struct {
+    uintptr_t location;
+    uintptr_t length;
+} MTRange;
+
 typedef MTSamplePosition MTCoordinate2D;
 
 MT_INLINE MTOrigin mt_create_origin(uintptr_t x, uintptr_t y, uintptr_t z)

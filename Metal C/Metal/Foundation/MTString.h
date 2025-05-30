@@ -62,3 +62,29 @@ MTString* mt_string_utf8String(const char* string){
     
     return ms_send_string_encoding(_class, initSel, string, MTUTF8StringEncoding);
 }
+
+MT_INLINE id mt_nsstring_create(const char* cstr) {
+    Class nsStringClass = objc_getClass("NSString");
+    SEL initWithUTF8Sel = sel_getUid("initWithUTF8String:");
+    id nsStringAlloc = ((id (*)(id, SEL))objc_msgSend)((id)nsStringClass, sel_getUid("alloc"));
+    id nsString = ((id (*)(id, SEL, const char*))objc_msgSend)(nsStringAlloc, initWithUTF8Sel, cstr);
+    return nsString;
+}
+
+MT_INLINE void mt_nsstring_release(id nsString) {
+    SEL releaseSel = sel_getUid("release");
+    ((void (*)(id, SEL))objc_msgSend)(nsString, releaseSel);
+}
+
+
+// TODO: REMOVE THIS AND PLACE IT ELSEWHERE
+MT_INLINE void mt_object_set_label(void* metal_object, const char* label) {
+    if (!metal_object || !label) return;
+
+    SEL setLabelSel = sel_getUid("setLabel:");
+    id nsLabel = mt_nsstring_create(label);
+
+    ((void (*)(id, SEL, id))objc_msgSend)((id)metal_object, setLabelSel, nsLabel);
+
+    mt_nsstring_release(nsLabel);
+}

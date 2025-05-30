@@ -59,11 +59,6 @@ typedef void* MTTextureDescriptor;
 
 typedef void* MTTexture;
 
-typedef struct {
-    uintptr_t location;
-    uintptr_t length;
-} MTRange;
-
 // MARK: MTSharedTexture Handle
 
 MT_INLINE MTSharedTextureHandle mt_texture_new_shared_texture_handle(MTTexture texture) {
