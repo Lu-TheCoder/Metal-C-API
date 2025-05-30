@@ -17,6 +17,55 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "vendors/stb_image.h"
 
+void print_mt_resource_options(MTResourceOptions options) {
+    // CPU Cache Mode (bits 0-3)
+    unsigned long cpuCacheMode = options & 0xF; // mask lower 4 bits for CPU cache mode
+    if (cpuCacheMode == MTResourceCPUCacheModeDefaultCache) {
+        printf("CPU Cache Mode: Default Cache\n");
+    } else if (cpuCacheMode == MTResourceCPUCacheModeWriteCombined) {
+        printf("CPU Cache Mode: Write Combined\n");
+    } else {
+        printf("CPU Cache Mode: Unknown (%lu)\n", cpuCacheMode);
+    }
+
+    // Storage Mode (bits 4-7)
+    unsigned long storageMode = options & 0xF0; // mask bits 4-7
+    switch (storageMode) {
+        case MTResourceStorageModeShared:
+            printf("Storage Mode: Shared\n");
+            break;
+        case MTResourceStorageModeManaged:
+            printf("Storage Mode: Managed\n");
+            break;
+        case MTResourceStorageModePrivate:
+            printf("Storage Mode: Private\n");
+            break;
+        case MTResourceStorageModeMemoryless:
+            printf("Storage Mode: Memoryless\n");
+            break;
+        default:
+            printf("Storage Mode: Unknown (%lu)\n", storageMode);
+            break;
+    }
+
+    // Hazard Tracking Mode (bits 8-11)
+    unsigned long hazardTrackingMode = options & 0xF00; // mask bits 8-11
+    switch (hazardTrackingMode) {
+        case MTResourceHazardTrackingModeDefault:
+            printf("Hazard Tracking Mode: Default\n");
+            break;
+        case MTResourceHazardTrackingModeUntracked:
+            printf("Hazard Tracking Mode: Untracked\n");
+            break;
+        case MTResourceHazardTrackingModeTracked:
+            printf("Hazard Tracking Mode: Tracked\n");
+            break;
+        default:
+            printf("Hazard Tracking Mode: Unknown (%lu)\n", hazardTrackingMode);
+            break;
+    }
+}
+
 //#include <sys/sysctl.h>
 double osxGetCurrentTimeInSeconds(mach_timebase_info_data_t tb)
 {
@@ -98,13 +147,13 @@ int main(int argc, const char * argv[]) {
     unsigned char* textureBytes = stbi_load("testTexture.png", &texWidth, &texHeight, &texNumChannels, texForceNumChannels);
     int texBytesPerRow = 4 * texWidth;
     
-    MTTextureDescriptor* texture_desc2 = mt_textureDescriptor_new_2D_descriptor(MTPixelFormatRGBA8Unorm, texWidth, texHeight, false);
+    MTTextureDescriptor* texture_desc2 = mt_texture_descriptor_create(MTPixelFormatRGBA8Unorm, texWidth, texHeight, false);
     
     MTTexture* texture = mt_device_create_texture_with_descriptor(device, texture_desc2);
     mt_release(texture_desc2);
-    
+  
     // Copy loaded image into MTTextureObject
-    mt_texture_replaceRegion(texture, mtRegionMake2D(0, 0, texWidth, texHeight), 0, textureBytes, texBytesPerRow);
+    mt_texture_replace_region(texture, mt_create_2D_region(0, 0, texWidth, texHeight), 0, textureBytes, texBytesPerRow);
     
     stbi_image_free(textureBytes);
     

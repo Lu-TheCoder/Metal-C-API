@@ -23,7 +23,7 @@ typedef enum MTHeapType {
 }MTHeapType;
 
 typedef void MTHeapDescriptor;
-typedef void MTHeap;
+typedef void* MTHeap;
 
 // MARK: Setters
 

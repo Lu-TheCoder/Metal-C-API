@@ -32,7 +32,7 @@ typedef enum MTHazardTrackingMode {
     MTHazardTrackingModeTracked = 2,
 }MTHazardTrackingMode;
 
-typedef enum MTResourceOptions {
+typedef enum MTResourceOptions : unsigned long {
     MTResourceCPUCacheModeDefaultCache = 0,
     MTResourceCPUCacheModeWriteCombined = 1,
     MTResourceStorageModeShared = 0,
@@ -42,6 +42,6 @@ typedef enum MTResourceOptions {
     MTResourceHazardTrackingModeDefault = 0,
     MTResourceHazardTrackingModeUntracked = 256,
     MTResourceHazardTrackingModeTracked = 512,
-    MTResourceOptionCPUCacheModeDefault = 0,
-    MTResourceOptionCPUCacheModeWriteCombined = 1,
+    MTResourceOptionCPUCacheModeDefault = 0, //Deprecated
+    MTResourceOptionCPUCacheModeWriteCombined = 1, //Deprecated
 }MTResourceOptions;
