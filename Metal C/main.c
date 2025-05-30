@@ -190,7 +190,7 @@ int main(int argc, const char * argv[]) {
         uniforms.color = playerColor;
         memcpy(mt_buffer_get_contents(uniformBuffers[currentUniformBufferIndex]), &uniforms, sizeof(Uniforms));
 
-        MTAutoreleasePool* pool =  mt_autoreleasepool_new();
+        MTAutoreleasePool* pool =  mt_autoreleasepool_create();
         
         void* drawable = platform_get_next_drawable();
         
