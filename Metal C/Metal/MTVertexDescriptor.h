@@ -80,74 +80,74 @@ typedef void MTVertexDescriptor;
 
 MT_INLINE MTVertexAttributeDescriptorArray* mt_vertexAttribute_new_descriptorArray(void) {
     Class vertDesc = objc_getClass("MTLVertexAttributeDescriptorArray");
-    SEL allocSel = sel_registerName("alloc");
+    SEL allocSel = sel_getUid("alloc");
     
     void* desc = ms_send(vertDesc, allocSel);
-    SEL initSel = sel_registerName("init");
+    SEL initSel = sel_getUid("init");
     return ms_send(desc, initSel);
 }
 
 MT_INLINE MTVertexAttributeDescriptor* mt_vertexAttribute_at_index(MTVertexAttributeDescriptorArray* vaa, unsigned long attrib_index) {
-    SEL selIndex = sel_registerName("objectAtIndexedSubscript:");
+    SEL selIndex = sel_getUid("objectAtIndexedSubscript:");
     return  ms_send_uint(vaa, selIndex, attrib_index);
 }
 
 MT_INLINE void mt_vertexAttribute_set_format(MTVertexAttributeDescriptorArray** attributes_array, unsigned long index, MTVertexFormat format) {
-    SEL sel = sel_registerName("setFormat:");
+    SEL sel = sel_getUid("setFormat:");
     ms_send_uint(mt_vertexAttribute_at_index(attributes_array, index), sel, format);
 }
 
 MT_INLINE void mt_vertexAttribute_set_offset(MTVertexAttributeDescriptorArray** attributes_array, unsigned long index, unsigned long offset) {
-    SEL sel = sel_registerName("setOffset:");
+    SEL sel = sel_getUid("setOffset:");
     ms_send_uint(mt_vertexAttribute_at_index(attributes_array, index), sel, offset);
 }
 
 MT_INLINE void mt_vertexAttribute_set_buffer_index(MTVertexAttributeDescriptorArray** attributes_array, unsigned long index, unsigned long buffer_index) {
-    SEL sel = sel_registerName("setBufferIndex:");
+    SEL sel = sel_getUid("setBufferIndex:");
     ms_send_uint(mt_vertexAttribute_at_index(attributes_array, index), sel, buffer_index);
 }
 
 MT_INLINE MTVertexDescriptor* mt_vertexDescriptor_new(void){
     Class vertDesc = objc_getClass("MTLVertexDescriptor");
-    SEL allocSel = sel_registerName("alloc");
+    SEL allocSel = sel_getUid("alloc");
     
     void* desc = ms_send(vertDesc, allocSel);
-    SEL initSel = sel_registerName("init");
+    SEL initSel = sel_getUid("init");
     return ms_send(desc, initSel);
 }
 
 MT_INLINE MTVertexBufferLayoutDescriptorArray* mt_vertexDescriptor_get_layouts(MTVertexDescriptor* vertex_desc){
-    SEL sel = sel_registerName("layouts");
+    SEL sel = sel_getUid("layouts");
     return ms_send(vertex_desc, sel);
 }
 
 MT_INLINE MTVertexBufferLayoutDescriptor* mt_vertexBufferLayout_at_index(MTVertexBufferLayoutDescriptorArray* vbla, unsigned long attrib_index) {
-    SEL selIndex = sel_registerName("objectAtIndexedSubscript:");
+    SEL selIndex = sel_getUid("objectAtIndexedSubscript:");
     return  ms_send_uint(vbla, selIndex, attrib_index);
 }
 
 MT_INLINE void mt_vertexBufferLayout_set_stride(MTVertexAttributeDescriptorArray** attributes_array, unsigned long index, unsigned long stride) {
-    SEL sel = sel_registerName("setStride:");
+    SEL sel = sel_getUid("setStride:");
     ms_send_uint(mt_vertexAttribute_at_index(attributes_array, index), sel, stride);
 }
 
 MT_INLINE void mt_vertexBufferLayout_set_stepFunction(MTVertexAttributeDescriptorArray** attributes_array, unsigned long index, MTVertexStepFunction step_func) {
-    SEL sel = sel_registerName("setStepFunction:");
+    SEL sel = sel_getUid("setStepFunction:");
     ms_send_uint(mt_vertexAttribute_at_index(attributes_array, index), sel, step_func);
 }
 
 MT_INLINE void mt_vertexBufferLayout_set_stepRate(MTVertexAttributeDescriptorArray** attributes_array, unsigned long index, unsigned long step_rate) {
-    SEL sel = sel_registerName("setStepRate:");
+    SEL sel = sel_getUid("setStepRate:");
     ms_send_uint(mt_vertexAttribute_at_index(attributes_array, index), sel, step_rate);
 }
 
 
 MT_INLINE MTVertexAttributeDescriptorArray* mt_vertexDescriptor_get_attributes(MTVertexDescriptor* vertex_desc){
-    SEL sel = sel_registerName("attributes");
+    SEL sel = sel_getUid("attributes");
     return ms_send(vertex_desc, sel);
 }
 
 MT_INLINE void mt_vertexDescriptor_reset(MTVertexDescriptor* vertex_desc) {
-    SEL sel = sel_registerName("reset");
+    SEL sel = sel_getUid("reset");
     ms_send(vertex_desc, sel);
 }

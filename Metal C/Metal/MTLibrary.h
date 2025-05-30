@@ -121,8 +121,8 @@ MT_INLINE MTFunction* mt_library_create_function(MTLibrary* library, MTString* n
 
 MT_INLINE MTCompileOptions* mt_compile_options_create(void) {
     Class cls = (Class)objc_getClass("MTLCompileOptions");
-    SEL allocSel = sel_registerName("alloc");
-    SEL initSel = sel_registerName("init");
+    SEL allocSel = sel_getUid("alloc");
+    SEL initSel = sel_getUid("init");
 
     void* (*allocMsgSend)(Class, SEL) = (void* (*)(Class, SEL))objc_msgSend;
     void* (*initMsgSend)(void*, SEL) = (void* (*)(void*, SEL))objc_msgSend;
@@ -133,14 +133,14 @@ MT_INLINE MTCompileOptions* mt_compile_options_create(void) {
 
 // Set fastMathEnabled: YES or NO
 MT_INLINE void mt_compile_options_set_fast_math_enabled(MTCompileOptions* opts, bool enabled) {
-    SEL sel = sel_registerName("setFastMathEnabled:");
+    SEL sel = sel_getUid("setFastMathEnabled:");
     void (*msgSend)(void*, SEL, bool) = (void (*)(void*, SEL, bool))objc_msgSend;
     msgSend(opts, sel, enabled);
 }
 
 // Set the Metal language version (e.g., MTLLanguageVersion2_4)
 MT_INLINE void mt_compile_options_set_language_version(MTCompileOptions* opts, MTLanguageVersion version) {
-    SEL sel = sel_registerName("setLanguageVersion:");
+    SEL sel = sel_getUid("setLanguageVersion:");
     void (*msgSend)(void*, SEL, MTLanguageVersion) = (void (*)(void*, SEL, MTLanguageVersion))objc_msgSend;
     msgSend(opts, sel, version);
 }

@@ -70,10 +70,10 @@ MTClearColor mtNewClearColor(double r, double g, double b, double a){
  */
 MT_INLINE MTRenderPassAttachmentDescriptor* mtNewRenderPassAttachmentDescriptor(void){
     Class renderpassAttDesc = objc_getClass("MTLRenderPassAttachmentDescriptor");
-    SEL allocSel = sel_registerName("alloc");
+    SEL allocSel = sel_getUid("alloc");
     
     void* pass = ms_send(renderpassAttDesc, allocSel);
-    SEL initSel = sel_registerName("init");
+    SEL initSel = sel_getUid("init");
     return ms_send(pass, initSel);
 }
 
@@ -84,10 +84,10 @@ MT_INLINE MTRenderPassAttachmentDescriptor* mtNewRenderPassAttachmentDescriptor(
  */
 MT_INLINE MTRenderPassColorAttachmentDescriptor* mtNewRenderPassColorAttachmentDescriptor(void){
     Class AttDesc = objc_getClass("MTLRenderPassColorAttachmentDescriptor");
-    SEL allocSel = sel_registerName("alloc");
+    SEL allocSel = sel_getUid("alloc");
     
     void* att = ms_send(AttDesc, allocSel);
-    SEL initSel = sel_registerName("init");
+    SEL initSel = sel_getUid("init");
     ms_send(att, initSel);
     return att;
 }
@@ -99,39 +99,39 @@ MT_INLINE MTRenderPassColorAttachmentDescriptor* mtNewRenderPassColorAttachmentD
  */
 MT_INLINE MTRenderPassDescriptor* mt_renderpass_descriptor_new(void) {
     Class renderpassDesc = objc_getClass("MTLRenderPassDescriptor");
-    SEL allocSel = sel_registerName("alloc");
+    SEL allocSel = sel_getUid("alloc");
     
     void* pass = ms_send(renderpassDesc, allocSel);
-    SEL initSel = sel_registerName("init");
+    SEL initSel = sel_getUid("init");
     return ms_send(pass, initSel);
 }
 
 MT_INLINE void mtRenderPassDescSetSampleCount(MTRenderPassDescriptor* ptr, NSUInteger width){
-    SEL sel = sel_registerName("setRenderTargetWidth:");
+    SEL sel = sel_getUid("setRenderTargetWidth:");
     ms_send_uint(ptr, sel, width);
 }
 
 MT_INLINE void mtRenderPassDescSetTargetWidth(MTRenderPassDescriptor* ptr, NSUInteger width){
-    SEL sel = sel_registerName("setRenderTargetWidth:");
+    SEL sel = sel_getUid("setRenderTargetWidth:");
     ms_send_uint(ptr, sel, width);
 }
 
 MT_INLINE void mtRenderPassDescSetTargetHeight(MTRenderPassDescriptor* ptr, NSUInteger height){
-    SEL sel = sel_registerName("setRenderTargetHeight:");
+    SEL sel = sel_getUid("setRenderTargetHeight:");
     ms_send_uint(ptr, sel, height);
 }
 
 MT_INLINE MTRenderPassColorAttachmentDescriptorArray* mt_renderpass_color_attachment_get_color_attachments(MTRenderPassDescriptor* renderpass){
-    SEL attchSel = sel_registerName("colorAttachments");
+    SEL attchSel = sel_getUid("colorAttachments");
     return ms_send(renderpass, attchSel);
 }
 
 MT_INLINE void mt_renderpass_color_attachment_set_loadAction(void* ptr, MTLoadAction action) {
-    ms_send_uint(ptr, sel_registerName("setLoadAction:"), action);
+    ms_send_uint(ptr, sel_getUid("setLoadAction:"), action);
 }
 
 MT_INLINE void mt_renderpass_color_attachment_set_storeAction(void* ptr, MTStoreAction action) {
-    ms_send_uint(ptr, sel_registerName("setStoreAction:"), action);
+    ms_send_uint(ptr, sel_getUid("setStoreAction:"), action);
 }
 
 MT_INLINE MTClearColor mt_clear_color_make(double red, double green, double blue, double alpha)
@@ -147,15 +147,15 @@ MT_INLINE MTClearColor mt_clear_color_make(double red, double green, double blue
 void* (*ms_send_color)(void*, SEL, MTClearColor) = (void* (*)(void*, SEL, MTClearColor)) objc_msgSend;
 
 MT_INLINE void mt_renderpass_color_attachment_set_clearColor(MTRenderPassColorAttachmentDescriptor* colorDesc, MTClearColor color){
-    ms_send_color(colorDesc, sel_registerName("setClearColor:"), color);
+    ms_send_color(colorDesc, sel_getUid("setClearColor:"), color);
 }
 
 MT_INLINE void mt_renderpass_color_attachment_set_texture(void* ptr, void* texture){
-    ms_send_void(ptr, sel_registerName("setTexture:"), texture);
+    ms_send_void(ptr, sel_getUid("setTexture:"), texture);
 }
 
 MT_INLINE MTRenderPassColorAttachmentDescriptor* mt_renderpass_get_color_attachment_at_index(MTRenderPassColorAttachmentDescriptorArray* rcadA, NSUInteger attachment_index){
-    SEL selIndex = sel_registerName("objectAtIndexedSubscript:");
+    SEL selIndex = sel_getUid("objectAtIndexedSubscript:");
     return  ms_send_uint(rcadA, selIndex, attachment_index);
 }
 
@@ -165,7 +165,7 @@ MTClearColor* mtGetRenderPassColorAttachmentDescriptorClearColor(MTRenderPassCol
 }
 
 MT_INLINE void mtSetRenderPassColorAttachmentDescriptorClearColor(MTRenderPassColorAttachmentDescriptor* rpColorAttachDescriptor, MTClearColor* color){
-    ms_send_v(rpColorAttachDescriptor, sel_registerName("setClearColor:"), color);
+    ms_send_v(rpColorAttachDescriptor, sel_getUid("setClearColor:"), color);
 }
 
 

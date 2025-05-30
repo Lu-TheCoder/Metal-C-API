@@ -34,16 +34,16 @@ ms_send(cls, allocSel);})
 ({objc_getClass(name);})
 
 MT_INLINE void mt_release(void* ptr){
-    SEL releaseSel = sel_registerName("release");
+    SEL releaseSel = sel_getUid("release");
     ms_send(ptr, releaseSel);
 }
 
 MT_INLINE bool mt_is_retained_references(void* ptr){
-    SEL retRefSel = sel_registerName("retainedReferences");
+    SEL retRefSel = sel_getUid("retainedReferences");
     return ms_send(ptr, retRefSel);
 }
 
 MT_INLINE void mt_set_retained_references(void* ptr){
-    SEL retRefSel = sel_registerName("setRetainedReferences:");
+    SEL retRefSel = sel_getUid("setRetainedReferences:");
     ms_send_bool(ptr, retRefSel, true);
 }
