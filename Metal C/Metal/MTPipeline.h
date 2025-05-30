@@ -4,7 +4,7 @@
 //
 //  Created by Lungile Maseko on 2025/05/30.
 //
-
+#pragma once
 #include "MTUtils.h"
 
 typedef enum MTMutability

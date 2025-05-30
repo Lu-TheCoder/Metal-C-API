@@ -9,6 +9,7 @@
 #include "MTLibrary.h"
 #include "MTVertexDescriptor.h"
 #include "MTPixelFormat.h"
+#include "MTPipeline.h"
 
 typedef void* MTRenderPipelineColorAttachmentDescriptor;
 typedef void* MTRenderPipelineColorAttachmentDescriptorArray;
@@ -94,4 +95,19 @@ MT_INLINE void mt_rendePipeline_descriptor_set_color_attachment_pixel_format(MTR
     SEL sel = sel_getUid("setPixelFormat:");
 //    MTRenderPipelineColorAttachmentDescriptor* color_attachments = mtRenderPipelineColorAttachments(renderPipelineDesc);
     ms_send_uint(color_attachment, sel, format);
+}
+
+MT_INLINE void mt_renderPipeline_descriptor_reset(MTRenderPipelineDescriptor desc) {
+    SEL sel = sel_getUid("reset");
+    ms_send(desc, sel);
+}
+
+MT_INLINE MTShaderValidation mt_renderPipeline_descriptor_get_shader_validation(MTRenderPipelineDescriptor desc) {
+    SEL sel = sel_getUid("shaderValidation");
+    return ((MTShaderValidation (*)(id, SEL))objc_msgSend)(desc, sel);
+}
+
+MT_INLINE void mt_renderPipeline_descriptor_set_shader_validation(MTRenderPipelineDescriptor desc, MTShaderValidation validation) {
+    SEL sel = sel_getUid("setShaderValidation:");
+    ((void (*)(id, SEL, MTShaderValidation))objc_msgSend)(desc, sel, validation);
 }

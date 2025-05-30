@@ -101,64 +101,141 @@ MTViewport mt_viewport_make(double origin_x, double origin_y, double width, doub
     return viewport;
 }
 
-void* (*ms_send_vertBuf)(void*, SEL, void*, NSUInteger, NSUInteger) = (void* (*)(void*, SEL, void*, NSUInteger, NSUInteger)) objc_msgSend;
-void* (*ms_send_bytes)(void*, SEL, const void*, NSUInteger, NSUInteger) = (void* (*)(void*, SEL, const void*, NSUInteger, NSUInteger)) objc_msgSend;
-
-
-void mt_renderCommand_encoder_set_vertex_buffer(MTRenderCommandEncoder render_cmd_enc, MTBuffer* buffer, NSUInteger offset, NSUInteger at_index){
-    ms_send_vertBuf(render_cmd_enc, sel_getUid("setVertexBuffer:offset:atIndex:"), buffer, offset, at_index);
+MT_INLINE void mt_renderCommand_encoder_set_vertex_buffer(
+    MTRenderCommandEncoder render_cmd_enc,
+    MTBuffer* buffer,
+    NSUInteger offset,
+    NSUInteger at_index
+) {
+    typedef void (*SetVertexBufferFunc)(id, SEL, id, NSUInteger, NSUInteger);
+    ((SetVertexBufferFunc)objc_msgSend)(
+        (id)render_cmd_enc,
+        sel_getUid("setVertexBuffer:offset:atIndex:"),
+        (id)buffer,
+        offset,
+        at_index
+    );
 }
 
-void mt_renderCommand_encoder_set_vertex_bytes(MTRenderCommandEncoder render_cmd_enc, const void* bytes, NSUInteger length, NSUInteger at_index){
-    ms_send_bytes(render_cmd_enc, sel_getUid("setVertexBytes:length:atIndex:"), bytes, length, at_index);
+MT_INLINE void mt_renderCommand_encoder_set_vertex_bytes(
+    MTRenderCommandEncoder render_cmd_enc,
+    const void* bytes,
+    NSUInteger length,
+    NSUInteger at_index
+) {
+    typedef void (*SetVertexBytesFunc)(id, SEL, const void*, NSUInteger, NSUInteger);
+    ((SetVertexBytesFunc)objc_msgSend)(
+        (id)render_cmd_enc,
+        sel_getUid("setVertexBytes:length:atIndex:"),
+        bytes,
+        length,
+        at_index
+    );
 }
 
-void mt_renderCommand_encoder_set_fragment_buffer(MTRenderCommandEncoder render_cmd_enc, MTBuffer* buffer, NSUInteger offset, NSUInteger at_index){
-    ms_send_vertBuf(render_cmd_enc, sel_getUid("setFragmentBuffer:offset:atIndex:"), buffer, offset, at_index);
+MT_INLINE void mt_renderCommand_encoder_set_fragment_buffer(
+    MTRenderCommandEncoder render_cmd_enc,
+    MTBuffer* buffer,
+    NSUInteger offset,
+    NSUInteger at_index
+) {
+    typedef void (*SetFragmentBufferFunc)(id, SEL, id, NSUInteger, NSUInteger);
+    ((SetFragmentBufferFunc)objc_msgSend)(
+        (id)render_cmd_enc,
+        sel_getUid("setFragmentBuffer:offset:atIndex:"),
+        (id)buffer,
+        offset,
+        at_index
+    );
 }
 
-void mt_renderCommand_encoder_set_fragment_bytes(MTRenderCommandEncoder render_cmd_enc, const void* bytes, NSUInteger length, NSUInteger at_index){
-    ms_send_bytes(render_cmd_enc, sel_getUid("setFragmentBytes:length:atIndex:"), bytes, length, at_index);
+MT_INLINE void mt_renderCommand_encoder_set_fragment_bytes(
+    MTRenderCommandEncoder render_cmd_enc,
+    const void* bytes,
+    NSUInteger length,
+    NSUInteger at_index
+) {
+    typedef void (*SetFragmentBytesFunc)(id, SEL, const void*, NSUInteger, NSUInteger);
+    ((SetFragmentBytesFunc)objc_msgSend)(
+        (id)render_cmd_enc,
+        sel_getUid("setFragmentBytes:length:atIndex:"),
+        bytes,
+        length,
+        at_index
+    );
 }
 
-void* (*ms_send_viewport)(void*, SEL, MTViewport) = (void* (*)(void*, SEL, MTViewport)) objc_msgSend;
-
-void mt_renderCommand_encoder_set_viewport(MTRenderCommandEncoder render_cmd_enc, MTViewport viewport) {
-    ms_send_viewport(render_cmd_enc, sel_getUid("setViewport:"), viewport);
+MT_INLINE void mt_renderCommand_encoder_set_viewport(
+    MTRenderCommandEncoder render_cmd_enc,
+    MTViewport viewport
+) {
+    typedef void (*SetViewportFunc)(id, SEL, MTViewport);
+    ((SetViewportFunc)objc_msgSend)(
+        (id)render_cmd_enc,
+        sel_getUid("setViewport:"),
+        viewport
+    );
 }
 
-void* (*ms_send_drawPrim)(void*, SEL, NSUInteger, NSUInteger, NSUInteger) = (void* (*)(void*, SEL, NSUInteger, NSUInteger, NSUInteger)) objc_msgSend;
-
-void* (*ms_send_drawIndxPrim)(void*, SEL, NSUInteger, NSUInteger, NSUInteger, const MTBuffer*, NSUInteger) = (void* (*)(void*, SEL, NSUInteger, NSUInteger, NSUInteger, const MTBuffer*, NSUInteger)) objc_msgSend;
-
-void* (*ms_send_drawIndxPrimInst)(void*, SEL, NSUInteger, NSUInteger, NSUInteger, const MTBuffer*, NSUInteger, NSUInteger) = (void* (*)(void*, SEL, NSUInteger, NSUInteger, NSUInteger, const MTBuffer*, NSUInteger, NSUInteger)) objc_msgSend;
-
-
-void mt_renderCommand_encoder_draw_primitives(MTRenderCommandEncoder render_cmd_enc, MTPrimitiveType type, NSUInteger vertex_start, NSUInteger vertex_count){
-    ms_send_drawPrim(render_cmd_enc, sel_getUid("drawPrimitives:vertexStart:vertexCount:"), type, vertex_start, vertex_count);
+MT_INLINE void mt_renderCommand_encoder_draw_primitives(
+    MTRenderCommandEncoder render_cmd_enc,
+    MTPrimitiveType type,
+    NSUInteger vertex_start,
+    NSUInteger vertex_count
+) {
+    typedef void (*DrawPrimitivesFunc)(
+        id, SEL, MTPrimitiveType, NSUInteger, NSUInteger
+    );
+    DrawPrimitivesFunc func = (DrawPrimitivesFunc)objc_msgSend;
+    func((id)render_cmd_enc,
+         sel_getUid("drawPrimitives:vertexStart:vertexCount:"),
+         type,
+         vertex_start,
+         vertex_count);
 }
 
-void mt_renderCommand_encoder_draw_indexed_primitives_with_instance_count(MTRenderCommandEncoder* render_cmd_enc,
-                                                          MTPrimitiveType primitive_type,
-                                                          NSUInteger index_count,
-                                                          MTIndexType index_type,
-                                                          const MTBuffer* index_buffer,
-                                                          uintptr_t index_buffer_offset,
-                                                          uintptr_t instance_count) {
-    ms_send_drawIndxPrimInst(render_cmd_enc,
-                             sel_getUid("drawIndexedPrimitives:indexCount:indexType:indexBuffer:indexBufferOffset:"),
-                     primitive_type, index_count, index_type, index_buffer, index_buffer_offset, instance_count);
+MT_INLINE void mt_renderCommand_encoder_draw_indexed_primitives(
+    MTRenderCommandEncoder render_cmd_enc,
+    MTPrimitiveType primitive_type,
+    NSUInteger index_count,
+    MTIndexType index_type,
+    const MTBuffer index_buffer,
+    uintptr_t index_buffer_offset
+) {
+    typedef void (*DrawIndexedPrimitivesFunc)(
+        id, SEL, MTPrimitiveType, NSUInteger, MTIndexType, const MTBuffer, NSUInteger
+    );
+    DrawIndexedPrimitivesFunc func = (DrawIndexedPrimitivesFunc)objc_msgSend;
+    func((id)render_cmd_enc,
+         sel_getUid("drawIndexedPrimitives:indexCount:indexType:indexBuffer:indexBufferOffset:"),
+         primitive_type,
+         index_count,
+         index_type,
+         index_buffer,
+         index_buffer_offset);
 }
 
-void mt_renderCommand_encoder_draw_indexed_primitives(MTRenderCommandEncoder* render_cmd_enc,
-                                                          MTPrimitiveType primitive_type,
-                                                          NSUInteger index_count,
-                                                          MTIndexType index_type,
-                                                          const MTBuffer* index_buffer,
-                                                          uintptr_t index_buffer_offset) {
-    ms_send_drawIndxPrim(render_cmd_enc,
-                         sel_getUid("drawIndexedPrimitives:indexCount:indexType:indexBuffer:indexBufferOffset:"),
-                     primitive_type, index_count, index_type, index_buffer, index_buffer_offset);
+MT_INLINE void mt_renderCommand_encoder_draw_indexed_primitives_with_instance_count(
+    MTRenderCommandEncoder render_cmd_enc,
+    MTPrimitiveType primitive_type,
+    NSUInteger index_count,
+    MTIndexType index_type,
+    const MTBuffer index_buffer,
+    uintptr_t index_buffer_offset,
+    uintptr_t instance_count
+) {
+    typedef void (*DrawIndexedPrimitivesInstancedFunc)(
+        id, SEL, MTPrimitiveType, NSUInteger, MTIndexType, const MTBuffer, NSUInteger, NSUInteger
+    );
+    DrawIndexedPrimitivesInstancedFunc func = (DrawIndexedPrimitivesInstancedFunc)objc_msgSend;
+    func((id)render_cmd_enc,
+         sel_getUid("drawIndexedPrimitives:indexCount:indexType:indexBuffer:indexBufferOffset:instanceCount:"),
+         primitive_type,
+         index_count,
+         index_type,
+         index_buffer,
+         index_buffer_offset,
+         instance_count);
 }
 
 void* (*ms_send_fragTex)(void*, SEL, void*, unsigned long) = (void* (*)(void*, SEL, void*, unsigned long)) objc_msgSend;
