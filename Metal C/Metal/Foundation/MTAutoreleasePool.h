@@ -11,27 +11,27 @@
 
 typedef void* MTAutoreleasePool;
 
-void* (*_initPool)(void*, SEL) = (void* (*)(void*, SEL)) objc_msgSend;
+typedef void* (*MsgSendInitFn)(void*, SEL);
+typedef void  (*MsgSendVoidFn)(void*, SEL);
 
-MTAutoreleasePool* mt_autoreleasepool_new(void) {
-    Class nsautoreleasepool = objc_getClass("NSAutoreleasePool");
-    return (void*)class_createInstance(nsautoreleasepool, 0);
-//    return (MTCommandQueue*)ms_send(device, sel_getUid("newCommandQueue"));
-}
+static MsgSendInitFn _msgSendInit = (MsgSendInitFn)objc_msgSend;
+static MsgSendVoidFn _msgSendVoid = (MsgSendVoidFn)objc_msgSend;
 
-void mt_autoreleasepool_init(MTAutoreleasePool* pool){
+MTAutoreleasePool mt_autoreleasepool_create(void) {
+    Class nsAutoreleasePoolClass = objc_getClass("NSAutoreleasePool");
+    void* pool = class_createInstance(nsAutoreleasePoolClass, 0);
     SEL initSel = sel_registerName("init");
-    pool = _initPool(pool, initSel);
+    pool = _msgSendInit(pool, initSel);
+    return pool;
 }
 
-void mt_autoreleasepool_drain(MTAutoreleasePool* pool){
-    SEL initSel = sel_registerName("drain");
-    _initPool(pool, initSel);
+void mt_autoreleasepool_drain(MTAutoreleasePool pool) {
+    SEL drainSel = sel_registerName("drain");
+    _msgSendVoid(pool, drainSel);
 }
 
-void mt_autoreleasepool_release(MTAutoreleasePool* pool){
-    SEL initSel = sel_registerName("release");
-    _initPool(pool, initSel);
+void mt_autoreleasepool_release(MTAutoreleasePool pool) {
+    SEL releaseSel = sel_registerName("release");
+    _msgSendVoid(pool, releaseSel);
 }
-
 

@@ -191,7 +191,6 @@ int main(int argc, const char * argv[]) {
         memcpy(mt_buffer_get_contents(uniformBuffers[currentUniformBufferIndex]), &uniforms, sizeof(Uniforms));
 
         MTAutoreleasePool* pool =  mt_autoreleasepool_new();
-        mt_autoreleasepool_init(pool);
         
         void* drawable = platform_get_next_drawable();
         
@@ -229,7 +228,7 @@ int main(int argc, const char * argv[]) {
         
         mt_commandBuffer_wait_until_completed(cmdBuffer);
         
-        mt_autoreleasepool_release(pool);
+        mt_autoreleasepool_drain(pool);
 
         currentUniformBufferIndex = (currentUniformBufferIndex + 1) % MAX_FRAMES_IN_FLIGHT;
     }
