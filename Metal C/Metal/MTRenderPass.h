@@ -53,45 +53,6 @@ void mtSetClearColor(MTClearColor* clearColor, double red, double green, double 
     clearColor->alpha = alpha;
 };
 
-MTClearColor mtNewClearColor(double r, double g, double b, double a){
-    MTClearColor color;
-    color.red = r;
-    color.green = g;
-    color.blue = b;
-    color.alpha = a;
-    
-    return color;
-}
-
-/**
- * @brief Creates a new MTLRenderPassAttachmentDescriptor class
- *
- * NOTE: Should be released using mtRelease();
- */
-MT_INLINE MTRenderPassAttachmentDescriptor mtNewRenderPassAttachmentDescriptor(void){
-    Class renderpassAttDesc = objc_getClass("MTLRenderPassAttachmentDescriptor");
-    SEL allocSel = sel_getUid("alloc");
-    
-    void* pass = ms_send(renderpassAttDesc, allocSel);
-    SEL initSel = sel_getUid("init");
-    return ms_send(pass, initSel);
-}
-
-/**
- * @brief Creates a new MTLRenderPassColorAttachmentDescriptor class
- *
- * NOTE: Should be released using mtRelease();
- */
-MT_INLINE MTRenderPassColorAttachmentDescriptor mtNewRenderPassColorAttachmentDescriptor(void){
-    Class AttDesc = objc_getClass("MTLRenderPassColorAttachmentDescriptor");
-    SEL allocSel = sel_getUid("alloc");
-    
-    void* att = ms_send(AttDesc, allocSel);
-    SEL initSel = sel_getUid("init");
-    ms_send(att, initSel);
-    return att;
-}
-
 /**
  * @brief Creates a new MTLRenderPassDescriptor class
  *
@@ -134,7 +95,7 @@ MT_INLINE void mt_renderpass_color_attachment_set_storeAction(void* ptr, MTStore
     ms_send_uint(ptr, sel_getUid("setStoreAction:"), action);
 }
 
-MT_INLINE MTClearColor mt_clear_color_make(double red, double green, double blue, double alpha)
+MT_INLINE MTClearColor mt_clear_color_create(double red, double green, double blue, double alpha)
 {
     MTClearColor result;
     result.red = red;
@@ -144,10 +105,12 @@ MT_INLINE MTClearColor mt_clear_color_make(double red, double green, double blue
     return result;
 }
 
-void* (*ms_send_color)(void*, SEL, MTClearColor) = (void* (*)(void*, SEL, MTClearColor)) objc_msgSend;
-
-MT_INLINE void mt_renderpass_color_attachment_set_clearColor(MTRenderPassColorAttachmentDescriptor colorDesc, MTClearColor color){
-    ms_send_color(colorDesc, sel_getUid("setClearColor:"), color);
+MT_INLINE void mt_renderpass_color_attachment_set_clearColor(
+    MTRenderPassColorAttachmentDescriptor rpColorAttachDescriptor,
+    MTClearColor color
+) {
+    typedef void (*MsgSendFunc)(void*, SEL, MTClearColor);
+    ((MsgSendFunc)objc_msgSend)(rpColorAttachDescriptor, sel_getUid("setClearColor:"), color);
 }
 
 MT_INLINE void mt_renderpass_color_attachment_set_texture(MTRenderPassColorAttachmentDescriptor colorDesc, void* texture){
@@ -159,9 +122,9 @@ MT_INLINE MTRenderPassColorAttachmentDescriptor* mt_renderpass_get_color_attachm
     return  ms_send_uint(rcadA, selIndex, attachment_index);
 }
 
-//FIXME: Not Returning a populated ClearColor struct.
-MTClearColor* mtGetRenderPassColorAttachmentDescriptorClearColor(MTRenderPassColorAttachmentDescriptor rpColorAttachDescriptor){
-    return (MTClearColor*) ms_send(rpColorAttachDescriptor, sel_getUid("clearColor"));
+MT_INLINE MTClearColor mt_renderPass_color_attachment_get_clear_color(MTRenderPassColorAttachmentDescriptor rpColorAttachDescriptor) {
+    typedef MTClearColor (*MsgSendFunc)(void*, SEL);
+    return ((MsgSendFunc)objc_msgSend)(rpColorAttachDescriptor, sel_getUid("clearColor"));
 }
 
 MT_INLINE void mtSetRenderPassColorAttachmentDescriptorClearColor(MTRenderPassColorAttachmentDescriptor rpColorAttachDescriptor, MTClearColor* color){

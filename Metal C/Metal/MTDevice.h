@@ -147,6 +147,8 @@ const char* mt_device_get_name(MTDevice* device){
 }
 
 typedef void* MTBuffer;
+typedef void* MTIndirectCommandBuffer;
+typedef void* MTIndirectCommandBufferDescriptor;
 
 MT_INLINE MTBuffer mt_device_create_buffer_with_bytes(MTDevice device, void* ptr, uintptr_t length, MTResourceOptions options) {
     typedef void* (*MTNewBufferWithBytesMsgSend)(void*, SEL, void*, uintptr_t, MTResourceOptions);
@@ -166,6 +168,17 @@ MT_INLINE MTBuffer mt_device_create_buffer_with_length(
     
     SEL sel = sel_getUid("newBufferWithLength:options:");
     return msgSend(device, sel, length, options);
+}
+
+MT_INLINE MTIndirectCommandBuffer mt_device_new_indirect_command_buffer(
+    MTDevice device,
+    MTIndirectCommandBufferDescriptor descriptor,
+    unsigned long maxCommandCount,
+    MTResourceOptions options
+) {
+    SEL sel = sel_getUid("newIndirectCommandBufferWithDescriptor:maxCommandCount:options:");
+    return ((MTIndirectCommandBuffer(*)(id, SEL, MTIndirectCommandBufferDescriptor, unsigned long, MTResourceOptions))
+            objc_msgSend)(device, sel, descriptor, maxCommandCount, options);
 }
 
 MT_INLINE MTRenderPipelineState mt_device_create_render_pipeline_state(

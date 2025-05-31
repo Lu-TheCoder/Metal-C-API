@@ -290,7 +290,7 @@ int main(int argc, const char * argv[]) {
 
         MTAutoreleasePool* pool =  mt_autoreleasepool_create();
         
-        void* drawable = platform_get_next_drawable();
+        MTDrawable drawable = platform_get_next_drawable();
         
         MTRenderPassDescriptor renderPass = mt_renderpass_descriptor_new();
         MTCommandBuffer cmdBuffer = mt_commandBuffer_new(queue);
@@ -300,7 +300,7 @@ int main(int argc, const char * argv[]) {
         mt_renderpass_color_attachment_set_texture(colorAttachment, platform_get_next_drawable_texture(drawable));
         mt_renderpass_color_attachment_set_loadAction(colorAttachment, MTLoadActionClear);
         mt_renderpass_color_attachment_set_storeAction(colorAttachment, MTStoreActionStore);
-        mt_renderpass_color_attachment_set_clearColor(colorAttachment, mt_clear_color_make(0.1f, 0.1f, 0.1f, 1.0f));
+        mt_renderpass_color_attachment_set_clearColor(colorAttachment, mt_clear_color_create(0.1f, 0.1f, 0.1f, 1.0f));
         
         MTRenderCommandEncoder renderCommandEncoder = mt_renderCommand_encoder_new(cmdBuffer, renderPass);
         mt_release(renderPass);
@@ -319,7 +319,7 @@ int main(int argc, const char * argv[]) {
         mt_renderCommand_encoder_end_encoding(renderCommandEncoder);
         
         mt_commandBuffer_present_drawable(cmdBuffer, drawable);
-        
+                        
         dispatch_semaphore_signal(uniformBufferSemaphore);
         
         mt_commandBuffer_commit(cmdBuffer);
