@@ -6,36 +6,49 @@
 //
 
 #pragma once
+#include "defines.h"
 
 typedef void* MTError;
 
 // Code: - (NSInteger)code
-long mt_error_get_code(MTError error) {
+MT_INLINE long mt_error_get_code(MTError error) {
     SEL sel = sel_registerName("code");
     typedef long (*MsgSendFn)(id, SEL);
     return ((MsgSendFn)objc_msgSend)(error, sel);
 }
 
-// Description: - (NSString *)localizedDescription
-const char* mt_error_get_localized_description(MTError error) {
+MT_INLINE const char* mt_error_get_localized_description(MTError error) {
     SEL sel = sel_registerName("localizedDescription");
-    typedef id (*MsgSendFn)(id, SEL);
-    id nsStr = ((MsgSendFn)objc_msgSend)(error, sel);
-    return ns_toString(nsStr); // Assumes ns_toString handles NSString* to UTF-8
+    id (*msgSendObj)(id, SEL) = (id (*)(id, SEL))objc_msgSend;
+    id nsStr = msgSendObj((id)error, sel);
+
+    if (!nsStr) return NULL;
+
+    SEL utf8Sel = sel_registerName("UTF8String");
+    const char* (*msgSendUTF8)(id, SEL) = (const char* (*)(id, SEL))objc_msgSend;
+    return msgSendUTF8(nsStr, utf8Sel);
 }
 
-// Recovery suggestion: - (NSString *)localizedRecoverySuggestion
-const char* mt_error_get_localized_recovery_suggestion(MTError error) {
+MT_INLINE const char* mt_error_get_localized_recovery_suggestion(MTError error) {
     SEL sel = sel_registerName("localizedRecoverySuggestion");
-    typedef id (*MsgSendFn)(id, SEL);
-    id nsStr = ((MsgSendFn)objc_msgSend)(error, sel);
-    return ns_toString(nsStr);
+    id (*msgSendObj)(id, SEL) = (id (*)(id, SEL))objc_msgSend;
+    id nsStr = msgSendObj((id)error, sel);
+
+    if (!nsStr) return NULL;
+
+    SEL utf8Sel = sel_registerName("UTF8String");
+    const char* (*msgSendUTF8)(id, SEL) = (const char* (*)(id, SEL))objc_msgSend;
+    return msgSendUTF8(nsStr, utf8Sel);
 }
 
-// Failure reason: - (NSString *)localizedFailureReason
-const char* mt_error_get_localized_failure_reason(MTError error) {
+MT_INLINE const char* mt_error_get_localized_failure_reason(MTError error) {
     SEL sel = sel_registerName("localizedFailureReason");
-    typedef id (*MsgSendFn)(id, SEL);
-    id nsStr = ((MsgSendFn)objc_msgSend)(error, sel);
-    return ns_toString(nsStr);
+    id (*msgSendObj)(id, SEL) = (id (*)(id, SEL))objc_msgSend;
+    id nsStr = msgSendObj((id)error, sel);
+
+    if (!nsStr) return NULL;
+
+    SEL utf8Sel = sel_registerName("UTF8String");
+    const char* (*msgSendUTF8)(id, SEL) = (const char* (*)(id, SEL))objc_msgSend;
+    return msgSendUTF8(nsStr, utf8Sel);
 }

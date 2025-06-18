@@ -80,7 +80,7 @@ typedef void* MTCompileOptions;
 
 typedef void* MTLibrary;
 
-MTCompileOptions mt_compile_options_new(void) {
+MT_INLINE MTCompileOptions mt_compile_options_new(void) {
     Class MTLCompileOptionsClass = objc_getClass("MTLCompileOptions");
     SEL allocSel = sel_registerName("alloc");
     SEL initSel = sel_registerName("init");

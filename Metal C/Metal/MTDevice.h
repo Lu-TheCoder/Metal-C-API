@@ -9,7 +9,6 @@
 #include <stdint.h>
 #include "MTUtils.h"
 #include "MTHeap.h"
-#include "../ObjectiveCCore/Objectivec.h"
 #include "MTResource.h"
 #include "MTRenderPipeline.h"
 #include "MTTexture.h"
@@ -138,12 +137,23 @@ typedef struct MTSizeAndAlign {
     unsigned long align;
 }MTSizeAndAlign;
 
-MTDevice* mt_create_system_default_device(void){
+MT_INLINE MTDevice* mt_create_system_default_device(void){
     return (MTDevice*) MTLCreateSystemDefaultDevice();
 }
 
-const char* mt_device_get_name(MTDevice* device){
-   return ns_toString(ns_mtDeviceName(device));
+MT_INLINE const char* mt_device_get_name(MTDevice device) {
+    if (!device) return NULL;
+
+    // Call: [device name]
+    SEL nameSel = sel_registerName("name");
+    id (*msgSendObj)(id, SEL) = (id (*)(id, SEL))objc_msgSend;
+    id nsStr = msgSendObj((id)device, nameSel);
+    if (!nsStr) return NULL;
+
+    // Call: [name UTF8String]
+    SEL utf8Sel = sel_registerName("UTF8String");
+    const char* (*msgSendUTF8)(id, SEL) = (const char* (*)(id, SEL))objc_msgSend;
+    return msgSendUTF8(nsStr, utf8Sel);
 }
 
 typedef void* MTBuffer;
@@ -461,19 +471,19 @@ MT_INLINE uintptr_t mt_device_maximum_concurrent_compilation_task_count(
 
 // -- MARK: IO
 
-MTIOFileHandle mt_device_new_io_file_handle(MTDevice device, MTURL url, MTError* outError) {
+MT_INLINE MTIOFileHandle mt_device_new_io_file_handle(MTDevice device, MTURL url, MTError* outError) {
     SEL sel = sel_registerName("newIOFileHandleWithURL:error:");
     typedef MTIOFileHandle (*MsgSendType)(id, SEL, MTURL, MTError*);
     return ((MsgSendType)objc_msgSend)(device, sel, url, outError);
 }
 
-MTIOFileHandle mt_device_new_io_file_handle_with_compression(MTDevice device, MTURL url, MTIOCompressionMethod compression, MTError* outError) {
+MT_INLINE MTIOFileHandle mt_device_new_io_file_handle_with_compression(MTDevice device, MTURL url, MTIOCompressionMethod compression, MTError* outError) {
     SEL sel = sel_registerName("newIOFileHandleWithURL:compressionMethod:error:");
     typedef MTIOFileHandle (*MsgSendType)(id, SEL, MTURL, unsigned long, MTError*);
     return ((MsgSendType)objc_msgSend)(device, sel, url, compression, outError);
 }
 
-MTIOCommandQueue mt_device_new_io_command_queue(MTDevice device, MTIOCommandQueueDescriptor desc, MTError* outError) {
+MT_INLINE MTIOCommandQueue mt_device_new_io_command_queue(MTDevice device, MTIOCommandQueueDescriptor desc, MTError* outError) {
     SEL sel = sel_registerName("newIOCommandQueueWithDescriptor:error:");
     typedef MTIOCommandQueue (*MsgSendType)(id, SEL, MTIOCommandQueueDescriptor, MTError*);
     return ((MsgSendType)objc_msgSend)(device, sel, desc, outError);

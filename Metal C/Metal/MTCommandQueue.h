@@ -8,7 +8,6 @@
 #pragma once
 
 #include "MTDevice.h"
-#include "../ObjectiveCCore/Objectivec.h"
 
 typedef void* MTCommandQueue;
 typedef void* MTCommandQueueDescriptor;

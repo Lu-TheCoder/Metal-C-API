@@ -39,46 +39,60 @@ typedef enum MTSamplerBorderColor {
 typedef void* MTSamplerDescriptor;
 typedef void* MTSamplerState;
 
-void* (*ms_send_textRegion2)(void*, SEL, MTRegion, NSUInteger, void*, NSUInteger) = (void* (*)(void*, SEL, MTRegion, NSUInteger, void*, NSUInteger)) objc_msgSend;
+// Create a new MTSamplerDescriptor
+MT_INLINE MTSamplerDescriptor mt_sampler_descriptor_new(void) {
+    Class cls = objc_getClass("MTLSamplerDescriptor");
+    SEL allocSel = sel_registerName("alloc");
+    id obj = ((id (*)(Class, SEL))objc_msgSend)(cls, allocSel);
 
-MT_INLINE MTSamplerDescriptor* mt_samplerDescriptor_new(void){
-    return NSCLASS_NEW("MTLSamplerDescriptor");
+    SEL initSel = sel_registerName("init");
+    return ((id (*)(id, SEL))objc_msgSend)(obj, initSel);
 }
 
-MT_INLINE void mt_samplerDescriptor_set_minFilter(MTSamplerDescriptor sampler_desc, MTSamplerMinMagFilter min_filter) {
-    ms_send_uint(sampler_desc, sel_getUid("setMinFilter:"), min_filter);
+// Setters
+MT_INLINE void mt_sampler_descriptor_set_min_filter(MTSamplerDescriptor desc, NSUInteger min_filter) {
+    SEL sel = sel_registerName("setMinFilter:");
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel, min_filter);
 }
 
-MT_INLINE void mt_samplerDescriptor_set_magFilter(MTSamplerDescriptor sampler_desc, MTSamplerMinMagFilter mag_filter) {
-    ms_send_uint(sampler_desc, sel_getUid("setMagFilter:"), mag_filter);
+MT_INLINE void mt_sampler_descriptor_set_mag_filter(MTSamplerDescriptor desc, NSUInteger mag_filter) {
+    SEL sel = sel_registerName("setMagFilter:");
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel, mag_filter);
 }
 
-MT_INLINE void mt_samplerDescriptor_set_mipFilter(MTSamplerDescriptor sampler_desc, MTSamplerMipFilter mip_filter) {
-    ms_send_uint(sampler_desc, sel_getUid("setMipFilter:"), mip_filter);
+MT_INLINE void mt_samplerDescriptor_set_mip_filter(MTSamplerDescriptor desc, NSUInteger mip_filter) {
+    SEL sel = sel_registerName("setMipFilter:");
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel, mip_filter);
 }
 
-MT_INLINE void mt_samplerDescriptor_set_maxAnisotropy(MTSamplerDescriptor sampler_desc, NSUInteger max_anisotropy) {
-    ms_send_uint(sampler_desc, sel_getUid("setMaxAnisotropy:"), max_anisotropy);
+MT_INLINE void mt_sampler_descriptor_set_max_anisotropy(MTSamplerDescriptor desc, NSUInteger max_anisotropy) {
+    SEL sel = sel_registerName("setMaxAnisotropy:");
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel, max_anisotropy);
 }
 
-MT_INLINE void mt_samplerDescriptor_set_sAddressMode(MTSamplerDescriptor sampler_desc, MTSamplerAddressMode addr_mode) {
-    ms_send_uint(sampler_desc, sel_getUid("setSAddressMode:"), addr_mode);
+MT_INLINE void mt_sampler_descriptor_set_s_address_mode(MTSamplerDescriptor desc, NSUInteger mode) {
+    SEL sel = sel_registerName("setSAddressMode:");
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel, mode);
 }
 
-MT_INLINE void mt_samplerDescriptor_set_tAddressMode(MTSamplerDescriptor sampler_desc, MTSamplerAddressMode addr_mode) {
-    ms_send_uint(sampler_desc, sel_getUid("setTAddressMode:"), addr_mode);
+MT_INLINE void mt_sampler_descriptor_set_t_address_mode(MTSamplerDescriptor desc, NSUInteger mode) {
+    SEL sel = sel_registerName("setTAddressMode:");
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel, mode);
 }
 
-MT_INLINE void mt_samplerDescriptor_set_rAddressMode(MTSamplerDescriptor sampler_desc, MTSamplerAddressMode addr_mode) {
-    ms_send_uint(sampler_desc, sel_getUid("setRAddressMode:"), addr_mode);
+MT_INLINE void mt_sampler_descriptor_set_r_address_mode(MTSamplerDescriptor desc, NSUInteger mode) {
+    SEL sel = sel_registerName("setRAddressMode:");
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel, mode);
 }
 
-MT_INLINE void mt_samplerDescriptor_set_borderColor(MTSamplerDescriptor sampler_desc, MTSamplerBorderColor border_color) {
-    ms_send_uint(sampler_desc, sel_getUid("setBorderColor:"), border_color);
+MT_INLINE void mt_sampler_descriptor_set_border_color(MTSamplerDescriptor desc, NSUInteger color) {
+    SEL sel = sel_registerName("setBorderColor:");
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel, color);
 }
 
-MT_INLINE void mt_samplerDescriptor_set_isNormalizedCoordinates(MTSamplerDescriptor sampler_desc, bool is_normalized) {
-    ms_send_uint(sampler_desc, sel_getUid("setNormalizedCoordinates:"), is_normalized);
+MT_INLINE void mt_sampler_descriptor_set_is_normalized_coordinates(MTSamplerDescriptor desc, bool is_normalized) {
+    SEL sel = sel_registerName("setNormalizedCoordinates:");
+    ((void (*)(id, SEL, BOOL))objc_msgSend)(desc, sel, (BOOL)is_normalized);
 }
 
 MT_INLINE void mt_sampler_set_lod_min_clamp(MTSamplerDescriptor desc, float min) {

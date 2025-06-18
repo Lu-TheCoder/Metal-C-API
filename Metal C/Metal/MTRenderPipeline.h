@@ -91,14 +91,20 @@ typedef enum MTTessellationControlPointIndexType {
  *
  * NOTE: Should be released using mtRelease();
  */
-MT_INLINE MTRenderPipelineColorAttachmentDescriptor mt_renderPipeline_color_attachment_descriptor_new(void){
-    Class renderPipeColorAttDesc = objc_getClass("MTLRenderPipelineColorAttachmentDescriptor");
-    SEL allocSel = sel_getUid("alloc");
-    
-    void* attDesc = ms_send(renderPipeColorAttDesc, allocSel);
-    SEL initSel = sel_getUid("init");
-    ms_send(attDesc, initSel);
-    return attDesc;
+MT_INLINE MTRenderPipelineColorAttachmentDescriptor mt_renderPipeline_color_attachment_descriptor_new(void) {
+    Class cls = objc_getClass("MTLRenderPipelineColorAttachmentDescriptor");
+
+    // [MTLRenderPipelineColorAttachmentDescriptor alloc]
+    SEL allocSel = sel_registerName("alloc");
+    id (*allocFn)(Class, SEL) = (id (*)(Class, SEL))objc_msgSend;
+    id obj = allocFn(cls, allocSel);
+
+    // [[... alloc] init]
+    SEL initSel = sel_registerName("init");
+    id (*initFn)(id, SEL) = (id (*)(id, SEL))objc_msgSend;
+    obj = initFn(obj, initSel);
+
+    return obj;
 }
 
 // pixelFormat property
@@ -205,22 +211,35 @@ MT_INLINE void mt_render_pipeline_color_attachment_descriptor_set_write_mask(MTR
  *
  * NOTE: Should be released using mtRelease();
  */
+// 1. Create a new MTLRenderPipelineDescriptor instance
 MT_INLINE MTRenderPipelineDescriptor mt_render_pipeline_descriptor_new(void) {
     Class renderPipeDesc = objc_getClass("MTLRenderPipelineDescriptor");
-    SEL allocSel = sel_getUid("alloc");
-    
-    void* renderDesc = ms_send(renderPipeDesc, allocSel);
-    SEL initSel = sel_getUid("init");
-    return ms_send(renderDesc, initSel);
+
+    // [MTLRenderPipelineDescriptor alloc]
+    SEL allocSel = sel_registerName("alloc");
+    id (*allocFn)(Class, SEL) = (id (*)(Class, SEL))objc_msgSend;
+    id allocInstance = allocFn(renderPipeDesc, allocSel);
+
+    // [[MTLRenderPipelineDescriptor alloc] init]
+    SEL initSel = sel_registerName("init");
+    id (*initFn)(id, SEL) = (id (*)(id, SEL))objc_msgSend;
+    return initFn(allocInstance, initSel);
 }
 
-MT_INLINE MTRenderPipelineColorAttachmentDescriptorArray mt_render_pipeline_get_color_attachments(MTRenderPipelineDescriptor* render_pipeline_desc){
-    SEL sel = sel_getUid("colorAttachments");
-    return ms_send(render_pipeline_desc, sel);
+// 2. Get colorAttachments property
+MT_INLINE MTRenderPipelineColorAttachmentDescriptorArray mt_render_pipeline_get_color_attachments(MTRenderPipelineDescriptor render_pipeline_desc) {
+    SEL sel = sel_registerName("colorAttachments");
+    MTRenderPipelineColorAttachmentDescriptorArray (*getter)(id, SEL) =
+        (MTRenderPipelineColorAttachmentDescriptorArray (*)(id, SEL))objc_msgSend;
+    return getter((id)render_pipeline_desc, sel);
 }
 
-MT_INLINE MTRenderPipelineColorAttachmentDescriptor mt_render_pipeline_get_color_attachment_at_index(MTRenderPipelineColorAttachmentDescriptorArray rpcada, unsigned long color_attach_index) {
-    return ms_send_uint(rpcada, sel_getUid("objectAtIndexedSubscript:"), color_attach_index);
+// 3. Get color attachment at a specific index using subscripting
+MT_INLINE MTRenderPipelineColorAttachmentDescriptor mt_render_pipeline_get_color_attachment_at_index(MTRenderPipelineColorAttachmentDescriptorArray array, unsigned long color_attach_index) {
+    SEL sel = sel_registerName("objectAtIndexedSubscript:");
+    MTRenderPipelineColorAttachmentDescriptor (*getAtIndex)(id, SEL, NSUInteger) =
+        (MTRenderPipelineColorAttachmentDescriptor (*)(id, SEL, NSUInteger))objc_msgSend;
+    return getAtIndex((id)array, sel, color_attach_index);
 }
 
 MT_INLINE MTRenderPipelineColorAttachmentDescriptor
@@ -245,40 +264,70 @@ MT_INLINE void mt_render_pipeline_descriptor_set_label(MTRenderPipelineDescripto
     ((void (*)(id, SEL, id))objc_msgSend)(desc, sel, str);
 }
 
+// -------------------
+// Setters
+// -------------------
+
 MT_INLINE void mt_render_pipeline_descriptor_set_vertex_function(MTRenderPipelineDescriptor renderPipelineDesc, MTFunction* vertFunction) {
-    ms_send_void(renderPipelineDesc, sel_getUid("setVertexFunction:"), vertFunction);
+    SEL sel = sel_registerName("setVertexFunction:");
+    void (*msgSendVoidId)(id, SEL, id) = (void (*)(id, SEL, id))objc_msgSend;
+    msgSendVoidId((id)renderPipelineDesc, sel, (id)vertFunction);
 }
 
 MT_INLINE void mt_render_pipeline_descriptor_set_fragment_function(MTRenderPipelineDescriptor renderPipelineDesc, MTFunction* fragFunction) {
-    ms_send_void(renderPipelineDesc, sel_getUid("setFragmentFunction:"), fragFunction);
+    SEL sel = sel_registerName("setFragmentFunction:");
+    void (*msgSendVoidId)(id, SEL, id) = (void (*)(id, SEL, id))objc_msgSend;
+    msgSendVoidId((id)renderPipelineDesc, sel, (id)fragFunction);
 }
 
 MT_INLINE void mt_render_pipeline_descriptor_set_vertex_descriptor(MTRenderPipelineDescriptor renderPipelineDesc, MTVertexDescriptor* vertDesc) {
-    ms_send_void(renderPipelineDesc, sel_getUid("setVertexDescriptor:"), vertDesc);
+    SEL sel = sel_registerName("setVertexDescriptor:");
+    void (*msgSendVoidId)(id, SEL, id) = (void (*)(id, SEL, id))objc_msgSend;
+    msgSendVoidId((id)renderPipelineDesc, sel, (id)vertDesc);
 }
 
 MT_INLINE void mt_render_pipeline_descriptor_set_raster_sample_count(MTRenderPipelineDescriptor renderPipelineDesc, uintptr_t count) {
-    void_ms_send_uint(renderPipelineDesc, sel_getUid("setRasterSampleCount:"), count);
+    SEL sel = sel_registerName("setRasterSampleCount:");
+    void (*msgSendVoidUInt)(id, SEL, uintptr_t) = (void (*)(id, SEL, uintptr_t))objc_msgSend;
+    msgSendVoidUInt((id)renderPipelineDesc, sel, count);
 }
 
 MT_INLINE void mt_render_pipeline_descriptor_set_depth_attachment_pixel_format(MTRenderPipelineDescriptor desc, MTPixelFormat format) {
-    SEL sel = sel_getUid("setDepthAttachmentPixelFormat:");
-    void_ms_send_uint(desc, sel, format);
+    SEL sel = sel_registerName("setDepthAttachmentPixelFormat:");
+    void (*msgSendVoidUInt)(id, SEL, MTPixelFormat) = (void (*)(id, SEL, MTPixelFormat))objc_msgSend;
+    msgSendVoidUInt((id)desc, sel, format);
 }
 
 MT_INLINE void mt_render_pipeline_descriptor_set_stencil_attachment_pixel_format(MTRenderPipelineDescriptor desc, MTPixelFormat format) {
-    SEL sel = sel_getUid("setStencilAttachmentPixelFormat:");
-    void_ms_send_uint(desc, sel, format);
+    SEL sel = sel_registerName("setStencilAttachmentPixelFormat:");
+    void (*msgSendVoidUInt)(id, SEL, MTPixelFormat) = (void (*)(id, SEL, MTPixelFormat))objc_msgSend;
+    msgSendVoidUInt((id)desc, sel, format);
 }
 
 MT_INLINE void mt_render_pipeline_descriptor_set_color_attachments_pixel_format(MTRenderPipelineDescriptor renderPipelineDesc, unsigned long color_attach_index, MTPixelFormat format) {
-    MTRenderPipelineColorAttachmentDescriptor* color_attachments = mt_render_pipeline_get_color_attachments(renderPipelineDesc);
-    ms_send_uint(mt_render_pipeline_get_color_attachment_at_index(color_attachments, color_attach_index), sel_getUid("setPixelFormat:"), format);
+    // Get colorAttachments: [renderPipelineDesc colorAttachments]
+    SEL sel_colorAttachments = sel_registerName("colorAttachments");
+    MTRenderPipelineColorAttachmentDescriptorArray (*msgSendColorAttachments)(id, SEL) =
+        (MTRenderPipelineColorAttachmentDescriptorArray (*)(id, SEL))objc_msgSend;
+    MTRenderPipelineColorAttachmentDescriptorArray attachments = msgSendColorAttachments((id)renderPipelineDesc, sel_colorAttachments);
+
+    // Get colorAttachment at index: [attachments objectAtIndexedSubscript:index]
+    SEL sel_atIndex = sel_registerName("objectAtIndexedSubscript:");
+    MTRenderPipelineColorAttachmentDescriptor (*msgSendAtIndex)(id, SEL, NSUInteger) =
+        (MTRenderPipelineColorAttachmentDescriptor (*)(id, SEL, NSUInteger))objc_msgSend;
+    MTRenderPipelineColorAttachmentDescriptor attachment = msgSendAtIndex((id)attachments, sel_atIndex, color_attach_index);
+
+    // Set pixel format: [attachment setPixelFormat:format]
+    SEL sel_setPixelFormat = sel_registerName("setPixelFormat:");
+    void (*msgSendSetPixelFormat)(id, SEL, MTPixelFormat) =
+        (void (*)(id, SEL, MTPixelFormat))objc_msgSend;
+    msgSendSetPixelFormat((id)attachment, sel_setPixelFormat, format);
 }
 
 MT_INLINE void mt_render_pipeline_descriptor_reset(MTRenderPipelineDescriptor desc) {
-    SEL sel = sel_getUid("reset");
-    ms_send(desc, sel);
+    SEL sel_reset = sel_registerName("reset");
+    void (*msgSendReset)(id, SEL) = (void (*)(id, SEL))objc_msgSend;
+    msgSendReset((id)desc, sel_reset);
 }
 
 MT_INLINE MTShaderValidation mt_render_pipeline_descriptor_get_shader_validation(MTRenderPipelineDescriptor desc) {

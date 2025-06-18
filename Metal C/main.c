@@ -281,7 +281,7 @@ int main(int argc, const char * argv[]) {
     save_texture_as_gpu_ready_bin("./testTexture.png", "./testTexture.bin");
     
     MTTextureDescriptor texture_desc2 = mt_texture_descriptor_create(MTPixelFormatRGBA8Unorm, texWidth, texHeight, false);
-    mt_textureDescriptor_set_storageMode(texture_desc2, MTStorageModeShared);
+    mt_texture_descriptor_set_storage_mode(texture_desc2, MTStorageModeShared);
     
     MTURL path_url = mt_url_init_with_path(mt_string_from_utf8("./testTexture.bin"));
     MTIOFileHandle file = mt_device_new_io_file_handle(device, path_url, error);
@@ -310,9 +310,9 @@ int main(int argc, const char * argv[]) {
     stbi_image_free(textureBytes);
     
     // Create a Sampler State
-    MTSamplerDescriptor* samplerDesc = mt_samplerDescriptor_new();
-    mt_samplerDescriptor_set_minFilter(samplerDesc, MTSamplerMinMagFilterLinear);
-    mt_samplerDescriptor_set_magFilter(samplerDesc, MTSamplerMinMagFilterLinear);
+    MTSamplerDescriptor* samplerDesc = mt_sampler_descriptor_new();
+    mt_sampler_descriptor_set_min_filter(samplerDesc, MTSamplerMinMagFilterLinear);
+    mt_sampler_descriptor_set_mag_filter(samplerDesc, MTSamplerMinMagFilterLinear);
 
     MTSamplerState* samplerState = mt_device_create_sampler_state(device, samplerDesc);
     
@@ -493,7 +493,7 @@ int main(int argc, const char * argv[]) {
         MTDrawable drawable = platform_get_next_drawable();
         
         MTRenderPassDescriptor renderPass = mt_renderpass_descriptor_new();
-        MTCommandBuffer cmdBuffer = mt_commandBuffer_new(queue);
+        MTCommandBuffer cmdBuffer = mt_command_queue_create_commandBuffer(queue);
         
         MTRenderPassColorAttachmentDescriptorArray colorAttachments = mt_renderpass_color_attachment_get_color_attachments(renderPass);
         MTRenderPassColorAttachmentDescriptor colorAttachment = mt_renderpass_get_color_attachment_at_index(colorAttachments, 0);

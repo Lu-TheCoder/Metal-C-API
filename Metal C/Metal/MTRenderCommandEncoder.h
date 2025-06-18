@@ -118,21 +118,25 @@ typedef void* MTVisibleFunctionTable;
 typedef void* MTIntersectionFunctionTable;
 typedef void* MTAccelerationStructure;
 
-MTRenderCommandEncoder mt_renderCommand_encoder_new(MTCommandBuffer cmdBuf, MTRenderPassDescriptor* renderpassDesc){
-    SEL selRCEWDescSel = sel_getUid("renderCommandEncoderWithDescriptor:");
-    return ms_send_void(cmdBuf, selRCEWDescSel, renderpassDesc);
+// Create a new render command encoder from a command buffer and render pass descriptor
+MT_INLINE MTRenderCommandEncoder mt_renderCommand_encoder_new(MTCommandBuffer cmdBuf, MTRenderPassDescriptor renderpassDesc) {
+    SEL sel = sel_registerName("renderCommandEncoderWithDescriptor:");
+    return ((id (*)(id, SEL, id))objc_msgSend)(cmdBuf, sel, renderpassDesc);
 }
 
-void mt_renderCommand_encoder_end_encoding(MTRenderCommandEncoder renderCmdEncoder){
-    SEL sel = sel_getUid("endEncoding");
-     ms_send(renderCmdEncoder, sel);
+// End encoding on a render command encoder
+MT_INLINE void mt_renderCommand_encoder_end_encoding(MTRenderCommandEncoder encoder) {
+    SEL sel = sel_registerName("endEncoding");
+    ((void (*)(id, SEL))objc_msgSend)(encoder, sel);
 }
 
-void mt_renderCommand_encoder_set_pipeline_state(MTRenderCommandEncoder render_cmd_enc, MTRenderPipelineState pipeline_state){
-    ms_send_void(render_cmd_enc, sel_getUid("setRenderPipelineState:"), pipeline_state);
+// Set the render pipeline state on a render command encoder
+MT_INLINE void mt_renderCommand_encoder_set_pipeline_state(MTRenderCommandEncoder encoder, MTRenderPipelineState pipelineState) {
+    SEL sel = sel_registerName("setRenderPipelineState:");
+    ((void (*)(id, SEL, id))objc_msgSend)(encoder, sel, pipelineState);
 }
 
-MTViewport mt_viewport_make(double origin_x, double origin_y, double width, double height, double znear, double zfar)
+MT_INLINE MTViewport mt_viewport_make(double origin_x, double origin_y, double width, double height, double znear, double zfar)
 {
     MTViewport viewport = {
         .originX = origin_x,
@@ -1090,6 +1094,8 @@ MT_INLINE void mt_renderCommand_encoder_set_object_sampler_state(
     );
 }
 
-void mt_renderCommand_encoder_set_tessellation_factor_scale(MTRenderCommandEncoder render_cmd_enc, float scale) {
-    void_ms_send_float(render_cmd_enc, sel_getUid("setTessellationFactorScale:"), scale);
+// Set the tessellation factor scale on a render command encoder
+MT_INLINE void mt_renderCommand_encoder_set_tessellation_factor_scale(MTRenderCommandEncoder encoder, float scale) {
+    SEL sel = sel_registerName("setTessellationFactorScale:");
+    ((void (*)(id, SEL, float))objc_msgSend)(encoder, sel, scale);
 }

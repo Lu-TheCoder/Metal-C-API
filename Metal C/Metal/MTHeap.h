@@ -76,60 +76,94 @@ MT_INLINE MTBuffer mt_heap_create_buffer_at_offset(MTHeap heap, uintptr_t length
     return (MTBuffer)func((id)heap, sel, length, options, offset);
 }
 
-MT_INLINE void mt_heap_descriptor_set_size(MTHeapDescriptor* desc, uintptr_t value) {
-    void_ms_send_uint(desc, sel_getUid("setSize:"), value);
+// -------------------
+// Setters
+// -------------------
+
+MT_INLINE void mt_heap_descriptor_set_size(MTHeapDescriptor desc, uintptr_t value) {
+    SEL sel = sel_registerName("setSize:");
+    void (*msgSendVoidUInt)(id, SEL, uintptr_t) = (void (*)(id, SEL, uintptr_t))objc_msgSend;
+    msgSendVoidUInt((id)desc, sel, value);
 }
 
-MT_INLINE void mt_heap_descriptor_set_storageMode(MTHeapDescriptor* desc, MTStorageMode mode) {
-    void_ms_send_uint(desc, sel_getUid("setStorageMode:"), mode);
+MT_INLINE void mt_heap_descriptor_set_storageMode(MTHeapDescriptor desc, MTStorageMode mode) {
+    SEL sel = sel_registerName("setStorageMode:");
+    void (*msgSendVoidUInt)(id, SEL, MTStorageMode) = (void (*)(id, SEL, MTStorageMode))objc_msgSend;
+    msgSendVoidUInt((id)desc, sel, mode);
 }
 
-MT_INLINE void mt_heap_descriptor_set_cpu_cacheMode(MTHeapDescriptor* desc, MTCPUCacheMode mode) {
-    void_ms_send_uint(desc, sel_getUid("setCpuCacheMode:"), mode);
+MT_INLINE void mt_heap_descriptor_set_cpu_cacheMode(MTHeapDescriptor desc, MTCPUCacheMode mode) {
+    SEL sel = sel_registerName("setCpuCacheMode:");
+    void (*msgSendVoidUInt)(id, SEL, MTCPUCacheMode) = (void (*)(id, SEL, MTCPUCacheMode))objc_msgSend;
+    msgSendVoidUInt((id)desc, sel, mode);
 }
 
-MT_INLINE void mt_heap_descriptor_set_sparse_pageSize(MTHeapDescriptor* desc, MTSparsePageSize size) {
-    void_ms_send_uint(desc, sel_getUid("setSparsePageSize:"), size);
+MT_INLINE void mt_heap_descriptor_set_sparse_pageSize(MTHeapDescriptor desc, MTSparsePageSize size) {
+    SEL sel = sel_registerName("setSparsePageSize:");
+    void (*msgSendVoidUInt)(id, SEL, MTSparsePageSize) = (void (*)(id, SEL, MTSparsePageSize))objc_msgSend;
+    msgSendVoidUInt((id)desc, sel, size);
 }
 
-MT_INLINE void mt_heap_descriptor_set_hazard_trackingMode(MTHeapDescriptor* desc, MTHazardTrackingMode mode) {
-    void_ms_send_uint(desc, sel_getUid("setHazardTrackingMode:"), mode);
+MT_INLINE void mt_heap_descriptor_set_hazard_trackingMode(MTHeapDescriptor desc, MTHazardTrackingMode mode) {
+    SEL sel = sel_registerName("setHazardTrackingMode:");
+    void (*msgSendVoidUInt)(id, SEL, MTHazardTrackingMode) = (void (*)(id, SEL, MTHazardTrackingMode))objc_msgSend;
+    msgSendVoidUInt((id)desc, sel, mode);
 }
 
-MT_INLINE void mt_heap_descriptor_set_resourceOptions(MTHeapDescriptor* desc, MTResourceOptions options) {
-    void_ms_send_uint(desc, sel_getUid("setResourceOptions:"), options);
+MT_INLINE void mt_heap_descriptor_set_resourceOptions(MTHeapDescriptor desc, MTResourceOptions options) {
+    SEL sel = sel_registerName("setResourceOptions:");
+    void (*msgSendVoidUInt)(id, SEL, MTResourceOptions) = (void (*)(id, SEL, MTResourceOptions))objc_msgSend;
+    msgSendVoidUInt((id)desc, sel, options);
 }
 
-MT_INLINE void mt_heap_descriptor_set_heapType(MTHeapDescriptor* desc, MTHeapType type) {
-    void_ms_send_uint(desc, sel_getUid("setType:"), type);
+MT_INLINE void mt_heap_descriptor_set_heapType(MTHeapDescriptor desc, MTHeapType type) {
+    SEL sel = sel_registerName("setType:");
+    void (*msgSendVoidUInt)(id, SEL, MTHeapType) = (void (*)(id, SEL, MTHeapType))objc_msgSend;
+    msgSendVoidUInt((id)desc, sel, type);
 }
 
-// MARK: Getters
+// -------------------
+// Getters
+// -------------------
 
-MT_INLINE uintptr_t mt_heap_descriptor_get_size(MTHeapDescriptor* desc) {
-    return ulong_ms_send(desc, sel_getUid("size"));
+MT_INLINE uintptr_t mt_heap_descriptor_get_size(MTHeapDescriptor desc) {
+    SEL sel = sel_registerName("size");
+    uintptr_t (*msgSendUInt)(id, SEL) = (uintptr_t (*)(id, SEL))objc_msgSend;
+    return msgSendUInt((id)desc, sel);
 }
 
-MT_INLINE MTStorageMode mt_heap_descriptor_get_storageMode(MTHeapDescriptor* desc) {
-    return (MTStorageMode)ulong_ms_send(desc, sel_getUid("storageMode"));
+MT_INLINE MTStorageMode mt_heap_descriptor_get_storageMode(MTHeapDescriptor desc) {
+    SEL sel = sel_registerName("storageMode");
+    MTStorageMode (*msgSendUInt)(id, SEL) = (MTStorageMode (*)(id, SEL))objc_msgSend;
+    return msgSendUInt((id)desc, sel);
 }
 
-MT_INLINE MTCPUCacheMode mt_heap_descriptor_get_cpu_cacheMode(MTHeapDescriptor* desc) {
-    return (MTCPUCacheMode)ulong_ms_send(desc, sel_getUid("cpuCacheMode"));
+MT_INLINE MTCPUCacheMode mt_heap_descriptor_get_cpu_cacheMode(MTHeapDescriptor desc) {
+    SEL sel = sel_registerName("cpuCacheMode");
+    MTCPUCacheMode (*msgSendUInt)(id, SEL) = (MTCPUCacheMode (*)(id, SEL))objc_msgSend;
+    return msgSendUInt((id)desc, sel);
 }
 
-MT_INLINE MTSparsePageSize mt_heap_descriptor_get_sparse_pageSize(MTHeapDescriptor* desc) {
-    return (MTSparsePageSize)ulong_ms_send(desc, sel_getUid("sparsePageSize"));
+MT_INLINE MTSparsePageSize mt_heap_descriptor_get_sparse_pageSize(MTHeapDescriptor desc) {
+    SEL sel = sel_registerName("sparsePageSize");
+    MTSparsePageSize (*msgSendUInt)(id, SEL) = (MTSparsePageSize (*)(id, SEL))objc_msgSend;
+    return msgSendUInt((id)desc, sel);
 }
 
-MT_INLINE MTHazardTrackingMode mt_heap_descriptor_get_hazard_trackingMode(MTHeapDescriptor* desc) {
-    return (MTHazardTrackingMode)ulong_ms_send(desc, sel_getUid("hazardTrackingMode"));
+MT_INLINE MTHazardTrackingMode mt_heap_descriptor_get_hazard_trackingMode(MTHeapDescriptor desc) {
+    SEL sel = sel_registerName("hazardTrackingMode");
+    MTHazardTrackingMode (*msgSendUInt)(id, SEL) = (MTHazardTrackingMode (*)(id, SEL))objc_msgSend;
+    return msgSendUInt((id)desc, sel);
 }
 
-MT_INLINE MTResourceOptions mt_heap_descriptor_get_resourceOptions(MTHeapDescriptor* desc) {
-    return (MTResourceOptions)ulong_ms_send(desc, sel_getUid("resourceOptions"));
+MT_INLINE MTResourceOptions mt_heap_descriptor_get_resourceOptions(MTHeapDescriptor desc) {
+    SEL sel = sel_registerName("resourceOptions");
+    MTResourceOptions (*msgSendUInt)(id, SEL) = (MTResourceOptions (*)(id, SEL))objc_msgSend;
+    return msgSendUInt((id)desc, sel);
 }
 
-MT_INLINE MTHeapType mt_heapDescriptor_get_heapType(MTHeapDescriptor* desc) {
-    return (MTHeapType)ulong_ms_send(desc, sel_getUid("type"));
+MT_INLINE MTHeapType mt_heapDescriptor_get_heapType(MTHeapDescriptor desc) {
+    SEL sel = sel_registerName("type");
+    MTHeapType (*msgSendUInt)(id, SEL) = (MTHeapType (*)(id, SEL))objc_msgSend;
+    return msgSendUInt((id)desc, sel);
 }

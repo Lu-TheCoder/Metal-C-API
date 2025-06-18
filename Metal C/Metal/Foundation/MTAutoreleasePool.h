@@ -7,31 +7,23 @@
 
 #pragma once
 #include <objc/runtime.h>
-#include "../../ObjectiveCCore/Objectivec.h"
+#include "defines.h"
 
 typedef void* MTAutoreleasePool;
 
-typedef void* (*MsgSendInitFn)(void*, SEL);
-typedef void  (*MsgSendVoidFn)(void*, SEL);
+MT_INLINE MTAutoreleasePool mt_autoreleasepool_create(void) {
+    Class NSAutoreleasePoolClass = objc_getClass("NSAutoreleasePool");
 
-static MsgSendInitFn _msgSendInit = (MsgSendInitFn)objc_msgSend;
-static MsgSendVoidFn _msgSendVoid = (MsgSendVoidFn)objc_msgSend;
+    SEL allocSel = sel_registerName("alloc");
+    SEL initSel  = sel_registerName("init");
 
-MTAutoreleasePool mt_autoreleasepool_create(void) {
-    Class nsAutoreleasePoolClass = objc_getClass("NSAutoreleasePool");
-    void* pool = class_createInstance(nsAutoreleasePoolClass, 0);
-    SEL initSel = sel_registerName("init");
-    pool = _msgSendInit(pool, initSel);
-    return pool;
+    id pool = ((id (*)(id, SEL))objc_msgSend)((id)NSAutoreleasePoolClass, allocSel);
+    pool = ((id (*)(id, SEL))objc_msgSend)(pool, initSel);
+
+    return (MTAutoreleasePool)pool;
 }
 
-void mt_autoreleasepool_drain(MTAutoreleasePool pool) {
-    SEL drainSel = sel_registerName("drain");
-    _msgSendVoid(pool, drainSel);
-}
-
-void mt_autoreleasepool_release(MTAutoreleasePool pool) {
+MT_INLINE void mt_autoreleasepool_drain(MTAutoreleasePool pool) {
     SEL releaseSel = sel_registerName("release");
-    _msgSendVoid(pool, releaseSel);
+    ((void (*)(id, SEL))objc_msgSend)((id)pool, releaseSel);
 }
-

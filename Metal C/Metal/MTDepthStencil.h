@@ -37,94 +37,96 @@ typedef void* MTDepthStencilState;
 
 // MARK: MTStencilDescriptor
 
-MT_INLINE MTStencilDescriptor* mt_stencil_descriptor_new(void) {
-    return NSCLASS_ALLOC_INIT("MTLStencilDescriptor");
+MT_INLINE MTStencilDescriptor mt_stencil_descriptor_new(void) {
+    Class cls = objc_getClass("MTLStencilDescriptor");
+    id obj = ((id (*)(Class, SEL))objc_msgSend)(cls, sel_getUid("alloc"));
+    return ((id (*)(id, SEL))objc_msgSend)(obj, sel_getUid("init"));
 }
 
 MT_INLINE void mt_stencil_descriptor_set_stencil_compare_function(MTStencilDescriptor desc, MTCompareFunction compare_func) {
-    void_ms_send_uint(desc, sel_getUid("setStencilCompareFunction:"), compare_func);
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel_getUid("setStencilCompareFunction:"), compare_func);
 }
 
 MT_INLINE MTCompareFunction mt_stencil_descriptor_get_stencil_compare_function(MTStencilDescriptor desc) {
-    return (MTCompareFunction)ulong_ms_send(desc, sel_getUid("stencilCompareFunction"));
+    return ((MTCompareFunction (*)(id, SEL))objc_msgSend)(desc, sel_getUid("stencilCompareFunction"));
 }
 
 MT_INLINE void mt_stencil_descriptor_set_stencil_failure_operation(MTStencilDescriptor desc, MTStencilOperation operation) {
-    void_ms_send_uint(desc, sel_getUid("setStencilFailureOperation:"), operation);
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel_getUid("setStencilFailureOperation:"), operation);
 }
 
 MT_INLINE MTStencilOperation mt_stencil_descriptor_get_stencil_failure_operation(MTStencilDescriptor desc) {
-    return (MTStencilOperation)ulong_ms_send(desc, sel_getUid("stencilFailureOperation"));
+    return ((MTStencilOperation (*)(id, SEL))objc_msgSend)(desc, sel_getUid("stencilFailureOperation"));
 }
 
 MT_INLINE void mt_stencil_descriptor_set_depth_failure_operation(MTStencilDescriptor desc, MTStencilOperation operation) {
-    void_ms_send_uint(desc, sel_getUid("setDepthFailureOperation:"), operation);
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel_getUid("setDepthFailureOperation:"), operation);
 }
 
 MT_INLINE MTStencilOperation mt_stencil_descriptor_get_depth_failure_operation(MTStencilDescriptor desc) {
-    return (MTStencilOperation)ulong_ms_send(desc, sel_getUid("depthFailureOperation"));
+    return ((MTStencilOperation (*)(id, SEL))objc_msgSend)(desc, sel_getUid("depthFailureOperation"));
 }
 
 MT_INLINE void mt_stencil_descriptor_set_depth_stencil_pass_operation(MTStencilDescriptor desc, MTStencilOperation operation) {
-    void_ms_send_uint(desc, sel_getUid("setDepthStencilPassOperation:"), operation);
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel_getUid("setDepthStencilPassOperation:"), operation);
 }
 
 MT_INLINE MTStencilOperation mt_stencil_descriptor_get_depth_stencil_pass_operation(MTStencilDescriptor desc) {
-    return (MTStencilOperation)ulong_ms_send(desc, sel_getUid("depthStencilPassOperation"));
+    return ((MTStencilOperation (*)(id, SEL))objc_msgSend)(desc, sel_getUid("depthStencilPassOperation"));
 }
 
 MT_INLINE void mt_stencil_descriptor_set_read_mask(MTStencilDescriptor desc, uint32_t value) {
-    void_ms_send_uint32(desc, sel_getUid("setReadMask:"), value);
+    ((void (*)(id, SEL, uint32_t))objc_msgSend)(desc, sel_getUid("setReadMask:"), value);
 }
 
 MT_INLINE uint32_t mt_stencil_descriptor_get_read_mask(MTStencilDescriptor desc) {
-    return uint32_ms_send(desc, sel_getUid("readMask"));
+    return ((uint32_t (*)(id, SEL))objc_msgSend)(desc, sel_getUid("readMask"));
 }
 
 MT_INLINE void mt_stencil_descriptor_set_write_mask(MTStencilDescriptor desc, uint32_t value) {
-    void_ms_send_uint32(desc, sel_getUid("setWriteMask:"), value);
+    ((void (*)(id, SEL, uint32_t))objc_msgSend)(desc, sel_getUid("setWriteMask:"), value);
 }
 
 MT_INLINE uint32_t mt_stencil_descriptor_get_write_mask(MTStencilDescriptor desc) {
-    return uint32_ms_send(desc, sel_getUid("writeMask"));
+    return ((uint32_t (*)(id, SEL))objc_msgSend)(desc, sel_getUid("writeMask"));
 }
 
-// MARK: MTDepthStencilDescriptor
-
-MT_INLINE MTDepthStencilDescriptor* mt_depth_stencil_descriptor_new(void) {
-    return NSCLASS_ALLOC_INIT("MTLDepthStencilDescriptor");
+MT_INLINE MTDepthStencilDescriptor mt_depth_stencil_descriptor_new(void) {
+    Class cls = objc_getClass("MTLDepthStencilDescriptor");
+    id obj = ((id (*)(Class, SEL))objc_msgSend)(cls, sel_getUid("alloc"));
+    return ((id (*)(id, SEL))objc_msgSend)(obj, sel_getUid("init"));
 }
 
 MT_INLINE void mt_depth_stencil_descriptor_set_depth_compare_function(MTDepthStencilDescriptor desc, MTCompareFunction compare_func) {
-    void_ms_send_uint(desc, sel_getUid("setDepthCompareFunction:"), compare_func);
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel_getUid("setDepthCompareFunction:"), compare_func);
 }
 
 MT_INLINE MTCompareFunction mt_depth_stencil_descriptor_get_depth_compare_function(MTDepthStencilDescriptor desc) {
-    return (MTCompareFunction)ulong_ms_send(desc, sel_getUid("depthCompareFunction"));
+    return ((MTCompareFunction (*)(id, SEL))objc_msgSend)(desc, sel_getUid("depthCompareFunction"));
 }
 
 MT_INLINE void mt_depth_stencil_descriptor_set_is_depth_write_enabled(MTDepthStencilDescriptor desc, bool is_write_enabled) {
-    void_ms_send_bool(desc, sel_getUid("setDepthWriteEnabled:"), is_write_enabled);
+    ((void (*)(id, SEL, BOOL))objc_msgSend)(desc, sel_getUid("setDepthWriteEnabled:"), is_write_enabled);
 }
 
 MT_INLINE bool mt_depth_stencil_descriptor_get_is_depth_write_enabled(MTDepthStencilDescriptor desc) {
-    return bool_ms_send(desc, sel_getUid("isDepthWriteEnabled"));
+    return ((BOOL (*)(id, SEL))objc_msgSend)(desc, sel_getUid("isDepthWriteEnabled"));
 }
 
 MT_INLINE void mt_depth_stencil_descriptor_set_front_face_stencil(MTDepthStencilDescriptor desc, MTStencilDescriptor front_face_stencil) {
-    void_ms_send_ptr(desc, sel_getUid("setFrontFaceStencil:"), front_face_stencil);
+    ((void (*)(id, SEL, id))objc_msgSend)(desc, sel_getUid("setFrontFaceStencil:"), front_face_stencil);
 }
 
-MT_INLINE MTStencilDescriptor* mt_depth_stencil_descriptor_get_front_face_stencil(MTDepthStencilDescriptor desc) {
-    return ptr_ms_send(desc, sel_getUid("frontFaceStencil"));
+MT_INLINE MTStencilDescriptor mt_depth_stencil_descriptor_get_front_face_stencil(MTDepthStencilDescriptor desc) {
+    return ((id (*)(id, SEL))objc_msgSend)(desc, sel_getUid("frontFaceStencil"));
 }
 
 MT_INLINE void mt_depth_stencil_descriptor_set_back_face_stencil(MTDepthStencilDescriptor desc, MTStencilDescriptor back_face_stencil) {
-    void_ms_send_ptr(desc, sel_getUid("setBackFaceStencil:"), back_face_stencil);
+    ((void (*)(id, SEL, id))objc_msgSend)(desc, sel_getUid("setBackFaceStencil:"), back_face_stencil);
 }
 
-MT_INLINE MTStencilDescriptor* mt_depth_stencil_descriptor_get_back_face_stencil(MTDepthStencilDescriptor desc) {
-    return ptr_ms_send(desc, sel_getUid("backFaceStencil"));
+MT_INLINE MTStencilDescriptor mt_depth_stencil_descriptor_get_back_face_stencil(MTDepthStencilDescriptor desc) {
+    return ((id (*)(id, SEL))objc_msgSend)(desc, sel_getUid("backFaceStencil"));
 }
 
 // MARK: MTDepthStencilState

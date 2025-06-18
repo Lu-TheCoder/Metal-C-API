@@ -46,7 +46,7 @@ typedef void* MTRenderPassDescriptor;
 
 typedef void* MTRenderPassColorAttachmentDescriptorArray;
 
-void mtSetClearColor(MTClearColor* clearColor, double red, double green, double blue, double alpha){
+MT_INLINE void mtSetClearColor(MTClearColor* clearColor, double red, double green, double blue, double alpha){
     clearColor->red = red;
     clearColor->green = green;
     clearColor->blue = blue;
@@ -58,41 +58,47 @@ void mtSetClearColor(MTClearColor* clearColor, double red, double green, double 
  *
  * NOTE: Should be released using mtRelease();
  */
+// Create a new MTLRenderPassDescriptor
 MT_INLINE MTRenderPassDescriptor mt_renderpass_descriptor_new(void) {
-    Class renderpassDesc = objc_getClass("MTLRenderPassDescriptor");
-    SEL allocSel = sel_getUid("alloc");
-    
-    void* pass = ms_send(renderpassDesc, allocSel);
-    SEL initSel = sel_getUid("init");
-    return ms_send(pass, initSel);
+    Class cls = objc_getClass("MTLRenderPassDescriptor");
+    SEL allocSel = sel_registerName("alloc");
+    id obj = ((id (*)(Class, SEL))objc_msgSend)(cls, allocSel);
+
+    SEL initSel = sel_registerName("init");
+    return ((id (*)(id, SEL))objc_msgSend)(obj, initSel);
 }
 
-MT_INLINE void mtRenderPassDescSetSampleCount(MTRenderPassDescriptor ptr, NSUInteger width){
-    SEL sel = sel_getUid("setRenderTargetWidth:");
-    ms_send_uint(ptr, sel, width);
+// Set render target width (same method used by two wrappers)
+MT_INLINE void mtRenderPassDescSetSampleCount(MTRenderPassDescriptor desc, NSUInteger count) {
+    SEL sel = sel_registerName("setRenderTargetWidth:");
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel, count);
 }
 
-MT_INLINE void mtRenderPassDescSetTargetWidth(MTRenderPassDescriptor ptr, NSUInteger width){
-    SEL sel = sel_getUid("setRenderTargetWidth:");
-    ms_send_uint(ptr, sel, width);
+MT_INLINE void mtRenderPassDescSetTargetWidth(MTRenderPassDescriptor desc, NSUInteger width) {
+    SEL sel = sel_registerName("setRenderTargetWidth:");
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel, width);
 }
 
-MT_INLINE void mtRenderPassDescSetTargetHeight(MTRenderPassDescriptor ptr, NSUInteger height){
-    SEL sel = sel_getUid("setRenderTargetHeight:");
-    ms_send_uint(ptr, sel, height);
+MT_INLINE void mtRenderPassDescSetTargetHeight(MTRenderPassDescriptor desc, NSUInteger height) {
+    SEL sel = sel_registerName("setRenderTargetHeight:");
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel, height);
 }
 
-MT_INLINE MTRenderPassColorAttachmentDescriptorArray mt_renderpass_color_attachment_get_color_attachments(MTRenderPassDescriptor renderpass){
-    SEL attchSel = sel_getUid("colorAttachments");
-    return ms_send(renderpass, attchSel);
+// Get color attachments array from render pass descriptor
+MT_INLINE MTRenderPassColorAttachmentDescriptorArray mt_renderpass_color_attachment_get_color_attachments(MTRenderPassDescriptor desc) {
+    SEL sel = sel_registerName("colorAttachments");
+    return ((id (*)(id, SEL))objc_msgSend)(desc, sel);
 }
 
-MT_INLINE void mt_renderpass_color_attachment_set_loadAction(void* ptr, MTLoadAction action) {
-    ms_send_uint(ptr, sel_getUid("setLoadAction:"), action);
+// Set load/store actions on color attachment descriptor
+MT_INLINE void mt_renderpass_color_attachment_set_loadAction(void* attachment, MTLoadAction action) {
+    SEL sel = sel_registerName("setLoadAction:");
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(attachment, sel, action);
 }
 
-MT_INLINE void mt_renderpass_color_attachment_set_storeAction(void* ptr, MTStoreAction action) {
-    ms_send_uint(ptr, sel_getUid("setStoreAction:"), action);
+MT_INLINE void mt_renderpass_color_attachment_set_storeAction(void* attachment, MTStoreAction action) {
+    SEL sel = sel_registerName("setStoreAction:");
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(attachment, sel, action);
 }
 
 MT_INLINE MTClearColor mt_clear_color_create(double red, double green, double blue, double alpha)
@@ -113,22 +119,78 @@ MT_INLINE void mt_renderpass_color_attachment_set_clearColor(
     ((MsgSendFunc)objc_msgSend)(rpColorAttachDescriptor, sel_getUid("setClearColor:"), color);
 }
 
-MT_INLINE void mt_renderpass_color_attachment_set_texture(MTRenderPassColorAttachmentDescriptor colorDesc, void* texture){
-    ms_send_void(colorDesc, sel_getUid("setTexture:"), texture);
+// Set the texture of a color attachment descriptor
+MT_INLINE void mt_renderpass_color_attachment_set_texture(MTRenderPassColorAttachmentDescriptor colorDesc, void* texture) {
+    SEL sel = sel_registerName("setTexture:");
+    ((void (*)(id, SEL, id))objc_msgSend)(colorDesc, sel, texture);
 }
 
-MT_INLINE MTRenderPassColorAttachmentDescriptor* mt_renderpass_get_color_attachment_at_index(MTRenderPassColorAttachmentDescriptorArray rcadA, NSUInteger attachment_index){
-    SEL selIndex = sel_getUid("objectAtIndexedSubscript:");
-    return  ms_send_uint(rcadA, selIndex, attachment_index);
+// Get color attachment descriptor at given index from array
+MT_INLINE MTRenderPassColorAttachmentDescriptor mt_renderpass_get_color_attachment_at_index(MTRenderPassColorAttachmentDescriptorArray array, NSUInteger index) {
+    SEL sel = sel_registerName("objectAtIndexedSubscript:");
+    return ((id (*)(id, SEL, NSUInteger))objc_msgSend)(array, sel, index);
 }
 
-MT_INLINE MTClearColor mt_renderPass_color_attachment_get_clear_color(MTRenderPassColorAttachmentDescriptor rpColorAttachDescriptor) {
-    typedef MTClearColor (*MsgSendFunc)(void*, SEL);
-    return ((MsgSendFunc)objc_msgSend)(rpColorAttachDescriptor, sel_getUid("clearColor"));
+// Get clearColor from a color attachment descriptor
+MT_INLINE MTClearColor mt_renderPass_color_attachment_get_clear_color(MTRenderPassColorAttachmentDescriptor desc) {
+    SEL sel = sel_registerName("clearColor");
+    return ((MTClearColor (*)(id, SEL))objc_msgSend)(desc, sel);
 }
 
-MT_INLINE void mtSetRenderPassColorAttachmentDescriptorClearColor(MTRenderPassColorAttachmentDescriptor rpColorAttachDescriptor, MTClearColor* color){
-    ms_send_v(rpColorAttachDescriptor, sel_getUid("setClearColor:"), color);
+// Set clearColor on a color attachment descriptor
+MT_INLINE void mtSetRenderPassColorAttachmentDescriptorClearColor(MTRenderPassColorAttachmentDescriptor desc, MTClearColor* color) {
+    SEL sel = sel_registerName("setClearColor:");
+    ((void (*)(id, SEL, MTClearColor))objc_msgSend)(desc, sel, *color);
 }
 
 
+
+MT_INLINE void mt_renderpass_color_attachments_set_texture(MTRenderPassDescriptor desc, NSUInteger index, MTTexture texture) {
+    MTRenderPassColorAttachmentDescriptorArray arr = ((id (*)(id, SEL))objc_msgSend)(desc, sel_getUid("colorAttachments"));
+    id attachment = ((id (*)(id, SEL, NSUInteger))objc_msgSend)(arr, sel_getUid("objectAtIndexedSubscript:"), index);
+    ((void (*)(id, SEL, id))objc_msgSend)(attachment, sel_getUid("setTexture:"), texture);
+}
+
+MT_INLINE void mt_renderpass_color_attachments_set_resolve_texture(MTRenderPassDescriptor desc, NSUInteger index, MTTexture resolve_texture) {
+    MTRenderPassColorAttachmentDescriptorArray arr = ((id (*)(id, SEL))objc_msgSend)(desc, sel_getUid("colorAttachments"));
+    id attachment = ((id (*)(id, SEL, NSUInteger))objc_msgSend)(arr, sel_getUid("objectAtIndexedSubscript:"), index);
+    ((void (*)(id, SEL, id))objc_msgSend)(attachment, sel_getUid("setResolveTexture:"), resolve_texture);
+}
+
+MT_INLINE void mt_renderpass_color_attachments_set_load_action(MTRenderPassDescriptor desc, NSUInteger index, MTLoadAction action) {
+    MTRenderPassColorAttachmentDescriptorArray arr = ((id (*)(id, SEL))objc_msgSend)(desc, sel_getUid("colorAttachments"));
+    id attachment = ((id (*)(id, SEL, NSUInteger))objc_msgSend)(arr, sel_getUid("objectAtIndexedSubscript:"), index);
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(attachment, sel_getUid("setLoadAction:"), action);
+}
+
+MT_INLINE void mt_renderpass_color_attachments_set_store_action(MTRenderPassDescriptor desc, NSUInteger index, MTStoreAction action) {
+    MTRenderPassColorAttachmentDescriptorArray arr = ((id (*)(id, SEL))objc_msgSend)(desc, sel_getUid("colorAttachments"));
+    id attachment = ((id (*)(id, SEL, NSUInteger))objc_msgSend)(arr, sel_getUid("objectAtIndexedSubscript:"), index);
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(attachment, sel_getUid("setStoreAction:"), action);
+}
+
+MT_INLINE void mt_renderpass_color_attachments_set_clear_color(MTRenderPassDescriptor desc, NSUInteger index, MTClearColor color) {
+    MTRenderPassColorAttachmentDescriptorArray arr = ((id (*)(id, SEL))objc_msgSend)(desc, sel_getUid("colorAttachments"));
+    id attachment = ((id (*)(id, SEL, NSUInteger))objc_msgSend)(arr, sel_getUid("objectAtIndexedSubscript:"), index);
+    ((void (*)(id, SEL, MTClearColor))objc_msgSend)(attachment, sel_getUid("setClearColor:"), color);
+}
+
+MT_INLINE void mt_renderpass_set_depth_texture(MTRenderPassDescriptor desc, MTTexture texture) {
+    id depthAttachment = ((id (*)(id, SEL))objc_msgSend)(desc, sel_getUid("depthAttachment"));
+    ((void (*)(id, SEL, id))objc_msgSend)(depthAttachment, sel_getUid("setTexture:"), texture);
+}
+
+MT_INLINE void mt_renderpass_set_depth_load_action(MTRenderPassDescriptor desc, MTLoadAction action) {
+    id depthAttachment = ((id (*)(id, SEL))objc_msgSend)(desc, sel_getUid("depthAttachment"));
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(depthAttachment, sel_getUid("setLoadAction:"), action);
+}
+
+MT_INLINE void mt_renderpass_set_depth_store_action(MTRenderPassDescriptor desc, MTStoreAction action) {
+    id depthAttachment = ((id (*)(id, SEL))objc_msgSend)(desc, sel_getUid("depthAttachment"));
+    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(depthAttachment, sel_getUid("setStoreAction:"), action);
+}
+
+MT_INLINE void mt_renderpass_set_depth_clear_value(MTRenderPassDescriptor desc, double clearValue) {
+    id depthAttachment = ((id (*)(id, SEL))objc_msgSend)(desc, sel_getUid("depthAttachment"));
+    ((void (*)(id, SEL, double))objc_msgSend)(depthAttachment, sel_getUid("setClearDepth:"), clearValue);
+}

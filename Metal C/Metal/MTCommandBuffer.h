@@ -52,8 +52,8 @@ typedef enum MTCommandEncoderErrorState {
     MTCommandEncoderErrorStateFaulted = 4,
 }MTCommandEncoderErrorState;
 
-MT_INLINE MTCommandBuffer mt_commandBuffer_new(MTCommandQueue* cmdQueue){
-    return (void*) ms_send(cmdQueue, sel_getUid("commandBuffer"));
+MT_INLINE MTCommandBuffer mt_command_queue_create_commandBuffer(MTCommandQueue cmdQueue) {
+    return ((id (*)(id, SEL))objc_msgSend)(cmdQueue, sel_getUid("commandBuffer"));
 }
 
 MT_INLINE MTBlitCommandEncoder mt_command_buffer_get_blit_encoder(MTCommandBuffer cmd_buf) {

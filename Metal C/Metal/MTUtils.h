@@ -7,7 +7,6 @@
 
 #pragma once
 #include <objc/message.h>
-#include "../ObjectiveCCore/Objectivec.h"
 
 #define MT_INLINE __attribute__((always_inline)) inline
 #define MT_PACKED __attribute__((packed))
@@ -33,18 +32,25 @@ ms_send(cls, allocSel);})
 #define NSCLASS(name) \
 ({objc_getClass(name);})
 
-MT_INLINE void mt_release(void* ptr){
-    SEL releaseSel = sel_getUid("release");
-    ms_send(ptr, releaseSel);
+MT_INLINE void mt_release(void* ptr) {
+    SEL releaseSel = sel_registerName("release");
+    void (*msgSend)(id, SEL) = (void (*)(id, SEL))objc_msgSend;
+    msgSend((id)ptr, releaseSel);
 }
 
-MT_INLINE bool mt_is_retained_references(void* ptr){
-    SEL retRefSel = sel_getUid("retainedReferences");
-    return ms_send(ptr, retRefSel);
+MT_INLINE bool mt_is_retained_references(void* ptr) {
+    SEL sel = sel_registerName("retainedReferences");
+    BOOL (*msgSend)(id, SEL) = (BOOL (*)(id, SEL))objc_msgSend;
+    return msgSend((id)ptr, sel);
 }
 
-MT_INLINE void mt_set_retained_references(void* ptr){
-    SEL retRefSel = sel_getUid("setRetainedReferences:");
-    ms_send_bool(ptr, retRefSel, true);
+MT_INLINE void mt_set_retained_references(void* ptr) {
+    SEL sel = sel_registerName("setRetainedReferences:");
+    void (*msgSend)(id, SEL, BOOL) = (void (*)(id, SEL, BOOL))objc_msgSend;
+    msgSend((id)ptr, sel, YES);
 }
 
+MT_INLINE void* mt_retain(void* obj) {
+    if (!obj) return NULL;
+    return ((void* (*)(void*, SEL))objc_msgSend)(obj, sel_registerName("retain"));
+}

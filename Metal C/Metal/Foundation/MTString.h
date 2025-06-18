@@ -6,6 +6,7 @@
 //
 
 #pragma once
+#include "defines.h"
 
 typedef enum MTStringEncoding {
     MTASCIIStringEncoding = 1,
@@ -41,17 +42,6 @@ typedef enum MTStringEncoding {
 //}NSStringCompareOptions;
 
 typedef void* MTString;
-
-MTString* mt_string_new(void){
-    Class _class = objc_getClass("NSString");
-    SEL allocSel = sel_registerName("alloc");
-    
-    void* _nsString = ms_send(_class, allocSel);
-    SEL initSel = sel_registerName("init");
-    return ms_send(_nsString, initSel);
-}
-
-void* (*ms_send_string_encoding)(void*, SEL, const char*, unsigned long) = (void* (*)(void*, SEL, const char*, unsigned long)) objc_msgSend;
 
 /// Converts a C string (UTF-8) to an NSString*
 MT_INLINE MTString mt_string_from_utf8(const char *utf8) {

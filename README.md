@@ -1,7 +1,9 @@
 # Apple's Metal Graphics API For C.
 This is the unofficial Metal Graphics API implementation for C. This API takes inspiration from the C++ Metal-CPP implementation which you can find at https://github.com/bkaradzic/metal-cpp .
-This API is for developers seeking to integrate or simply use Metal in their game engines or graphics rendering projects.
+This API is for developers seeking to integrate or simply use Metal in their game engines or graphics rendering projects without having to use Objective-c or Swift in their C codebase.
 
+<img width="1277" alt="Screenshot 2025-06-18 at 19 15 47" src="https://github.com/user-attachments/assets/f8f5b292-07fe-4263-81a9-d434e660d52a" /> 
+<img width="1277" alt="Screenshot 2025-06-18 at 19 18 23" src="https://github.com/user-attachments/assets/ddf4cd85-3578-4cf8-93aa-c703785391e0" />
 
 ![Screen Recording 2024-06-04 at 20 40 15](https://github.com/Lu-TheCoder/Metal-C-API/assets/90724319/e7e6b8ae-378e-4c07-90b9-de645c5ff0c2)
 
@@ -11,32 +13,43 @@ This API IS NOT PRODUCTION READY! and still in it's early development stage. The
 # Basic Usage.
 
 ```c
+// Load Metal C Header files:
 #include "Metal/Metal.h"
+#include "Metal/Foundation/Foundation.h"
+#include "Metal/QuartzCore/CAMetalLayer.h"
 
 int main() {
 
   // window initialization code goes here...
   ...
 
-  MTDevice* device = mt_create_system_default_device();
+  MTDevice device = mt_create_system_default_device();
+  if(!device){
+    printf("Error: Failed to create device\n");
+    return false;
+  }
 
-  // Automatically find the path of compiled shader
-  // -> Useful if project is not in Xcode. 
-  MTBundle* bundle = mt_bundle_new();
-  MTString* lib_path = mt_bundle_get_lib_path(bundle, mt_string_utf8String("default"), mt_string_utf8String("metallib"));
-  MTURL* fileURL = mt_url_init_with_path(lib_path);
+  MTCommandQueue command_queue = mt_device_create_command_queue(device);
+  if(!command_queue){
+    printf("Error: Failed to create command queue\n");
+    return false;
+  }
   
-  MTError* error = NULL;
-  MTLibrary* library = mt_library_new_library_withURL(device, fileURL, &error);
+  // Retrieve your compiled metallib shader
+  MTURL fileURL = mt_bundle_url_for_resource_(mt_string_from_utf8("default"), mt_string_from_utf8("metallib"));
 
+  // Create your shader library
+  MTError error = NULL;
+  MTLibrary library = mt_device_create_library_withURL(state_ptr->device, fileURL, error);
   if(!library){
       printf("Failed to load library. Error %s\n", nsErrorLocalizedDescription(error));
   }
   
-  MTFunction* vertFunction = mt_library_new_function(library, nsUtf8String("vert"));
-  MTFunction* fragFunction = mt_library_new_function(library, nsUtf8String("frag"));
-    
-  mtRelease(library);
+  MTFunction vertFunction = mt_library_create_function(state_ptr->library, mt_string_from_utf8("vert"));
+  MTFunction fragFunction = mt_library_create_function(state_ptr->library, mt_string_from_utf8("frag"));
+
+  // free library (no longer needed) 
+  mt_release(library);
 
   float vertexData[] = {
       // x, y,
@@ -48,28 +61,28 @@ int main() {
        0.5f,  0.5f
   };
   
-  MTBuffer* vertexBuffer = mt_buffer_new_bufferWithBytes(device, vertexData, sizeof(vertexData), MTResourceCPUCacheModeDefaultCache);
+  MTBuffer vertexBuffer = mt_device_create_buffer_with_bytes(device, vertexData, sizeof(vertexData), MTResourceCPUCacheModeDefaultCache);
 
-  MTVertexDescriptor* vertDesc = mt_vertexDescriptor_new();
-  MTVertexAttributeDescriptorArray* attributes = mt_vertexDescriptor_get_attributes(vertDesc);
-  MTVertexBufferLayoutDescriptorArray* layouts = mt_vertexDescriptor_get_layouts(vertDesc);
+  MTVertexDescriptor vertDesc = mt_vertex_descriptor_create();
+  // Set your vertex attributes
+  mt_vertex_descriptor_set_vertex_attribute_format(state_ptr->vertDesc, VertexAttributeIndex_Default_Position, MTVertexFormatFloat2);
+  mt_vertex_descriptor_set_vertex_attribute_offset(vertDesc, VertexAttributeIndex_Default_Position, 0);
+  mt_vertex_descriptor_set_vertex_attribute_buffer_index(vertDesc, VertexAttributeIndex_Default_Position, VertexBufferIndex_Attributes);
+  // set your vertex layout
+  mt_vertex_descriptor_set_vertex_layout_stride(vertDesc, VertexBufferIndex_Attributes, sizeof(Vertex3D));
+  mt_vertex_descriptor_set_vertex_layout_step_rate(vertDesc, VertexBufferIndex_Attributes, 1);
+  mt_vertex_descriptor_set_vertex_layout_step_function(vertDesc, VertexBufferIndex_Attributes, MTVertexStepFunctionPerVertex);
 
-  // Attributes
-  mt_vertexAttribute_set_format(attributes, VertexAttributeIndex_Position, MTVertexFormatFloat2);
-  mt_vertexAttribute_set_offset(attributes, VertexAttributeIndex_Position, 0);
-  mt_vertexAttribute_set_buffer_index(attributes, VertexAttributeIndex_Position, VertexBufferIndex_Attributes);
-  // Layout
-  mt_vertexBufferLayout_set_stride(layouts, VertexBufferIndex_Attributes, 2 * sizeof(float));
-  mt_vertexBufferLayout_set_stepRate(layouts, VertexBufferIndex_Attributes, 1);
-  mt_vertexBufferLayout_set_stepFunction(layouts, VertexBufferIndex_Attributes, MTVertexStepFunctionPerVertex);
-  
-  MTRenderPipelineDescriptor* renderPipelineDesc = mt_renderPipeline_descriptor_new();
-  mt_renderPipeline_descriptor_set_vertex_function(renderPipelineDesc, vertFunction);
-  mt_renderPipeline_descriptor_set_fragment_function(renderPipelineDesc, fragFunction);
-  mt_renderPipeline_descriptor_set_vertex_descriptor(renderPipelineDesc, vertDesc);
-  mt_renderPipeline_descriptor_set_color_attachments_pixel_format(renderPipelineDesc, 0, (MTPixelFormat)platform_get_drawable_pixelFormat());
-  
-  MTRenderPipelineState* renderPipelineState = mt_renderPipelineState_new(device, renderPipelineDesc, &error);
+  // setup render pipeline descriptor
+  MTRenderPipelineDescriptor renderPipelineDesc = mt_render_pipeline_descriptor_create();
+  mt_render_pipeline_descriptor_set_label(renderPipelineDesc, "Default Render Pipeline");
+  mt_render_pipeline_descriptor_set_vertex_function(renderPipelineDesc, vertFunction);
+  mt_render_pipeline_descriptor_set_fragment_function(renderPipelineDesc, fragFunction);
+  mt_render_pipeline_descriptor_set_vertex_descriptor(renderPipelineDesc, vertDesc);
+  mt_render_pipeline_descriptor_set_color_attachments_pixel_format(renderPipelineDesc, 0, MTPixelFormatBGRA8Unorm);
+
+  // create render pipeline state
+  MTRenderPipelineState renderPipelineState = mt_device_create_render_pipeline_state(device, renderPipelineDesc, &error);
   
   if (!renderPipelineState) {
       printf("Failed to create pipeline state. Error: %s\n", nsErrorLocalizedDescription(error));
@@ -84,44 +97,42 @@ int main() {
   // Game/Window loop
   while (isRunning) {
 
-    // Start of Autoreleasepool
-    NSAutoreleasePool* pool =  mtlNewAutoreleasepool();
-    mtAutoreleasePoolInit(pool);
+    CAMetalDrawable drawable = platform_get_next_drawable();
+    
+    MTRenderPassDescriptor renderPass = mt_renderpass_descriptor_new();
+    MTCommandBuffer cmdBuffer = mt_command_queue_create_commandBuffer(queue);
 
-    void* drawable = platform_get_next_drawable();
-    
-    MTRenderPassDescriptor* renderPass = mt_renderpass_descriptor_new();
-    MTCommandBuffer* cmdBuffer = mt_commandBuffer_new(queue);
-    
-    MTRenderPassColorAttachmentDescriptorArray* colorAttachments = mt_renderpass_color_attachment_get_color_attachments(renderPass);
-    MTRenderPassColorAttachmentDescriptor* colorAttachment = mt_renderpass_get_color_attachment_at_index(colorAttachments, 0);
-    mt_renderpass_color_attachment_set_texture(colorAttachment, platform_get_next_drawable_texture(drawable));
-    mt_renderpass_color_attachment_set_loadAction(colorAttachment, MTLoadActionClear);
-    mt_renderpass_color_attachment_set_storeAction(colorAttachment, MTStoreActionStore);
-    mt_renderpass_color_attachment_set_clearColor(colorAttachment, mt_clear_color_make(0.1, 0.1, 0.1, 1.0));
-    
-    MTRenderCommandEncoder* renderCommandEncoder = mt_renderCommand_encoder_new(cmdBuffer, renderPass);
+    // Set color attachments
+    mt_renderpass_color_attachments_set_texture(renderPass, 0, platform_get_next_drawable_texture(drawable));
+    mt_renderpass_color_attachments_set_load_action(renderPass, 0, MTLoadActionClear);
+    mt_renderpass_color_attachments_set_store_action(renderPass, 0, MTStoreActionMultisampleResolve);
+    mt_renderpass_color_attachments_set_clear_color(renderPass, 0, mt_clear_color_create(42.0f/255.0f, 41.0f/255.0f, 43.0f/255.0f, 1.0f));
+
+    MTRenderCommandEncoder renderCommandEncoder = mt_renderCommand_encoder_new(cmdBuffer, renderPass);
     mt_release(renderPass);
-    
-   mt_renderCommand_encoder_set_viewport(renderCommandEncoder, mt_viewport_make(0, 0,
-                                                                       platform_get_drawable_width(),
-                                                                       platform_get_drawable_height(),
-                                                                       0, 1));
+
+    mt_renderCommand_encoder_set_viewport(state_ptr->command_encoder, mt_viewport_make(
+                                                                    0, 0,
+                                                                    platform_get_drawable_width(state_ptr->current_window),
+                                                                    platform_get_drawable_height(state_ptr->current_window),
+                                                                    0, 1));  
     
     mt_renderCommand_encoder_set_pipeline_state(renderCommandEncoder, renderPipelineState);
+    // bind vertex buffer
     mt_renderCommand_encoder_set_vertex_buffer(renderCommandEncoder, vertexBuffer, 0, VertexBufferIndex_Attributes);
-    mt_renderCommand_encoder_set_draw_primitives(renderCommandEncoder, MTPrimitiveTypeTriangle, 0, 6);
+    // draw geometry
+    mt_renderCommand_encoder_draw_primitives(renderCommandEncoder, MTPrimitiveTypeTriangle, 0, 6);
     
     mt_renderCommand_encoder_end_encoding(renderCommandEncoder);
-    
     mt_commandBuffer_present_drawable(cmdBuffer, drawable);
-    
     mt_commandBuffer_commit(cmdBuffer);
     
     mt_commandBuffer_wait_until_completed(cmdBuffer);
 
-    // end of Autoreleasepool.
-    mtAutoreleasePoolRelease(pool);
+    // release per frame resources
+    mt_release(cmdBuffer);
+    mt_release(renderCommandEncoder);
+    mt_release(drawable);
   
   }
 
