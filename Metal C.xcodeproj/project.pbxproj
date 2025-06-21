@@ -94,6 +94,7 @@
 		BF81BD122E06CB30009DA941 /* MT4Compiler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MT4Compiler.h; sourceTree = "<group>"; };
 		BF81BD132E06D21B009DA941 /* MT4CompilerTask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MT4CompilerTask.h; sourceTree = "<group>"; };
 		BF81BD142E070C97009DA941 /* MT4Counters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MT4Counters.h; sourceTree = "<group>"; };
+		BF81BD152E0716A5009DA941 /* MT4LibraryFunctionDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MT4LibraryFunctionDescriptor.h; sourceTree = "<group>"; };
 		BF90EDE42BDFF293001F890E /* MTDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTDevice.h; sourceTree = "<group>"; };
 		BF90EDE52BDFF318001F890E /* MTResource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTResource.h; sourceTree = "<group>"; };
 		BF90EDE72BDFF366001F890E /* Objectivec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Objectivec.h; sourceTree = "<group>"; };
@@ -269,6 +270,7 @@
 				BF81BD112E06C5B6009DA941 /* MT4Archive.h */,
 				BF81BD122E06CB30009DA941 /* MT4Compiler.h */,
 				BF81BD132E06D21B009DA941 /* MT4CompilerTask.h */,
+				BF81BD152E0716A5009DA941 /* MT4LibraryFunctionDescriptor.h */,
 				BFB489CA2E062D4800E27BC9 /* MTResidencySet.h */,
 				BFB489C52E05CDA200E27BC9 /* MTResourceStateCommandEncoder.h */,
 				BFF187612DEADDCF00B2D71E /* MTIndirectCommandBuffer.h */,

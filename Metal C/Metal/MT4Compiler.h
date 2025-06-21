@@ -26,6 +26,22 @@ typedef void* MT4CompilerTaskOptions;
 typedef void (^MT4NewBinaryFunctionCompletionHandler)(MT4BinaryFunction function, MTError error);
 typedef void (^MT4NewMachineLearningPipelineStateCompletionHandler)(MT4MachineLearningPipelineState mlPipelineState, MTError error);
 
+MT_INLINE MT4CompilerTaskOptions mt4_compiler_task_options_create(void) {
+    // Get the class object
+    Class cls = objc_getClass("MTL4CompilerTaskOptions");
+    if (!cls) return NULL;
+
+    // Allocate
+    id obj = ((id (*)(Class, SEL))objc_msgSend)(cls, sel_getUid("alloc"));
+    if (!obj) return NULL;
+
+    // Initialize
+    obj = ((id (*)(id, SEL))objc_msgSend)(obj, sel_getUid("init"));
+    return obj;
+}
+
+//TODO: Still need to implement this...
+// @property (nullable, copy, nonatomic) NSArray<id<MTL4Archive>>* lookupArchives;
 
 MT_INLINE MT4PipelineDataSetSerializer mt4_compiler_get_pipeline_data_set_serializer(MT4Compiler compiler) {
     if (!compiler) return nil;

@@ -11,9 +11,15 @@ typedef void* MTResidencySet;
 typedef void* MTAllocation;
 typedef void* MTDevice;
 
-MT_INLINE MTResidencySetDescriptor mt_residency_set_descriptor_new(void) {
+MT_INLINE MTResidencySetDescriptor mt_residency_set_descriptor_create(void) {
     Class cls = objc_getClass("MTLResidencySetDescriptor");
-    return (MTResidencySetDescriptor)((id (*)(id, SEL))objc_msgSend)(cls, sel_getUid("new"));
+    if (!cls) return NULL;
+    
+    id obj = ((id (*)(Class, SEL))objc_msgSend)(cls, sel_getUid("alloc"));
+    if (!obj) return NULL;
+
+    obj = ((id (*)(id, SEL))objc_msgSend)(obj, sel_getUid("init"));
+    return obj;
 }
 
 MT_INLINE MTDevice mt_residency_set_get_device(MTResidencySet set) {

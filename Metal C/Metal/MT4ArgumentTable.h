@@ -10,9 +10,18 @@
 typedef void *MT4ArgumentTableDescriptor;
 typedef void *MT4ArgumentTable;
 
-MT_INLINE MT4ArgumentTableDescriptor mt4_argument_table_descriptor_new(void) {
+MT_INLINE MT4ArgumentTableDescriptor mt4_argument_table_descriptor_create(void) {
+    // Get the class object
     Class cls = objc_getClass("MTL4ArgumentTableDescriptor");
-    return (MT4ArgumentTableDescriptor)((id (*)(id, SEL))objc_msgSend)(cls, sel_getUid("new"));
+    if (!cls) return NULL;
+
+    // Allocate
+    id obj = ((id (*)(Class, SEL))objc_msgSend)(cls, sel_getUid("alloc"));
+    if (!obj) return NULL;
+
+    // Initialize
+    obj = ((id (*)(id, SEL))objc_msgSend)(obj, sel_getUid("init"));
+    return obj;
 }
 
 MT_INLINE void mt4_argument_table_descriptor_set_max_buffer_bind_count(MT4ArgumentTableDescriptor desc, unsigned long count) {
