@@ -7,9 +7,11 @@
 #pragma once
 #include "MT4CompilerTask.h"
 #include "MTLibrary.h"
+#include "MTUtils.h"
 
 typedef void* MTDevice;
 typedef void* MTURL;
+typedef void* MTArray;
 typedef void* MTLibrary;
 typedef void* MTRenderPipelineState;
 typedef void* MTComputePipelineState;
@@ -40,8 +42,14 @@ MT_INLINE MT4CompilerTaskOptions mt4_compiler_task_options_create(void) {
     return obj;
 }
 
-//TODO: Still need to implement this...
-// @property (nullable, copy, nonatomic) NSArray<id<MTL4Archive>>* lookupArchives;
+MT_INLINE void mt4_compiler_task_options_set_lookup_archives(MT4CompilerTaskOptions opts, MTArray array) {
+    if (!opts) return;
+    ((void (*)(void*, SEL, MTArray))objc_msgSend)(
+        opts,
+        sel_getUid("setLookupArchives:"),
+        array
+    );
+}
 
 MT_INLINE MT4PipelineDataSetSerializer mt4_compiler_get_pipeline_data_set_serializer(MT4Compiler compiler) {
     if (!compiler) return nil;

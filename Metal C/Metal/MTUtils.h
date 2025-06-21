@@ -32,6 +32,8 @@ ms_send(cls, allocSel);})
 #define NSCLASS(name) \
 ({objc_getClass(name);})
 
+typedef void* MTArray;
+
 MT_INLINE void mt_release(void* ptr) {
     SEL releaseSel = sel_registerName("release");
     void (*msgSend)(id, SEL) = (void (*)(id, SEL))objc_msgSend;
@@ -53,4 +55,13 @@ MT_INLINE void mt_set_retained_references(void* ptr) {
 MT_INLINE void* mt_retain(void* obj) {
     if (!obj) return NULL;
     return ((void* (*)(void*, SEL))objc_msgSend)(obj, sel_registerName("retain"));
+}
+
+MT_INLINE MTArray mt_array_with_objects(const id* objects, unsigned long count) {
+    return ((MTArray (*)(Class, SEL, const id*, unsigned long))objc_msgSend)(
+        objc_getClass("NSArray"),
+        sel_getUid("arrayWithObjects:count:"),
+        objects,
+        count
+    );
 }
