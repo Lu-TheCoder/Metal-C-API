@@ -13,6 +13,7 @@
 #include "MT4CommandBuffer.h"
 #include "MT4RenderCommandEncoder.h"
 #include "MT4ArgumentTable.h"
+#include "MT4Archive.h"
 
 #include "MTResidencySet.h"
 #include "MTResourceStateCommandEncoder.h"

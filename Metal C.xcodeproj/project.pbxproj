@@ -90,6 +90,7 @@
 		BF683B672DF37177002105F1 /* my_hammer2.obj */ = {isa = PBXFileReference; lastKnownFileType = text; path = my_hammer2.obj; sourceTree = "<group>"; };
 		BF683B692DF38D36002105F1 /* gizmo_shader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = gizmo_shader.metal; sourceTree = "<group>"; };
 		BF683B6B2DF39057002105F1 /* gizmo_shader.metallib */ = {isa = PBXFileReference; lastKnownFileType = "archive.metal-library"; path = gizmo_shader.metallib; sourceTree = "<group>"; };
+		BF81BD112E06C5B6009DA941 /* MT4Archive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MT4Archive.h; sourceTree = "<group>"; };
 		BF90EDE42BDFF293001F890E /* MTDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTDevice.h; sourceTree = "<group>"; };
 		BF90EDE52BDFF318001F890E /* MTResource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTResource.h; sourceTree = "<group>"; };
 		BF90EDE72BDFF366001F890E /* Objectivec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Objectivec.h; sourceTree = "<group>"; };
@@ -261,6 +262,7 @@
 				BFB489C72E05CF4C00E27BC9 /* MT4CommandBuffer.h */,
 				BFB489C82E0627FD00E27BC9 /* MT4RenderCommandEncoder.h */,
 				BFB489C92E0629EB00E27BC9 /* MT4ArgumentTable.h */,
+				BF81BD112E06C5B6009DA941 /* MT4Archive.h */,
 				BFB489CA2E062D4800E27BC9 /* MTResidencySet.h */,
 				BFB489C52E05CDA200E27BC9 /* MTResourceStateCommandEncoder.h */,
 				BFF187612DEADDCF00B2D71E /* MTIndirectCommandBuffer.h */,
