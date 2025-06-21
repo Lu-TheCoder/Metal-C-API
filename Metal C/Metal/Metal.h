@@ -14,6 +14,8 @@
 #include "MT4RenderCommandEncoder.h"
 #include "MT4ArgumentTable.h"
 #include "MT4Archive.h"
+#include "MT4CompilerTask.h"
+#include "MT4Compiler.h"
 
 #include "MTResidencySet.h"
 #include "MTResourceStateCommandEncoder.h"

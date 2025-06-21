@@ -159,6 +159,7 @@ MT_INLINE const char* mt_device_get_name(MTDevice device) {
     return msgSendUTF8(nsStr, utf8Sel);
 }
 
+typedef void* MTURL;
 typedef void* MTBuffer;
 typedef void* MTIndirectCommandBuffer;
 typedef void* MTIndirectCommandBufferDescriptor;

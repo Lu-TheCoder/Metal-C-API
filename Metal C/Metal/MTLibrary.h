@@ -7,8 +7,7 @@
 
 #pragma once
 #include "MTDevice.h"
-#include "Foundation/MTError.h"
-#include "Foundation/MTURL.h"
+//#include "Foundation/MTURL.h"
 #include "Foundation/MTString.h"
 #include <dispatch/dispatch.h>
 #include <Block.h>
@@ -79,6 +78,17 @@ typedef void* MTFunction;
 typedef void* MTCompileOptions;
 
 typedef void* MTLibrary;
+typedef void* MTDynamicLibrary;
+typedef void* MTRenderPipelineState;
+typedef void* MTComputePipelineState;
+typedef void* MTError;
+typedef void* MTURL;
+
+// BLOCKS
+typedef void (^MTNewLibraryCompletionHandler)(MTLibrary library, MTError error);
+typedef void (^MTNewDynamicLibraryCompletionHandler)(MTDynamicLibrary library, MTError error);
+typedef void (^MTNewRenderPipelineStateCompletionHandler)(MTRenderPipelineState renderPipelineState, MTError error);
+typedef void (^MTNewComputePipelineStateCompletionHandler)(MTComputePipelineState computePipelineState, MTError error);
 
 MT_INLINE MTCompileOptions mt_compile_options_new(void) {
     Class MTLCompileOptionsClass = objc_getClass("MTLCompileOptions");

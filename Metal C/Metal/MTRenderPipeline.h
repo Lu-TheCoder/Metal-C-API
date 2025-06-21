@@ -15,6 +15,7 @@ typedef void* MTRenderPipelineColorAttachmentDescriptor;
 typedef void* MTRenderPipelineColorAttachmentDescriptorArray;
 typedef void* MTRenderPipelineDescriptor;
 typedef void* MTRenderPipelineState;
+typedef void* MTFunction;
 
 typedef enum MTBlendFactor {
     MTBlendFactorZero = 0,

@@ -34,7 +34,7 @@ MT_INLINE MTComputePipelineState mt4_archive_new_compute_pipeline_state_with_des
     MTError *error)
 {
     if (!archive || !descriptor) return nil;
-    return ((id (*)(id, SEL, id, MTError*))objc_msgSend)(
+    return ((MTComputePipelineState (*)(id, SEL, id, MTError*))objc_msgSend)(
         archive,
         sel_getUid("newComputePipelineStateWithDescriptor:error:"),
         descriptor,
@@ -50,7 +50,7 @@ MT_INLINE MTComputePipelineState mt4_archive_new_compute_pipeline_state_with_des
     MTError *error)
 {
     if (!archive || !descriptor || !linking) return nil;
-    return ((id (*)(id, SEL, id, id, MTError*))objc_msgSend)(
+    return ((MTComputePipelineState (*)(id, SEL, id, id, MTError*))objc_msgSend)(
         archive,
         sel_getUid("newComputePipelineStateWithDescriptor:dynamicLinkingDescriptor:error:"),
         descriptor,
@@ -66,7 +66,7 @@ MT_INLINE MTRenderPipelineState mt4_archive_new_render_pipeline_state_with_descr
     MTError *error)
 {
     if (!archive || !descriptor) return nil;
-    return ((id (*)(id, SEL, id, MTError*))objc_msgSend)(
+    return ((MTRenderPipelineState (*)(id, SEL, id, MTError*))objc_msgSend)(
         archive,
         sel_getUid("newRenderPipelineStateWithDescriptor:error:"),
         descriptor,
@@ -80,10 +80,10 @@ MT_INLINE MTRenderPipelineState mt4_archive_new_render_pipeline_state_with_descr
     MT4Archive archive,
     MT4PipelineDescriptor descriptor,
     MT4RenderPipelineDynamicLinkingDescriptor linking,
-    MTError *error)  // This is equivalent to NSError**
+    MTError *error)
 {
     if (!archive || !descriptor || !linking) return nil;
-    return ((id (*)(id, SEL, id, id, MTError *))objc_msgSend)(
+    return ((MTRenderPipelineState (*)(id, SEL, id, id, MTError *))objc_msgSend)(
         archive,
         sel_getUid("newRenderPipelineStateWithDescriptor:dynamicLinkingDescriptor:error:"),
         descriptor,
@@ -99,7 +99,7 @@ MT_INLINE MT4BinaryFunction mt4_archive_new_binary_function_with_descriptor(
     MTError *error)
 {
     if (!archive || !descriptor) return nil;
-    return ((id (*)(id, SEL, id, MTError*))objc_msgSend)(
+    return ((MT4BinaryFunction (*)(id, SEL, id, MTError*))objc_msgSend)(
         archive,
         sel_getUid("newBinaryFunctionWithDescriptor:error:"),
         descriptor,
