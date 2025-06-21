@@ -165,6 +165,9 @@ typedef void* MTIndirectCommandBuffer;
 typedef void* MTIndirectCommandBufferDescriptor;
 typedef void* MTRenderPipelineReflection;
 
+typedef void* MTTextureDescriptor;
+typedef void* MTHeapDescriptor;
+
 typedef void* MTIOFileHandle;
 typedef void* MTIOCommandQueue;
 typedef void* MTIOCommandQueueDescriptor;

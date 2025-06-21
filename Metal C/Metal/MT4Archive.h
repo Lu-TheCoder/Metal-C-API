@@ -74,7 +74,6 @@ MT_INLINE MTRenderPipelineState mt4_archive_new_render_pipeline_state_with_descr
     );
 }
 
-typedef void* MTError;
 // Create render pipeline state with descriptor + linking
 MT_INLINE MTRenderPipelineState mt4_archive_new_render_pipeline_state_with_descriptor_and_linking(
     MT4Archive archive,

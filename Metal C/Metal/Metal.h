@@ -16,6 +16,7 @@
 #include "MT4Archive.h"
 #include "MT4CompilerTask.h"
 #include "MT4Compiler.h"
+#include "MT4Counters.h"
 
 #include "MTResidencySet.h"
 #include "MTResourceStateCommandEncoder.h"
