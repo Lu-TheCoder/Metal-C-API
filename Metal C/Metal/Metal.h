@@ -7,6 +7,16 @@
 
 #pragma once
 
+//METAL 4
+#include "MT4CommandQueue.h"
+#include "MT4CommandAllocator.h"
+#include "MT4CommandBuffer.h"
+#include "MT4RenderCommandEncoder.h"
+#include "MT4ArgumentTable.h"
+
+#include "MTResidencySet.h"
+#include "MTResourceStateCommandEncoder.h"
+#include "MTEvent.h"
 #include "MTUtils.h"
 #include "MTBuffer.h"
 #include "MTCommandBuffer.h"

@@ -16,6 +16,9 @@
 #include "MTDepthStencil.h"
 
 typedef void* MTDevice;
+typedef void* MTSharedEvent;
+typedef void* MTSharedEventHandle;
+typedef void* MTEvent;
 
 extern MTDevice* MTLCreateSystemDefaultDevice(void);
 
@@ -493,4 +496,25 @@ MT_INLINE MTIOCommandQueue mt_device_new_io_command_queue(MTDevice device, MTIOC
 MT_INLINE MTBinaryArchive mt_device_new_binary_archive(MTDevice device, MTBinaryArchiveDescriptor desc, MTError* error_out) {
     SEL sel = sel_getUid("newBinaryArchiveWithDescriptor:error:");
     return (MTBinaryArchive)((id (*)(id, SEL, id, MTError**))objc_msgSend)((id)device, sel, (id)desc, (MTError**)error_out);
+}
+
+MT_INLINE MTEvent mt_device_new_event(MTDevice device) {
+    if (!device) return NULL;
+
+    SEL sel = sel_getUid("newEvent");
+    return ((MTEvent (*)(id, SEL))objc_msgSend)((id)device, sel);
+}
+
+MT_INLINE MTSharedEvent mt_device_new_shared_event(MTDevice device) {
+    if (!device) return NULL;
+
+    SEL sel = sel_getUid("newSharedEvent");
+    return ((MTSharedEvent (*)(id, SEL))objc_msgSend)((id)device, sel);
+}
+
+MT_INLINE MTSharedEvent mt_device_new_shared_event_with_handle(MTDevice device, MTSharedEventHandle handle) {
+    if (!device || !handle) return NULL;
+
+    SEL sel = sel_getUid("newSharedEventWithHandle:");
+    return ((MTSharedEvent (*)(id, SEL, MTSharedEventHandle))objc_msgSend)((id)device, sel, handle);
 }

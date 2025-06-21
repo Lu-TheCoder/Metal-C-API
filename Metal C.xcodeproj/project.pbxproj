@@ -112,6 +112,14 @@
 		BFA366632C069A39002E9B0F /* MTUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTUtils.h; sourceTree = "<group>"; };
 		BFA366642C06A97D002E9B0F /* MTTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTTexture.h; sourceTree = "<group>"; };
 		BFA366652C06B8F4002E9B0F /* MTRenderPipeline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTRenderPipeline.h; sourceTree = "<group>"; };
+		BFB489C32E05B5D200E27BC9 /* MTEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTEvent.h; sourceTree = "<group>"; };
+		BFB489C42E05C30B00E27BC9 /* MT4CommandQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MT4CommandQueue.h; sourceTree = "<group>"; };
+		BFB489C52E05CDA200E27BC9 /* MTResourceStateCommandEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTResourceStateCommandEncoder.h; sourceTree = "<group>"; };
+		BFB489C62E05CE5C00E27BC9 /* MT4CommandAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MT4CommandAllocator.h; sourceTree = "<group>"; };
+		BFB489C72E05CF4C00E27BC9 /* MT4CommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MT4CommandBuffer.h; sourceTree = "<group>"; };
+		BFB489C82E0627FD00E27BC9 /* MT4RenderCommandEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MT4RenderCommandEncoder.h; sourceTree = "<group>"; };
+		BFB489C92E0629EB00E27BC9 /* MT4ArgumentTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MT4ArgumentTable.h; sourceTree = "<group>"; };
+		BFB489CA2E062D4800E27BC9 /* MTResidencySet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTResidencySet.h; sourceTree = "<group>"; };
 		BFE160792DF32FB100BE7780 /* obj_loader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = obj_loader.h; sourceTree = "<group>"; };
 		BFF1875F2DEA1BA000B2D71E /* MTPipeline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTPipeline.h; sourceTree = "<group>"; };
 		BFF187602DEAD87D00B2D71E /* MTBlitCommandEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTBlitCommandEncoder.h; sourceTree = "<group>"; };
@@ -244,9 +252,17 @@
 				BF2168CF2DF231DD00B02D9D /* MTBinaryArchive.h */,
 				BFF1875F2DEA1BA000B2D71E /* MTPipeline.h */,
 				BF2168CC2DF1AF6B00B02D9D /* MTIOCommandQueue.h */,
+				BFB489C32E05B5D200E27BC9 /* MTEvent.h */,
 				BF2168CD2DF1B17600B02D9D /* MTIOCommandBuffer.h */,
 				BF2168CE2DF2189B00B02D9D /* MTIOCompressor.h */,
 				BF2168D12DF2D5D200B02D9D /* MTFunctionConstantValues.h */,
+				BFB489C42E05C30B00E27BC9 /* MT4CommandQueue.h */,
+				BFB489C62E05CE5C00E27BC9 /* MT4CommandAllocator.h */,
+				BFB489C72E05CF4C00E27BC9 /* MT4CommandBuffer.h */,
+				BFB489C82E0627FD00E27BC9 /* MT4RenderCommandEncoder.h */,
+				BFB489C92E0629EB00E27BC9 /* MT4ArgumentTable.h */,
+				BFB489CA2E062D4800E27BC9 /* MTResidencySet.h */,
+				BFB489C52E05CDA200E27BC9 /* MTResourceStateCommandEncoder.h */,
 				BFF187612DEADDCF00B2D71E /* MTIndirectCommandBuffer.h */,
 				BF2168D22DF2D64000B02D9D /* MTArgument.h */,
 				BFF187622DEAEB9A00B2D71E /* MTIndirectCommandEncoder.h */,

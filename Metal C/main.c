@@ -136,7 +136,9 @@ int main(int argc, const char * argv[]) {
 //    
 //    printf("Mesh Vertex Count: %zu\n", cube.vertex_count);
 //    printf("Mesh Index Count: %zu\n", cube.index_count);
-//    
+//
+
+    
     Mesh mesh;
     load_obj("my_hammer2.obj", &mesh);
 
@@ -154,7 +156,14 @@ int main(int argc, const char * argv[]) {
         printf("Failed to startup platform.\n");
     }
     
+    uint64_t frame_number = 0;
+    
     MTDevice device = mt_create_system_default_device();
+    
+    // Create shared event.
+    MTSharedEvent shared_event;
+    shared_event = mt_device_new_shared_event(device);
+    mt_shared_event_set_signaled_value(shared_event, frame_number);
     
     MTCommandQueue queue = mt_device_create_command_queue(device);
     
@@ -446,7 +455,7 @@ int main(int argc, const char * argv[]) {
     free(data);
 
     while (isRunning){
-        
+                
         dispatch_semaphore_wait(uniformBufferSemaphore, DISPATCH_TIME_FOREVER);
         
         double previousTimeInSeconds = currentTimeInSeconds;
@@ -491,6 +500,18 @@ int main(int argc, const char * argv[]) {
         MTAutoreleasePool* pool =  mt_autoreleasepool_create();
         
         MTDrawable drawable = platform_get_next_drawable();
+        
+        frame_number += 1;
+        
+        printf("Frame number: %llu \n", frame_number);
+        
+        if(frame_number >= MAX_FRAMES_IN_FLIGHT) {
+            // wait for the GPU to finish rendering the frame
+            // thats 'MAX_FRAMES_IN_FLIGHT' before this one, then
+            // proceed to next step
+            uint64_t previous_value_to_wait_for = frame_number - MAX_FRAMES_IN_FLIGHT;
+            mt_shared_event_wait_until_signaled(shared_event, previous_value_to_wait_for, 10);
+        }
         
         MTRenderPassDescriptor renderPass = mt_renderpass_descriptor_new();
         MTCommandBuffer cmdBuffer = mt_command_queue_create_commandBuffer(queue);
@@ -561,12 +582,16 @@ int main(int argc, const char * argv[]) {
             accumulatedTime = 0.0;
             frameCount = 0;
         }
-        
+        dispatch_queue_t a;
         dispatch_semaphore_signal(uniformBufferSemaphore);
+    
         
         mt_commandBuffer_commit(cmdBuffer);
         
-        mt_commandBuffer_wait_until_completed(cmdBuffer);
+        // Signal when the GPU finishes rendering this frame with a shared event.
+        // TODO: eish realized its better to add Metal 4 support first..
+//        uint64_t future_value_to_wait_for = frame_number;
+        
         
         mt_autoreleasepool_drain(pool);
 
