@@ -489,88 +489,89 @@ int main(int argc, const char * argv[]) {
         uniforms.color = playerColor;
         memcpy(mt_buffer_get_contents(uniformBuffers[currentUniformBufferIndex]), &uniforms, sizeof(Uniforms));
 
-        MTAutoreleasePool* pool =  mt_autoreleasepool_create();
-        
-        MTDrawable drawable = platform_get_next_drawable();
-        
-        MTRenderPassDescriptor renderPass = mt_renderpass_new();
-        MTCommandBuffer cmdBuffer = mt_command_queue_create_commandBuffer(queue);
-        
-        // Single-step color attachment access - much cleaner!
-        MTRenderPassColorAttachmentDescriptor ca = mt_renderpass_color_attachment(renderPass, 0);
-        mt_renderpass_color_attachment_set_texture(ca, cametal_drawable_get_texture(drawable));
-        mt_renderpass_color_attachment_set_load_action(ca, MTLoadActionClear);
-        mt_renderpass_color_attachment_set_store_action(ca, MTStoreActionStore);
-        mt_renderpass_color_attachment_set_clear_color(ca, mt_clear_color(0.1, 0.1, 0.1, 1.0));
-        
-        
-        MTRenderCommandEncoder renderCommandEncoder = mt_renderCommand_encoder_new(cmdBuffer, renderPass);
-        mt_release(renderPass);
-        
-        mt_renderCommand_encoder_set_viewport(renderCommandEncoder, mt_viewport_make(
-                                                                    0, 0,
-                                                                    platform_get_drawable_width(),
-                                                                    platform_get_drawable_height(),
-                                                                    0, 1));
-        
-//        mt_renderCommand_encoder_set_cull_mode(renderCommandEncoder, MTCullModeBack);
-//        mt_renderCommand_encoder_set_front_facing_winding(renderCommandEncoder, MTWindingCounterClockwise);
-    
-//        mt_renderCommand_encoder_set_triangle_fill_mode(renderCommandEncoder, MTTriangleFillModeLines);
-        
-//        mt_renderCommand_encoder_set_pipeline_state(renderCommandEncoder, renderPipelineState);
-        mt_renderCommand_encoder_set_pipeline_state(renderCommandEncoder, gizmo_renderPipelineState);
-        
-        mt_renderCommand_encoder_set_vertex_buffer(renderCommandEncoder, vertexBuffer, 0, VertexBufferIndex_Attributes);
-        
-        mt_renderCommand_encoder_set_vertex_buffer(renderCommandEncoder, uniformBuffers[currentUniformBufferIndex], 0, VertexBufferIndex_Uniforms);
-        
-        mt_renderCommand_encoder_set_fragment_texture(renderCommandEncoder, texture, 0);
-        
-        mt_renderCommand_encoder_set_fragment_sampler_state(renderCommandEncoder, samplerState, 0);
-        
-        int drawOffset = 0;
-        mt_renderCommand_encoder_draw_primitives(renderCommandEncoder, MTPrimitiveTypeTriangleStrip, drawOffset, vertCountX); drawOffset += vertCountX;
-        mt_renderCommand_encoder_draw_primitives(renderCommandEncoder, MTPrimitiveTypeTriangleStrip, drawOffset, vertCountY); drawOffset += vertCountY;
-        mt_renderCommand_encoder_draw_primitives(renderCommandEncoder, MTPrimitiveTypeTriangleStrip, drawOffset, vertCountZ); drawOffset += vertCountZ;
-
-        mt_renderCommand_encoder_draw_primitives(renderCommandEncoder, MTPrimitiveTypeTriangle, drawOffset, coneCountX); drawOffset += coneCountX;
-        mt_renderCommand_encoder_draw_primitives(renderCommandEncoder, MTPrimitiveTypeTriangle, drawOffset, coneCountY); drawOffset += coneCountY;
-        mt_renderCommand_encoder_draw_primitives(renderCommandEncoder, MTPrimitiveTypeTriangle, drawOffset, coneCountZ); drawOffset += coneCountZ;
-        
-//        mt_renderCommand_encoder_draw_indexed_primitives(renderCommandEncoder, MTPrimitiveTypeTriangle, mesh.index_count, MTIndexTypeUInt32, indexBuffer, 0);
-        
-        
-        mt_renderCommand_encoder_end_encoding(renderCommandEncoder);
-        
-        mt_commandBuffer_present_drawable(cmdBuffer, drawable);
-        
-        // Calculate FPS:
-        static double frameStartTime = 0.0;
-        static double frameDeltaTime = 0.0;
-        static int frameCount = 0;
-        static double accumulatedTime = 0.0;
-
-        frameDeltaTime = currentTimeInSeconds - frameStartTime;
-        frameStartTime = currentTimeInSeconds;
-
-        accumulatedTime += frameDeltaTime;
-        frameCount++;
-
-        if (accumulatedTime >= 1.0) {
-//            printf("FPS: %d\n", frameCount);
-            accumulatedTime = 0.0;
-            frameCount = 0;
-        }
-        
-        dispatch_semaphore_signal(uniformBufferSemaphore);
-        
-        mt_commandBuffer_commit(cmdBuffer);
-        
-        mt_commandBuffer_wait_until_completed(cmdBuffer);
-        
-        mt_autoreleasepool_drain(pool);
-
+//        MTAutoreleasePool* pool =  mt_autoreleasepool_create();
+        autoreleasepool {
+            
+            MTDrawable drawable = platform_get_next_drawable();
+            
+            MTRenderPassDescriptor renderPass = mt_renderpass_new();
+            MTCommandBuffer cmdBuffer = mt_command_queue_create_commandBuffer(queue);
+            
+            // Single-step color attachment access - much cleaner!
+            MTRenderPassColorAttachmentDescriptor ca = mt_renderpass_color_attachment(renderPass, 0);
+            mt_renderpass_color_attachment_set_texture(ca, cametal_drawable_get_texture(drawable));
+            mt_renderpass_color_attachment_set_load_action(ca, MTLoadActionClear);
+            mt_renderpass_color_attachment_set_store_action(ca, MTStoreActionStore);
+            mt_renderpass_color_attachment_set_clear_color(ca, mt_clear_color(0.1, 0.1, 0.1, 1.0));
+            
+            
+            MTRenderCommandEncoder renderCommandEncoder = mt_renderCommand_encoder_new(cmdBuffer, renderPass);
+            mt_release(renderPass);
+            
+            mt_renderCommand_encoder_set_viewport(renderCommandEncoder, mt_viewport_make(
+                                                                                         0, 0,
+                                                                                         platform_get_drawable_width(),
+                                                                                         platform_get_drawable_height(),
+                                                                                         0, 1));
+            
+            //        mt_renderCommand_encoder_set_cull_mode(renderCommandEncoder, MTCullModeBack);
+            //        mt_renderCommand_encoder_set_front_facing_winding(renderCommandEncoder, MTWindingCounterClockwise);
+            
+            //        mt_renderCommand_encoder_set_triangle_fill_mode(renderCommandEncoder, MTTriangleFillModeLines);
+            
+            //        mt_renderCommand_encoder_set_pipeline_state(renderCommandEncoder, renderPipelineState);
+            mt_renderCommand_encoder_set_pipeline_state(renderCommandEncoder, gizmo_renderPipelineState);
+            
+            mt_renderCommand_encoder_set_vertex_buffer(renderCommandEncoder, vertexBuffer, 0, VertexBufferIndex_Attributes);
+            
+            mt_renderCommand_encoder_set_vertex_buffer(renderCommandEncoder, uniformBuffers[currentUniformBufferIndex], 0, VertexBufferIndex_Uniforms);
+            
+            mt_renderCommand_encoder_set_fragment_texture(renderCommandEncoder, texture, 0);
+            
+            mt_renderCommand_encoder_set_fragment_sampler_state(renderCommandEncoder, samplerState, 0);
+            
+            int drawOffset = 0;
+            mt_renderCommand_encoder_draw_primitives(renderCommandEncoder, MTPrimitiveTypeTriangleStrip, drawOffset, vertCountX); drawOffset += vertCountX;
+            mt_renderCommand_encoder_draw_primitives(renderCommandEncoder, MTPrimitiveTypeTriangleStrip, drawOffset, vertCountY); drawOffset += vertCountY;
+            mt_renderCommand_encoder_draw_primitives(renderCommandEncoder, MTPrimitiveTypeTriangleStrip, drawOffset, vertCountZ); drawOffset += vertCountZ;
+            
+            mt_renderCommand_encoder_draw_primitives(renderCommandEncoder, MTPrimitiveTypeTriangle, drawOffset, coneCountX); drawOffset += coneCountX;
+            mt_renderCommand_encoder_draw_primitives(renderCommandEncoder, MTPrimitiveTypeTriangle, drawOffset, coneCountY); drawOffset += coneCountY;
+            mt_renderCommand_encoder_draw_primitives(renderCommandEncoder, MTPrimitiveTypeTriangle, drawOffset, coneCountZ); drawOffset += coneCountZ;
+            
+            //        mt_renderCommand_encoder_draw_indexed_primitives(renderCommandEncoder, MTPrimitiveTypeTriangle, mesh.index_count, MTIndexTypeUInt32, indexBuffer, 0);
+            
+            
+            mt_renderCommand_encoder_end_encoding(renderCommandEncoder);
+            
+            mt_commandBuffer_present_drawable(cmdBuffer, drawable);
+            
+            // Calculate FPS:
+            static double frameStartTime = 0.0;
+            static double frameDeltaTime = 0.0;
+            static int frameCount = 0;
+            static double accumulatedTime = 0.0;
+            
+            frameDeltaTime = currentTimeInSeconds - frameStartTime;
+            frameStartTime = currentTimeInSeconds;
+            
+            accumulatedTime += frameDeltaTime;
+            frameCount++;
+            
+            if (accumulatedTime >= 1.0) {
+                //            printf("FPS: %d\n", frameCount);
+                accumulatedTime = 0.0;
+                frameCount = 0;
+            }
+            
+            dispatch_semaphore_signal(uniformBufferSemaphore);
+            
+            mt_commandBuffer_commit(cmdBuffer);
+            
+            mt_commandBuffer_wait_until_completed(cmdBuffer);
+            
+            //        mt_autoreleasepool_drain(pool);
+        } // autoreleasepool
         currentUniformBufferIndex = (currentUniformBufferIndex + 1) % MAX_FRAMES_IN_FLIGHT;
     }
     
