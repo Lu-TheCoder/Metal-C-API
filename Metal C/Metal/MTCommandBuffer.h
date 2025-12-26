@@ -22,7 +22,7 @@ typedef enum MTCommandBufferStatus {
     MTCommandBufferStatusScheduled = 3,
     MTCommandBufferStatusCompleted = 4,
     MTCommandBufferStatusError = 5,
-}MTCommandBufferStatus;
+} MTCommandBufferStatus;
 
 typedef enum MTCommandBufferError {
     MTCommandBufferErrorNone = 0,
@@ -37,12 +37,12 @@ typedef enum MTCommandBufferError {
     MTCommandBufferErrorMemoryless = 10,
     MTCommandBufferErrorDeviceRemoved = 11,
     MTCommandBufferErrorStackOverflow = 12,
-}MTCommandBufferError;
+} MTCommandBufferError;
 
 typedef enum MTCommandBufferErrorOption {
     MTCommandBufferErrorOptionNone = 0,
     MTCommandBufferErrorOptionEncoderExecutionStatus = 1,
-}MTCommandBufferErrorOption;
+} MTCommandBufferErrorOption;
 
 typedef enum MTCommandEncoderErrorState {
     MTCommandEncoderErrorStateUnknown = 0,
@@ -50,86 +50,58 @@ typedef enum MTCommandEncoderErrorState {
     MTCommandEncoderErrorStateAffected = 2,
     MTCommandEncoderErrorStatePending = 3,
     MTCommandEncoderErrorStateFaulted = 4,
-}MTCommandEncoderErrorState;
+} MTCommandEncoderErrorState;
 
 MT_INLINE MTCommandBuffer mt_command_queue_create_commandBuffer(MTCommandQueue cmdQueue) {
-    return ((id (*)(id, SEL))objc_msgSend)(cmdQueue, sel_getUid("commandBuffer"));
+    return MT_MSG_SEND(id, cmdQueue, MT_SEL("commandBuffer"));
 }
 
 MT_INLINE MTBlitCommandEncoder mt_command_buffer_get_blit_encoder(MTCommandBuffer cmd_buf) {
-    SEL sel = sel_getUid("blitCommandEncoder");
-    return ((MTBlitCommandEncoder (*)(id, SEL))objc_msgSend)(cmd_buf, sel);
+    return MT_MSG_SEND(id, cmd_buf, MT_SEL("blitCommandEncoder"));
 }
 
 MT_INLINE MTBlitCommandEncoder mt_command_buffer_get_blit_encoder_with_descriptor(MTCommandBuffer cmd_buf, MTBlitPassDescriptor* desc) {
-    SEL sel = sel_getUid("blitCommandEncoderWithDescriptor:");
-    return ((MTBlitCommandEncoder (*)(id, SEL, MTBlitPassDescriptor*))objc_msgSend)(cmd_buf, sel, desc);
+    return MT_MSG_SEND_1(id, cmd_buf, MT_SEL("blitCommandEncoderWithDescriptor:"), MTBlitPassDescriptor*, desc);
 }
 
-/**
- * @brief Creates a new MTLCommandBufferDescriptor class
- *
- * NOTE: Should be released using mtRelease().
- */
 MT_INLINE MTCommandBufferDescriptor mt_commandBuffer_descriptor_new(void) {
-    Class cmdBufDescClass = objc_getClass("MTLCommandBufferDescriptor");
-    SEL allocSel = sel_getUid("alloc");
-    SEL initSel = sel_getUid("init");
-
-    // Allocate
-    id obj = ((id (*)(Class, SEL))objc_msgSend)(cmdBufDescClass, allocSel);
-    // Initialize
-    obj = ((id (*)(id, SEL))objc_msgSend)(obj, initSel);
-
-    return (MTCommandBufferDescriptor*)obj;
+    return MT_ALLOC_INIT("MTLCommandBufferDescriptor");
 }
 
 MT_INLINE void mt_commandBuffer_present_drawable(MTCommandBuffer cmdBuffer, MTDrawable* drawable) {
-    void (*msgSend)(void*, SEL, void*) = (void (*)(void*, SEL, void*))objc_msgSend;
-    SEL sel = sel_getUid("presentDrawable:");
-    msgSend(cmdBuffer, sel, drawable);
+    MT_MSG_SEND_1(void, cmdBuffer, MT_SEL("presentDrawable:"), id, drawable);
 }
 
 MT_INLINE void mt_command_buffer_present_drawable_at_time(MTCommandBuffer cmd_buf, MTDrawable drawable, CFTimeInterval time) {
-    SEL sel = sel_getUid("presentDrawable:atTime:");
-    ((void (*)(id, SEL, id, CFTimeInterval))objc_msgSend)(cmd_buf, sel, drawable, time);
+    MT_MSG_SEND_2(void, cmd_buf, MT_SEL("presentDrawable:atTime:"), id, drawable, CFTimeInterval, time);
 }
 
 MT_INLINE void mt_commandBuffer_commit(MTCommandBuffer cmdBuffer) {
-    void (*msgSend)(void*, SEL) = (void (*)(void*, SEL))objc_msgSend;
-    SEL sel = sel_getUid("commit");
-    msgSend(cmdBuffer, sel);
+    MT_MSG_SEND(void, cmdBuffer, MT_SEL("commit"));
 }
 
 MT_INLINE void mt_commandBuffer_wait_until_completed(MTCommandBuffer cmdBuffer) {
-    void (*msgSend)(void*, SEL) = (void (*)(void*, SEL))objc_msgSend;
-    SEL sel = sel_getUid("waitUntilCompleted");
-    msgSend(cmdBuffer, sel);
+    MT_MSG_SEND(void, cmdBuffer, MT_SEL("waitUntilCompleted"));
 }
 
 MT_INLINE void mt_command_buffer_push_debug_group(MTCommandBuffer cmd_buf, const char* name) {
-    SEL sel = sel_getUid("pushDebugGroup:");
     id nsString = mt_nsstring_create(name);
-    ((void (*)(id, SEL, id))objc_msgSend)(cmd_buf, sel, nsString);
+    MT_MSG_SEND_1(void, cmd_buf, MT_SEL("pushDebugGroup:"), id, nsString);
     mt_nsstring_release(nsString);
 }
 
 MT_INLINE void mt_command_buffer_pop_debug_group(MTCommandBuffer cmd_buf) {
-    SEL sel = sel_getUid("popDebugGroup");
-    ((void (*)(id, SEL))objc_msgSend)(cmd_buf, sel);
+    MT_MSG_SEND(void, cmd_buf, MT_SEL("popDebugGroup"));
 }
 
 MT_INLINE MTCommandBufferStatus mt_command_buffer_get_status(MTCommandBuffer cmd_buf) {
-    SEL sel = sel_getUid("status");
-    return ((MTCommandBufferStatus (*)(id, SEL))objc_msgSend)(cmd_buf, sel);
+    return MT_MSG_SEND(MTCommandBufferStatus, cmd_buf, MT_SEL("status"));
 }
 
 MT_INLINE MTError* mt_command_buffer_get_error(MTCommandBuffer cmd_buf) {
-    SEL sel = sel_getUid("error");
-    return ((MTError* (*)(id, SEL))objc_msgSend)(cmd_buf, sel);
+    return MT_MSG_SEND(MTError*, cmd_buf, MT_SEL("error"));
 }
 
 MT_INLINE void mt_command_buffer_wait_until_scheduled(MTCommandBuffer cmd_buf) {
-    SEL sel = sel_getUid("waitUntilScheduled");
-    ((void (*)(id, SEL))objc_msgSend)(cmd_buf, sel);
+    MT_MSG_SEND(void, cmd_buf, MT_SEL("waitUntilScheduled"));
 }

@@ -13,25 +13,25 @@ typedef enum MTPurgeableState {
     MTPurgeableStateNonVolatile = 2,
     MTPurgeableStateVolatile = 3,
     MTPurgeableStateEmpty = 4,
-}MTPurgeableState;
+} MTPurgeableState;
 
 typedef enum MTCPUCacheMode {
     MTCPUCacheModeDefaultCache = 0,
     MTCPUCacheModeWriteCombined = 1,
-}MTCPUCacheMode;
+} MTCPUCacheMode;
 
 typedef enum MTStorageMode {
     MTStorageModeShared = 0,
     MTStorageModeManaged = 1,
     MTStorageModePrivate = 2,
     MTStorageModeMemoryless = 3,
-}MTStorageMode;
+} MTStorageMode;
 
 typedef enum MTHazardTrackingMode {
     MTHazardTrackingModeDefault = 0,
     MTHazardTrackingModeUntracked = 1,
     MTHazardTrackingModeTracked = 2,
-}MTHazardTrackingMode;
+} MTHazardTrackingMode;
 
 typedef enum MTResourceOptions : unsigned long {
     MTResourceCPUCacheModeDefaultCache = 0,
@@ -45,40 +45,40 @@ typedef enum MTResourceOptions : unsigned long {
     MTResourceHazardTrackingModeTracked = 512,
     MTResourceOptionCPUCacheModeDefault = 0, //Deprecated
     MTResourceOptionCPUCacheModeWriteCombined = 1, //Deprecated
-}MTResourceOptions;
+} MTResourceOptions;
 
 typedef void* MTResource;
 typedef void* MTHeap;
 typedef void* MTDevice;
 
 MT_INLINE MTDevice mt_resource_get_device(MTResource resource) {
-    return ((id (*)(id, SEL))objc_msgSend)(resource, sel_getUid("device"));
+    return MT_MSG_SEND(id, resource, MT_SEL("device"));
 }
 
 MT_INLINE MTCPUCacheMode mt_resource_get_cpu_cache_mode(MTResource resource) {
-    return ((MTCPUCacheMode (*)(id, SEL))objc_msgSend)(resource, sel_getUid("cpuCacheMode"));
+    return MT_MSG_SEND(MTCPUCacheMode, resource, MT_SEL("cpuCacheMode"));
 }
 
 MT_INLINE MTStorageMode mt_resource_get_storage_mode(MTResource resource) {
-    return ((MTStorageMode (*)(id, SEL))objc_msgSend)(resource, sel_getUid("storageMode"));
+    return MT_MSG_SEND(MTStorageMode, resource, MT_SEL("storageMode"));
 }
 
 MT_INLINE MTHazardTrackingMode mt_resource_get_hazard_tracking_mode(MTResource resource) {
-    return ((MTHazardTrackingMode (*)(id, SEL))objc_msgSend)(resource, sel_getUid("hazardTrackingMode"));
+    return MT_MSG_SEND(MTHazardTrackingMode, resource, MT_SEL("hazardTrackingMode"));
 }
 
 MT_INLINE MTResourceOptions mt_resource_get_resource_options(MTResource resource) {
-    return ((MTResourceOptions (*)(id, SEL))objc_msgSend)(resource, sel_getUid("resourceOptions"));
+    return MT_MSG_SEND(MTResourceOptions, resource, MT_SEL("resourceOptions"));
 }
 
 MT_INLINE MTHeap mt_resource_get_heap(MTResource resource) {
-    return ((id (*)(id, SEL))objc_msgSend)(resource, sel_getUid("heap"));
+    return MT_MSG_SEND(id, resource, MT_SEL("heap"));
 }
 
 MT_INLINE unsigned long mt_resource_get_heap_offset(MTResource resource) {
-    return ((unsigned long (*)(id, SEL))objc_msgSend)(resource, sel_getUid("heapOffset"));
+    return MT_MSG_SEND(unsigned long, resource, MT_SEL("heapOffset"));
 }
 
 MT_INLINE unsigned long mt_resource_get_allocated_size(MTResource resource) {
-    return ((unsigned long (*)(id, SEL))objc_msgSend)(resource, sel_getUid("allocatedSize"));
+    return MT_MSG_SEND(unsigned long, resource, MT_SEL("allocatedSize"));
 }

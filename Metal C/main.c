@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "Metal/Metal.h"
 #include "Platform/platform.h"
-#include "Metal/Foundation/Foundation.h"
+#include "Metal/MTFoundation/Foundation.h"
 #include "shaders/shaderInterface.h"
 #include <dispatch/semaphore.h>
 #include <mach/mach_time.h>
@@ -163,9 +163,10 @@ int main(int argc, const char * argv[]) {
     MTURL fileURL = mt_bundle_url_for_resource_(mt_string_from_utf8("default"), mt_string_from_utf8("metallib"));
     MTURL gizmo_shaderURL = mt_bundle_url_for_resource_(mt_string_from_utf8("gizmo_shader"), mt_string_from_utf8("metallib"));
 
-    MTError error = NULL;
-    MTLibrary library = mt_device_create_library_withURL(device, fileURL, error);
-    MTLibrary gizmo_library = mt_device_create_library_withURL(device, gizmo_shaderURL, error);
+    MTError* error = NULL;
+    
+    MTLibrary library = mt_device_create_library_withURL(device, fileURL, &error);
+    MTLibrary gizmo_library = mt_device_create_library_withURL(device, gizmo_shaderURL, &error);
     mt_release(fileURL);
 
     MTString src = mt_string_from_utf8("kernel void test(device float *a [[ buffer(0) ]]) { a[0] = 42.0; }");
@@ -179,7 +180,7 @@ int main(int argc, const char * argv[]) {
     }
     
     if(!gizmo_library){
-        printf("Failed to load gizmp library. Error %s\n", mt_error_get_localized_description(error));
+        printf("Failed to load gizmo library. Error %s\n", mt_error_get_localized_description(error));
     }
     
     MTFunction vertFunction = mt_library_create_function(library, mt_string_from_utf8("vert"));
@@ -284,7 +285,7 @@ int main(int argc, const char * argv[]) {
     mt_texture_descriptor_set_storage_mode(texture_desc2, MTStorageModeShared);
     
     MTURL path_url = mt_url_init_with_path(mt_string_from_utf8("./testTexture.bin"));
-    MTIOFileHandle file = mt_device_new_io_file_handle(device, path_url, error);
+    MTIOFileHandle file = mt_device_new_io_file_handle(device, path_url, &error);
     MTTexture texture = mt_device_create_texture_with_descriptor(device, texture_desc2);
     
     uint32_t width = 512;
@@ -342,15 +343,15 @@ int main(int argc, const char * argv[]) {
     mt_render_pipeline_descriptor_set_vertex_descriptor(renderPipelineDesc, vertDesc);
     mt_render_pipeline_descriptor_set_color_attachments_pixel_format(renderPipelineDesc, 0, (MTPixelFormat)platform_get_drawable_pixelFormat());
 
-    MTRenderPipelineColorAttachmentDescriptor p_color_attachment =  mt_render_pipeline_descriptor_get_color_attachment_at_index(renderPipelineDesc, 0);
-    mt_render_pipeline_color_attachment_descriptor_set_pixel_format(p_color_attachment, MTPixelFormatBGRA8Unorm);
-    mt_render_pipeline_color_attachment_descriptor_set_blending_enabled(p_color_attachment, true);
-    mt_render_pipeline_color_attachment_descriptor_set_rgb_blend_operation(p_color_attachment, MTBlendOperationAdd);
-    mt_render_pipeline_color_attachment_descriptor_set_alpha_blend_operation(p_color_attachment, MTBlendOperationAdd);
-    mt_render_pipeline_color_attachment_descriptor_set_source_rgb_blend_factor(p_color_attachment, MTBlendFactorSourceAlpha);
-    mt_render_pipeline_color_attachment_descriptor_set_source_alpha_blend_factor(p_color_attachment, MTBlendFactorSourceAlpha);
-    mt_render_pipeline_color_attachment_descriptor_set_destination_rgb_blend_factor(p_color_attachment, MTBlendFactorOneMinusSourceAlpha);
-    mt_render_pipeline_color_attachment_descriptor_set_destination_alpha_blend_factor(p_color_attachment, MTBlendFactorOneMinusSourceAlpha);
+    MTRenderPipelineColorAttachmentDescriptor ca = mt_render_pipeline_descriptor_get_color_attachment_at_index(renderPipelineDesc, 0);
+    mt_color_attachment_set_pixel_format(ca, MTPixelFormatBGRA8Unorm);
+    mt_color_attachment_set_blending(ca, true);
+    mt_color_attachment_set_rgb_blend_op(ca, MTBlendOperationAdd);
+    mt_color_attachment_set_alpha_blend_op(ca, MTBlendOperationAdd);
+    mt_color_attachment_set_src_rgb_blend(ca, MTBlendFactorSourceAlpha);
+    mt_color_attachment_set_src_alpha_blend(ca, MTBlendFactorSourceAlpha);
+    mt_color_attachment_set_dst_rgb_blend(ca, MTBlendFactorOneMinusSourceAlpha);
+    mt_color_attachment_set_dst_alpha_blend(ca, MTBlendFactorOneMinusSourceAlpha);
     
     MTVertexDescriptor gizmo_vertDesc = mt_vertex_descriptor_create();
     mt_vertex_descriptor_set_vertex_attribute_format(gizmo_vertDesc, VertexAttributeIndex_Position, MTVertexFormatFloat3);
@@ -372,19 +373,19 @@ int main(int argc, const char * argv[]) {
     mt_render_pipeline_descriptor_set_vertex_descriptor(gizmo_renderPipelineDesc, gizmo_vertDesc);
     mt_render_pipeline_descriptor_set_color_attachments_pixel_format(gizmo_renderPipelineDesc, 0, (MTPixelFormat)platform_get_drawable_pixelFormat());
     
-    MTRenderPipelineColorAttachmentDescriptor p_color_attachment2 =  mt_render_pipeline_descriptor_get_color_attachment_at_index(gizmo_renderPipelineDesc, 0);
-    mt_render_pipeline_color_attachment_descriptor_set_pixel_format(p_color_attachment2, MTPixelFormatBGRA8Unorm);
-    mt_render_pipeline_color_attachment_descriptor_set_blending_enabled(p_color_attachment2, true);
-    mt_render_pipeline_color_attachment_descriptor_set_rgb_blend_operation(p_color_attachment2, MTBlendOperationAdd);
-    mt_render_pipeline_color_attachment_descriptor_set_alpha_blend_operation(p_color_attachment2, MTBlendOperationAdd);
-    mt_render_pipeline_color_attachment_descriptor_set_source_rgb_blend_factor(p_color_attachment2, MTBlendFactorSourceAlpha);
-    mt_render_pipeline_color_attachment_descriptor_set_source_alpha_blend_factor(p_color_attachment2, MTBlendFactorSourceAlpha);
-    mt_render_pipeline_color_attachment_descriptor_set_destination_rgb_blend_factor(p_color_attachment2, MTBlendFactorOneMinusSourceAlpha);
-    mt_render_pipeline_color_attachment_descriptor_set_destination_alpha_blend_factor(p_color_attachment2, MTBlendFactorOneMinusSourceAlpha);
+    MTRenderPipelineColorAttachmentDescriptor ca2 = mt_render_pipeline_descriptor_get_color_attachment_at_index(gizmo_renderPipelineDesc, 0);
+    mt_color_attachment_set_pixel_format(ca2, MTPixelFormatBGRA8Unorm);
+    mt_color_attachment_set_blending(ca2, true);
+    mt_color_attachment_set_rgb_blend_op(ca2, MTBlendOperationAdd);
+    mt_color_attachment_set_alpha_blend_op(ca2, MTBlendOperationAdd);
+    mt_color_attachment_set_src_rgb_blend(ca2, MTBlendFactorSourceAlpha);
+    mt_color_attachment_set_src_alpha_blend(ca2, MTBlendFactorSourceAlpha);
+    mt_color_attachment_set_dst_rgb_blend(ca2, MTBlendFactorOneMinusSourceAlpha);
+    mt_color_attachment_set_dst_alpha_blend(ca2, MTBlendFactorOneMinusSourceAlpha);
 
     
-    MTRenderPipelineState renderPipelineState = mt_device_create_render_pipeline_state(device, renderPipelineDesc, error);
-    MTRenderPipelineState gizmo_renderPipelineState = mt_device_create_render_pipeline_state(device, gizmo_renderPipelineDesc, error);
+    MTRenderPipelineState renderPipelineState = mt_device_create_render_pipeline_state(device, renderPipelineDesc, &error);
+    MTRenderPipelineState gizmo_renderPipelineState = mt_device_create_render_pipeline_state(device, gizmo_renderPipelineDesc, &error);
     
     if (!renderPipelineState) {
         printf("Failed to create pipeline state. Error: %s\n", mt_error_get_localized_description(error));
@@ -492,15 +493,15 @@ int main(int argc, const char * argv[]) {
         
         MTDrawable drawable = platform_get_next_drawable();
         
-        MTRenderPassDescriptor renderPass = mt_renderpass_descriptor_new();
+        MTRenderPassDescriptor renderPass = mt_renderpass_new();
         MTCommandBuffer cmdBuffer = mt_command_queue_create_commandBuffer(queue);
         
-        MTRenderPassColorAttachmentDescriptorArray colorAttachments = mt_renderpass_color_attachment_get_color_attachments(renderPass);
-        MTRenderPassColorAttachmentDescriptor colorAttachment = mt_renderpass_get_color_attachment_at_index(colorAttachments, 0);
-        mt_renderpass_color_attachment_set_texture(colorAttachment, cametal_drawable_get_texture(drawable));
-        mt_renderpass_color_attachment_set_loadAction(colorAttachment, MTLoadActionClear);
-        mt_renderpass_color_attachment_set_storeAction(colorAttachment, MTStoreActionStore);
-        mt_renderpass_color_attachment_set_clearColor(colorAttachment, mt_clear_color_create(0.1f, 0.1f, 0.1f, 1.0f));
+        // Single-step color attachment access - much cleaner!
+        MTRenderPassColorAttachmentDescriptor ca = mt_renderpass_color_attachment(renderPass, 0);
+        mt_renderpass_color_attachment_set_texture(ca, cametal_drawable_get_texture(drawable));
+        mt_renderpass_color_attachment_set_load_action(ca, MTLoadActionClear);
+        mt_renderpass_color_attachment_set_store_action(ca, MTStoreActionStore);
+        mt_renderpass_color_attachment_set_clear_color(ca, mt_clear_color(0.1, 0.1, 0.1, 1.0));
         
         
         MTRenderCommandEncoder renderCommandEncoder = mt_renderCommand_encoder_new(cmdBuffer, renderPass);

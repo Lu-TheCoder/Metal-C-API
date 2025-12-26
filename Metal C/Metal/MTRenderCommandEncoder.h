@@ -19,20 +19,20 @@ typedef enum MTPrimitiveType {
     MTPrimitiveTypeLineStrip = 2,
     MTPrimitiveTypeTriangle = 3,
     MTPrimitiveTypeTriangleStrip = 4,
-}MTPrimitiveType;
+} MTPrimitiveType;
 
 typedef enum MTVisibilityResultMode {
     MTVisibilityResultModeDisabled = 0,
     MTVisibilityResultModeBoolean = 1,
     MTVisibilityResultModeCounting = 2,
-}MTVisibilityResultMode;
+} MTVisibilityResultMode;
 
 typedef struct MTScissorRect {
     unsigned long x;
     unsigned long y;
     unsigned long width;
     unsigned long height;
-}MTScissorRect;
+} MTScissorRect;
 
 typedef struct MTViewport {
     double originX;
@@ -41,28 +41,28 @@ typedef struct MTViewport {
     double height;
     double znear;
     double zfar;
-}MTViewport;
+} MTViewport;
 
 typedef enum MTCullMode {
     MTCullModeNone = 0,
     MTCullModeFront = 1,
     MTCullModeBack = 2,
-}MTCullMode;
+} MTCullMode;
 
 typedef enum MTWinding {
     MTWindingClockwise = 0,
     MTWindingCounterClockwise = 1,
-}MTWinding;
+} MTWinding;
 
 typedef enum MTDepthClipMode {
     MTDepthClipModeClip = 0,
     MTDepthClipModeClamp = 1,
-}MTDepthClipMode;
+} MTDepthClipMode;
 
 typedef enum MTTriangleFillMode {
     MTTriangleFillModeFill = 0,
     MTTriangleFillModeLines = 1,
-}MTTriangleFillMode;
+} MTTriangleFillMode;
 
 typedef struct MTDrawPrimitivesIndirectArguments {
     uint32_t vertexCount;
@@ -92,13 +92,11 @@ typedef struct MTDrawPatchIndirectArguments {
 } MTDrawPatchIndirectArguments;
 
 typedef struct MTQuadTessellationFactorsHalf {
-    /* NOTE: edgeTessellationFactor and insideTessellationFactor are interpreted as half (16-bit floats) */
     uint16_t edgeTessellationFactor[4];
     uint16_t insideTessellationFactor[2];
 } MTQuadTessellationFactorsHalf;
 
-typedef struct MTTriangleTessellationFactorsHalf{
-    /* NOTE: edgeTessellationFactor and insideTessellationFactor are interpreted as half (16-bit floats) */
+typedef struct MTTriangleTessellationFactorsHalf {
     uint16_t edgeTessellationFactor[3];
     uint16_t insideTessellationFactor;
 } MTTriangleTessellationFactorsHalf;
@@ -111,33 +109,29 @@ typedef enum MTRenderStages: unsigned long {
     MTLRenderStageMesh     = (1UL << 4),
 } MTRenderStages;
 
-
 typedef void* MTRenderCommandEncoder;
 typedef void* MTBuffer;
 typedef void* MTVisibleFunctionTable;
 typedef void* MTIntersectionFunctionTable;
 typedef void* MTAccelerationStructure;
 
-// Create a new render command encoder from a command buffer and render pass descriptor
+// MARK: - Encoder Creation/Lifecycle
+
 MT_INLINE MTRenderCommandEncoder mt_renderCommand_encoder_new(MTCommandBuffer cmdBuf, MTRenderPassDescriptor renderpassDesc) {
-    SEL sel = sel_registerName("renderCommandEncoderWithDescriptor:");
-    return ((id (*)(id, SEL, id))objc_msgSend)(cmdBuf, sel, renderpassDesc);
+    return MT_MSG_SEND_1(id, cmdBuf, MT_SEL("renderCommandEncoderWithDescriptor:"), id, renderpassDesc);
 }
 
-// End encoding on a render command encoder
 MT_INLINE void mt_renderCommand_encoder_end_encoding(MTRenderCommandEncoder encoder) {
-    SEL sel = sel_registerName("endEncoding");
-    ((void (*)(id, SEL))objc_msgSend)(encoder, sel);
+    MT_MSG_SEND(void, encoder, MT_SEL("endEncoding"));
 }
 
-// Set the render pipeline state on a render command encoder
 MT_INLINE void mt_renderCommand_encoder_set_pipeline_state(MTRenderCommandEncoder encoder, MTRenderPipelineState pipelineState) {
-    SEL sel = sel_registerName("setRenderPipelineState:");
-    ((void (*)(id, SEL, id))objc_msgSend)(encoder, sel, pipelineState);
+    MT_MSG_SEND_1(void, encoder, MT_SEL("setRenderPipelineState:"), id, pipelineState);
 }
 
-MT_INLINE MTViewport mt_viewport_make(double origin_x, double origin_y, double width, double height, double znear, double zfar)
-{
+// MARK: - Viewport Helpers
+
+MT_INLINE MTViewport mt_viewport_make(double origin_x, double origin_y, double width, double height, double znear, double zfar) {
     MTViewport viewport = {
         .originX = origin_x,
         .originY = origin_y,
@@ -146,956 +140,311 @@ MT_INLINE MTViewport mt_viewport_make(double origin_x, double origin_y, double w
         .znear = znear,
         .zfar = zfar,
     };
-    
     return viewport;
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_buffer(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTBuffer* buffer,
-    unsigned long offset,
-    unsigned long at_index
-) {
-    typedef void (*SetVertexBufferFunc)(id, SEL, id, unsigned long, unsigned long);
-    ((SetVertexBufferFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexBuffer:offset:atIndex:"),
-        (id)buffer,
-        offset,
-        at_index
-    );
+// MARK: - Vertex Buffer Functions
+
+MT_INLINE void mt_renderCommand_encoder_set_vertex_buffer(MTRenderCommandEncoder render_cmd_enc, MTBuffer buffer, unsigned long offset, unsigned long at_index) {
+    MT_MSG_SEND_3(void, render_cmd_enc, MT_SEL("setVertexBuffer:offset:atIndex:"), id, buffer, unsigned long, offset, unsigned long, at_index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_bytes(
-    MTRenderCommandEncoder render_cmd_enc,
-    const void* bytes,
-    unsigned long length,
-    unsigned long at_index
-) {
-    typedef void (*SetVertexBytesFunc)(id, SEL, const void*, unsigned long, unsigned long);
-    ((SetVertexBytesFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexBytes:length:atIndex:"),
-        bytes,
-        length,
-        at_index
-    );
+MT_INLINE void mt_renderCommand_encoder_set_vertex_bytes(MTRenderCommandEncoder render_cmd_enc, const void* bytes, unsigned long length, unsigned long at_index) {
+    MT_MSG_SEND_3(void, render_cmd_enc, MT_SEL("setVertexBytes:length:atIndex:"), const void*, bytes, unsigned long, length, unsigned long, at_index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_buffer_offset(
-    MTRenderCommandEncoder render_cmd_enc,
-    unsigned long offset,
-    unsigned long index
-) {
-    typedef void (*FuncType)(id, SEL, unsigned long, unsigned long);
-    ((FuncType)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexBufferOffset:atIndex:"),
-        offset,
-        index
-    );
+MT_INLINE void mt_renderCommand_encoder_set_vertex_buffer_offset(MTRenderCommandEncoder render_cmd_enc, unsigned long offset, unsigned long index) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setVertexBufferOffset:atIndex:"), unsigned long, offset, unsigned long, index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_buffers(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTBuffer const* buffers,
-    const unsigned long* offsets,
-    MTRange range
-) {
-    typedef void (*FuncType)(id, SEL, void* const*, const unsigned long*, MTRange);
-    ((FuncType)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexBuffers:offsets:withRange:"),
-        buffers,
-        offsets,
-        range
-    );
+// Struct arg - explicit cast
+MT_INLINE void mt_renderCommand_encoder_set_vertex_buffers(MTRenderCommandEncoder render_cmd_enc, MTBuffer const* buffers, const unsigned long* offsets, MTRange range) {
+    ((void (*)(id, SEL, const void*, const unsigned long*, MTRange))objc_msgSend)(
+        (id)render_cmd_enc, MT_SEL("setVertexBuffers:offsets:withRange:"), buffers, offsets, range);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_buffer_stride(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTBuffer buffer,
-    unsigned long offset,
-    unsigned long stride,
-    unsigned long index
-) {
-    typedef void (*FuncType)(id, SEL, id, unsigned long, unsigned long, unsigned long);
-    ((FuncType)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexBuffer:offset:attributeStride:atIndex:"),
-        (id)buffer,
-        offset,
-        stride,
-        index
-    );
+MT_INLINE void mt_renderCommand_encoder_set_vertex_buffer_stride(MTRenderCommandEncoder render_cmd_enc, MTBuffer buffer, unsigned long offset, unsigned long stride, unsigned long index) {
+    MT_MSG_SEND_4(void, render_cmd_enc, MT_SEL("setVertexBuffer:offset:attributeStride:atIndex:"), id, buffer, unsigned long, offset, unsigned long, stride, unsigned long, index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_buffers_stride(
-    MTRenderCommandEncoder render_cmd_enc,
-    void* const* buffers,
-    const unsigned long* offsets,
-    const unsigned long* strides,
-    MTRange range
-) {
-    typedef void (*FuncType)(id, SEL, void* const*, const unsigned long*, const unsigned long*, MTRange);
-    ((FuncType)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexBuffers:offsets:attributeStrides:withRange:"),
-        buffers,
-        offsets,
-        strides,
-        range
-    );
+// Struct arg - explicit cast
+MT_INLINE void mt_renderCommand_encoder_set_vertex_buffers_stride(MTRenderCommandEncoder render_cmd_enc, void* const* buffers, const unsigned long* offsets, const unsigned long* strides, MTRange range) {
+    ((void (*)(id, SEL, void* const*, const unsigned long*, const unsigned long*, MTRange))objc_msgSend)(
+        (id)render_cmd_enc, MT_SEL("setVertexBuffers:offsets:attributeStrides:withRange:"), buffers, offsets, strides, range);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_buffer_offset_stride(
-    MTRenderCommandEncoder render_cmd_enc,
-    unsigned long offset,
-    unsigned long stride,
-    unsigned long index
-) {
-    typedef void (*FuncType)(id, SEL, unsigned long, unsigned long, unsigned long);
-    ((FuncType)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexBufferOffset:attributeStride:atIndex:"),
-        offset,
-        stride,
-        index
-    );
+MT_INLINE void mt_renderCommand_encoder_set_vertex_buffer_offset_stride(MTRenderCommandEncoder render_cmd_enc, unsigned long offset, unsigned long stride, unsigned long index) {
+    MT_MSG_SEND_3(void, render_cmd_enc, MT_SEL("setVertexBufferOffset:attributeStride:atIndex:"), unsigned long, offset, unsigned long, stride, unsigned long, index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_bytes_stride(
-    MTRenderCommandEncoder render_cmd_enc,
-    const void* bytes,
-    unsigned long length,
-    unsigned long stride,
-    unsigned long index
-) {
-    typedef void (*FuncType)(id, SEL, const void*, unsigned long, unsigned long, unsigned long);
-    ((FuncType)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexBytes:length:attributeStride:atIndex:"),
-        bytes,
-        length,
-        stride,
-        index
-    );
+MT_INLINE void mt_renderCommand_encoder_set_vertex_bytes_stride(MTRenderCommandEncoder render_cmd_enc, const void* bytes, unsigned long length, unsigned long stride, unsigned long index) {
+    MT_MSG_SEND_4(void, render_cmd_enc, MT_SEL("setVertexBytes:length:attributeStride:atIndex:"), const void*, bytes, unsigned long, length, unsigned long, stride, unsigned long, index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_draw_primitives(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTPrimitiveType type,
-    unsigned long vertex_start,
-    unsigned long vertex_count
-) {
-    typedef void (*DrawPrimitivesFunc)(
-        id, SEL, MTPrimitiveType, unsigned long, unsigned long
-    );
-    DrawPrimitivesFunc func = (DrawPrimitivesFunc)objc_msgSend;
-    func((id)render_cmd_enc,
-         sel_getUid("drawPrimitives:vertexStart:vertexCount:"),
-         type,
-         vertex_start,
-         vertex_count);
+// MARK: - Draw Primitives
+
+MT_INLINE void mt_renderCommand_encoder_draw_primitives(MTRenderCommandEncoder render_cmd_enc, MTPrimitiveType type, unsigned long vertex_start, unsigned long vertex_count) {
+    MT_MSG_SEND_3(void, render_cmd_enc, MT_SEL("drawPrimitives:vertexStart:vertexCount:"), MTPrimitiveType, type, unsigned long, vertex_start, unsigned long, vertex_count);
 }
 
-MT_INLINE void mt_renderCommand_encoder_draw_indexed_primitives(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTPrimitiveType primitive_type,
-    unsigned long index_count,
-    MTIndexType index_type,
-    const MTBuffer index_buffer,
-    uintptr_t index_buffer_offset
-) {
-    typedef void (*DrawIndexedPrimitivesFunc)(
-        id, SEL, MTPrimitiveType, unsigned long, MTIndexType, const MTBuffer, unsigned long
-    );
-    DrawIndexedPrimitivesFunc func = (DrawIndexedPrimitivesFunc)objc_msgSend;
-    func((id)render_cmd_enc,
-         sel_getUid("drawIndexedPrimitives:indexCount:indexType:indexBuffer:indexBufferOffset:"),
-         primitive_type,
-         index_count,
-         index_type,
-         index_buffer,
-         index_buffer_offset);
+MT_INLINE void mt_renderCommand_encoder_draw_indexed_primitives(MTRenderCommandEncoder render_cmd_enc, MTPrimitiveType primitive_type, unsigned long index_count, MTIndexType index_type, const MTBuffer index_buffer, uintptr_t index_buffer_offset) {
+    MT_MSG_SEND_5(void, render_cmd_enc, MT_SEL("drawIndexedPrimitives:indexCount:indexType:indexBuffer:indexBufferOffset:"), MTPrimitiveType, primitive_type, unsigned long, index_count, MTIndexType, index_type, id, index_buffer, uintptr_t, index_buffer_offset);
 }
 
-MT_INLINE void mt_renderCommand_encoder_draw_indexed_primitives_with_instance_count(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTPrimitiveType primitive_type,
-    unsigned long index_count,
-    MTIndexType index_type,
-    const MTBuffer index_buffer,
-    uintptr_t index_buffer_offset,
-    uintptr_t instance_count
-) {
-    typedef void (*DrawIndexedPrimitivesInstancedFunc)(
-        id, SEL, MTPrimitiveType, unsigned long, MTIndexType, const MTBuffer, unsigned long, unsigned long
-    );
-    DrawIndexedPrimitivesInstancedFunc func = (DrawIndexedPrimitivesInstancedFunc)objc_msgSend;
-    func((id)render_cmd_enc,
-         sel_getUid("drawIndexedPrimitives:indexCount:indexType:indexBuffer:indexBufferOffset:instanceCount:"),
-         primitive_type,
-         index_count,
-         index_type,
-         index_buffer,
-         index_buffer_offset,
-         instance_count);
+MT_INLINE void mt_renderCommand_encoder_draw_indexed_primitives_with_instance_count(MTRenderCommandEncoder render_cmd_enc, MTPrimitiveType primitive_type, unsigned long index_count, MTIndexType index_type, const MTBuffer index_buffer, uintptr_t index_buffer_offset, uintptr_t instance_count) {
+    MT_MSG_SEND_6(void, render_cmd_enc, MT_SEL("drawIndexedPrimitives:indexCount:indexType:indexBuffer:indexBufferOffset:instanceCount:"), MTPrimitiveType, primitive_type, unsigned long, index_count, MTIndexType, index_type, id, index_buffer, uintptr_t, index_buffer_offset, uintptr_t, instance_count);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_texture(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTTexture texture,
-    NSUInteger index
-) {
-    typedef void (*FuncType)(id, SEL, MTTexture, NSUInteger);
-    ((FuncType)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexTexture:atIndex:"),
-        texture,
-        index
-    );
+// MARK: - Vertex Textures
+
+MT_INLINE void mt_renderCommand_encoder_set_vertex_texture(MTRenderCommandEncoder render_cmd_enc, MTTexture texture, NSUInteger index) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setVertexTexture:atIndex:"), id, texture, NSUInteger, index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_textures(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTTexture const* textures,
-    MTRange range
-) {
-    typedef void (*FuncType)(id, SEL, MTTexture const*, MTRange);
-    ((FuncType)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexTextures:withRange:"),
-        textures,
-        range
-    );
+// Struct arg - explicit cast
+MT_INLINE void mt_renderCommand_encoder_set_vertex_textures(MTRenderCommandEncoder render_cmd_enc, MTTexture const* textures, MTRange range) {
+    ((void (*)(id, SEL, const void*, MTRange))objc_msgSend)((id)render_cmd_enc, MT_SEL("setVertexTextures:withRange:"), textures, range);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_sampler_state(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTSamplerState sampler,
-    NSUInteger index
-) {
-    typedef void (*FuncType)(id, SEL, MTSamplerState, NSUInteger);
-    ((FuncType)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexSamplerState:atIndex:"),
-        sampler,
-        index
-    );
+// MARK: - Vertex Samplers
+
+MT_INLINE void mt_renderCommand_encoder_set_vertex_sampler_state(MTRenderCommandEncoder render_cmd_enc, MTSamplerState sampler, NSUInteger index) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setVertexSamplerState:atIndex:"), id, sampler, NSUInteger, index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_sampler_states(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTSamplerState const* samplers,
-    MTRange range
-) {
-    typedef void (*FuncType)(id, SEL, MTSamplerState const*, MTRange);
-    ((FuncType)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexSamplerStates:withRange:"),
-        samplers,
-        range
-    );
+// Struct arg - explicit cast
+MT_INLINE void mt_renderCommand_encoder_set_vertex_sampler_states(MTRenderCommandEncoder render_cmd_enc, MTSamplerState const* samplers, MTRange range) {
+    ((void (*)(id, SEL, const void*, MTRange))objc_msgSend)((id)render_cmd_enc, MT_SEL("setVertexSamplerStates:withRange:"), samplers, range);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_sampler_state_lod(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTSamplerState sampler,
-    float lod_min,
-    float lod_max,
-    NSUInteger index
-) {
-    typedef void (*FuncType)(id, SEL, MTSamplerState, float, float, NSUInteger);
-    ((FuncType)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexSamplerState:lodMinClamp:lodMaxClamp:atIndex:"),
-        sampler,
-        lod_min,
-        lod_max,
-        index
-    );
+MT_INLINE void mt_renderCommand_encoder_set_vertex_sampler_state_lod(MTRenderCommandEncoder render_cmd_enc, MTSamplerState sampler, float lod_min, float lod_max, NSUInteger index) {
+    MT_MSG_SEND_4(void, render_cmd_enc, MT_SEL("setVertexSamplerState:lodMinClamp:lodMaxClamp:atIndex:"), id, sampler, float, lod_min, float, lod_max, NSUInteger, index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_sampler_states_lod(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTSamplerState const* samplers,
-    const float* lod_min_clamps,
-    const float* lod_max_clamps,
-    MTRange range
-) {
-    typedef void (*FuncType)(id, SEL, MTSamplerState const*, const float*, const float*, MTRange);
-    ((FuncType)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexSamplerStates:lodMinClamps:lodMaxClamps:withRange:"),
-        samplers,
-        lod_min_clamps,
-        lod_max_clamps,
-        range
-    );
+// Struct arg - explicit cast
+MT_INLINE void mt_renderCommand_encoder_set_vertex_sampler_states_lod(MTRenderCommandEncoder render_cmd_enc, MTSamplerState const* samplers, const float* lod_min_clamps, const float* lod_max_clamps, MTRange range) {
+    ((void (*)(id, SEL, const void*, const float*, const float*, MTRange))objc_msgSend)(
+        (id)render_cmd_enc, MT_SEL("setVertexSamplerStates:lodMinClamps:lodMaxClamps:withRange:"), samplers, lod_min_clamps, lod_max_clamps, range);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_visible_function_table(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTVisibleFunctionTable function_table,
-    NSUInteger buffer_index
-) {
-    typedef void (*FuncType)(id, SEL, MTVisibleFunctionTable, NSUInteger);
-    ((FuncType)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexVisibleFunctionTable:atBufferIndex:"),
-        function_table,
-        buffer_index
-    );
+// MARK: - Vertex Function Tables
+
+MT_INLINE void mt_renderCommand_encoder_set_vertex_visible_function_table(MTRenderCommandEncoder render_cmd_enc, MTVisibleFunctionTable function_table, NSUInteger buffer_index) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setVertexVisibleFunctionTable:atBufferIndex:"), id, function_table, NSUInteger, buffer_index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_visible_function_tables(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTVisibleFunctionTable const* tables,
-    MTRange range
-) {
-    typedef void (*FuncType)(id, SEL, MTVisibleFunctionTable const*, MTRange);
-    ((FuncType)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexVisibleFunctionTables:withBufferRange:"),
-        tables,
-        range
-    );
+// Struct arg - explicit cast
+MT_INLINE void mt_renderCommand_encoder_set_vertex_visible_function_tables(MTRenderCommandEncoder render_cmd_enc, MTVisibleFunctionTable const* tables, MTRange range) {
+    ((void (*)(id, SEL, const void*, MTRange))objc_msgSend)((id)render_cmd_enc, MT_SEL("setVertexVisibleFunctionTables:withBufferRange:"), tables, range);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_intersection_function_table(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTIntersectionFunctionTable table,
-    NSUInteger buffer_index
-) {
-    typedef void (*FuncType)(id, SEL, MTIntersectionFunctionTable, NSUInteger);
-    ((FuncType)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexIntersectionFunctionTable:atBufferIndex:"),
-        table,
-        buffer_index
-    );
+MT_INLINE void mt_renderCommand_encoder_set_vertex_intersection_function_table(MTRenderCommandEncoder render_cmd_enc, MTIntersectionFunctionTable table, NSUInteger buffer_index) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setVertexIntersectionFunctionTable:atBufferIndex:"), id, table, NSUInteger, buffer_index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_intersection_function_tables(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTIntersectionFunctionTable const* tables,
-    MTRange range
-) {
-    typedef void (*FuncType)(id, SEL, MTIntersectionFunctionTable const*, MTRange);
-    ((FuncType)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexIntersectionFunctionTables:withBufferRange:"),
-        tables,
-        range
-    );
+// Struct arg - explicit cast
+MT_INLINE void mt_renderCommand_encoder_set_vertex_intersection_function_tables(MTRenderCommandEncoder render_cmd_enc, MTIntersectionFunctionTable const* tables, MTRange range) {
+    ((void (*)(id, SEL, const void*, MTRange))objc_msgSend)((id)render_cmd_enc, MT_SEL("setVertexIntersectionFunctionTables:withBufferRange:"), tables, range);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_acceleration_structure(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTAccelerationStructure accel_struct,
-    NSUInteger buffer_index
-) {
-    typedef void (*FuncType)(id, SEL, MTAccelerationStructure, NSUInteger);
-    ((FuncType)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexAccelerationStructure:atBufferIndex:"),
-        accel_struct,
-        buffer_index
-    );
+MT_INLINE void mt_renderCommand_encoder_set_vertex_acceleration_structure(MTRenderCommandEncoder render_cmd_enc, MTAccelerationStructure accel_struct, NSUInteger buffer_index) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setVertexAccelerationStructure:atBufferIndex:"), id, accel_struct, NSUInteger, buffer_index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_viewport(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTViewport viewport
-) {
-    typedef void (*SetViewportFunc)(id, SEL, MTViewport);
-    ((SetViewportFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setViewport:"),
-        viewport
-    );
+// MARK: - Viewport & Rasterization State
+
+// Struct arg - explicit cast
+MT_INLINE void mt_renderCommand_encoder_set_viewport(MTRenderCommandEncoder render_cmd_enc, MTViewport viewport) {
+    ((void (*)(id, SEL, MTViewport))objc_msgSend)((id)render_cmd_enc, MT_SEL("setViewport:"), viewport);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_viewports(
-    MTRenderCommandEncoder render_cmd_enc,
-    const MTViewport* viewports,
-    NSUInteger count
-) {
-    typedef void (*SetViewportsFunc)(id, SEL, const MTViewport*, NSUInteger);
-    ((SetViewportsFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setViewports:count:"),
-        viewports,
-        count
-    );
+MT_INLINE void mt_renderCommand_encoder_set_viewports(MTRenderCommandEncoder render_cmd_enc, const MTViewport* viewports, NSUInteger count) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setViewports:count:"), const MTViewport*, viewports, NSUInteger, count);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_front_facing_winding(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTWinding winding
-) {
-    typedef void (*SetFrontFacingWindingFunc)(id, SEL, MTWinding);
-    ((SetFrontFacingWindingFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setFrontFacingWinding:"),
-        winding
-    );
+MT_INLINE void mt_renderCommand_encoder_set_front_facing_winding(MTRenderCommandEncoder render_cmd_enc, MTWinding winding) {
+    MT_MSG_SEND_1(void, render_cmd_enc, MT_SEL("setFrontFacingWinding:"), MTWinding, winding);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_vertex_amplification_count(
-    MTRenderCommandEncoder render_cmd_enc,
-    NSUInteger count,
-    const MTVertexAmplificationViewMapping* view_mappings
-) {
-    typedef void (*SetVertexAmplificationCountFunc)(id, SEL, NSUInteger, const MTVertexAmplificationViewMapping*);
-    ((SetVertexAmplificationCountFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVertexAmplificationCount:viewMappings:"),
-        count,
-        view_mappings
-    );
+MT_INLINE void mt_renderCommand_encoder_set_vertex_amplification_count(MTRenderCommandEncoder render_cmd_enc, NSUInteger count, const MTVertexAmplificationViewMapping* view_mappings) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setVertexAmplificationCount:viewMappings:"), NSUInteger, count, const MTVertexAmplificationViewMapping*, view_mappings);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_cull_mode(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTCullMode cull_mode
-) {
-    typedef void (*SetCullModeFunc)(id, SEL, MTCullMode);
-    ((SetCullModeFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setCullMode:"),
-        cull_mode
-    );
+MT_INLINE void mt_renderCommand_encoder_set_cull_mode(MTRenderCommandEncoder render_cmd_enc, MTCullMode cull_mode) {
+    MT_MSG_SEND_1(void, render_cmd_enc, MT_SEL("setCullMode:"), MTCullMode, cull_mode);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_depth_clip_mode(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTDepthClipMode clip_mode
-) {
-    typedef void (*SetDepthClipModeFunc)(id, SEL, MTDepthClipMode);
-    ((SetDepthClipModeFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setDepthClipMode:"),
-        clip_mode
-    );
+MT_INLINE void mt_renderCommand_encoder_set_depth_clip_mode(MTRenderCommandEncoder render_cmd_enc, MTDepthClipMode clip_mode) {
+    MT_MSG_SEND_1(void, render_cmd_enc, MT_SEL("setDepthClipMode:"), MTDepthClipMode, clip_mode);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_depth_bias(
-    MTRenderCommandEncoder render_cmd_enc,
-    float depth_bias,
-    float slope_scale,
-    float clamp
-) {
-    typedef void (*SetDepthBiasFunc)(id, SEL, float, float, float);
-    ((SetDepthBiasFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setDepthBias:slopeScale:clamp:"),
-        depth_bias,
-        slope_scale,
-        clamp
-    );
+MT_INLINE void mt_renderCommand_encoder_set_depth_bias(MTRenderCommandEncoder render_cmd_enc, float depth_bias, float slope_scale, float clamp) {
+    MT_MSG_SEND_3(void, render_cmd_enc, MT_SEL("setDepthBias:slopeScale:clamp:"), float, depth_bias, float, slope_scale, float, clamp);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_scissor_rect(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTScissorRect rect
-) {
-    typedef void (*SetScissorRectFunc)(id, SEL, MTScissorRect);
-    ((SetScissorRectFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setScissorRect:"),
-        rect
-    );
+// Struct arg - explicit cast
+MT_INLINE void mt_renderCommand_encoder_set_scissor_rect(MTRenderCommandEncoder render_cmd_enc, MTScissorRect rect) {
+    ((void (*)(id, SEL, MTScissorRect))objc_msgSend)((id)render_cmd_enc, MT_SEL("setScissorRect:"), rect);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_scissor_rects(
-    MTRenderCommandEncoder render_cmd_enc,
-    const MTScissorRect* scissor_rects,
-    NSUInteger count
-) {
-    typedef void (*SetScissorRectsFunc)(id, SEL, const MTScissorRect*, NSUInteger);
-    ((SetScissorRectsFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setScissorRects:count:"),
-        scissor_rects,
-        count
-    );
+MT_INLINE void mt_renderCommand_encoder_set_scissor_rects(MTRenderCommandEncoder render_cmd_enc, const MTScissorRect* scissor_rects, NSUInteger count) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setScissorRects:count:"), const MTScissorRect*, scissor_rects, NSUInteger, count);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_triangle_fill_mode(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTTriangleFillMode fill_mode
-) {
-    typedef void (*SetTriangleFillModeFunc)(id, SEL, MTTriangleFillMode);
-    ((SetTriangleFillModeFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setTriangleFillMode:"),
-        fill_mode
-    );
+MT_INLINE void mt_renderCommand_encoder_set_triangle_fill_mode(MTRenderCommandEncoder render_cmd_enc, MTTriangleFillMode fill_mode) {
+    MT_MSG_SEND_1(void, render_cmd_enc, MT_SEL("setTriangleFillMode:"), MTTriangleFillMode, fill_mode);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_fragment_bytes(
-    MTRenderCommandEncoder render_cmd_enc,
-    const void* bytes,
-    NSUInteger length,
-    NSUInteger index
-) {
-    typedef void (*SetFragmentBytesFunc)(id, SEL, const void*, NSUInteger, NSUInteger);
-    ((SetFragmentBytesFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setFragmentBytes:length:atIndex:"),
-        bytes,
-        length,
-        index
-    );
+// MARK: - Fragment Buffer Functions
+
+MT_INLINE void mt_renderCommand_encoder_set_fragment_bytes(MTRenderCommandEncoder render_cmd_enc, const void* bytes, NSUInteger length, NSUInteger index) {
+    MT_MSG_SEND_3(void, render_cmd_enc, MT_SEL("setFragmentBytes:length:atIndex:"), const void*, bytes, NSUInteger, length, NSUInteger, index);
 }
 
-
-MT_INLINE void mt_renderCommand_encoder_set_fragment_buffer(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTBuffer buffer,
-    NSUInteger offset,
-    NSUInteger index
-) {
-    typedef void (*SetFragmentBufferFunc)(id, SEL, id, NSUInteger, NSUInteger);
-    ((SetFragmentBufferFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setFragmentBuffer:offset:atIndex:"),
-        (id)buffer,
-        offset,
-        index
-    );
+MT_INLINE void mt_renderCommand_encoder_set_fragment_buffer(MTRenderCommandEncoder render_cmd_enc, MTBuffer buffer, NSUInteger offset, NSUInteger index) {
+    MT_MSG_SEND_3(void, render_cmd_enc, MT_SEL("setFragmentBuffer:offset:atIndex:"), id, buffer, NSUInteger, offset, NSUInteger, index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_fragment_buffer_offset(
-    MTRenderCommandEncoder render_cmd_enc,
-    NSUInteger offset,
-    NSUInteger index
-) {
-    typedef void (*SetFragmentBufferOffsetFunc)(id, SEL, NSUInteger, NSUInteger);
-    ((SetFragmentBufferOffsetFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setFragmentBufferOffset:atIndex:"),
-        offset,
-        index
-    );
+MT_INLINE void mt_renderCommand_encoder_set_fragment_buffer_offset(MTRenderCommandEncoder render_cmd_enc, NSUInteger offset, NSUInteger index) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setFragmentBufferOffset:atIndex:"), NSUInteger, offset, NSUInteger, index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_fragment_buffers(
-    MTRenderCommandEncoder render_cmd_enc,
-    const MTBuffer* buffers,
-    const NSUInteger* offsets,
-    MTRange range
-) {
-    typedef void (*SetFragmentBuffersFunc)(id, SEL, const id*, const NSUInteger*, MTRange);
-    ((SetFragmentBuffersFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setFragmentBuffers:offsets:withRange:"),
-        (const id*)buffers,
-        offsets,
-        range
-    );
+// Struct arg - explicit cast
+MT_INLINE void mt_renderCommand_encoder_set_fragment_buffers(MTRenderCommandEncoder render_cmd_enc, const MTBuffer* buffers, const NSUInteger* offsets, MTRange range) {
+    ((void (*)(id, SEL, const void*, const NSUInteger*, MTRange))objc_msgSend)(
+        (id)render_cmd_enc, MT_SEL("setFragmentBuffers:offsets:withRange:"), buffers, offsets, range);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_fragment_texture(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTTexture texture,
-    NSUInteger index
-) {
-    typedef void (*SetFragmentTextureFunc)(id, SEL, id, NSUInteger);
-    ((SetFragmentTextureFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setFragmentTexture:atIndex:"),
-        (id)texture,
-        index
-    );
+// MARK: - Fragment Textures
+
+MT_INLINE void mt_renderCommand_encoder_set_fragment_texture(MTRenderCommandEncoder render_cmd_enc, MTTexture texture, NSUInteger index) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setFragmentTexture:atIndex:"), id, texture, NSUInteger, index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_fragment_textures(
-    MTRenderCommandEncoder render_cmd_enc,
-    const MTTexture* textures,
-    MTRange range
-) {
-    typedef void (*SetFragmentTexturesFunc)(id, SEL, const id*, MTRange);
-    ((SetFragmentTexturesFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setFragmentTextures:withRange:"),
-        (const id*)textures,
-        range
-    );
+// Struct arg - explicit cast
+MT_INLINE void mt_renderCommand_encoder_set_fragment_textures(MTRenderCommandEncoder render_cmd_enc, const MTTexture* textures, MTRange range) {
+    ((void (*)(id, SEL, const void*, MTRange))objc_msgSend)((id)render_cmd_enc, MT_SEL("setFragmentTextures:withRange:"), textures, range);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_fragment_sampler_state(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTSamplerState sampler,
-    NSUInteger index
-) {
-    typedef void (*SetFragmentSamplerStateFunc)(id, SEL, id, NSUInteger);
-    ((SetFragmentSamplerStateFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setFragmentSamplerState:atIndex:"),
-        (id)sampler,
-        index
-    );
+// MARK: - Fragment Samplers
+
+MT_INLINE void mt_renderCommand_encoder_set_fragment_sampler_state(MTRenderCommandEncoder render_cmd_enc, MTSamplerState sampler, NSUInteger index) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setFragmentSamplerState:atIndex:"), id, sampler, NSUInteger, index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_fragment_sampler_states(
-    MTRenderCommandEncoder render_cmd_enc,
-    const MTSamplerState* samplers,
-    MTRange range
-) {
-    typedef void (*SetFragmentSamplerStatesFunc)(id, SEL, const id*, MTRange);
-    ((SetFragmentSamplerStatesFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setFragmentSamplerStates:withRange:"),
-        (const id*)samplers,
-        range
-    );
+// Struct arg - explicit cast
+MT_INLINE void mt_renderCommand_encoder_set_fragment_sampler_states(MTRenderCommandEncoder render_cmd_enc, const MTSamplerState* samplers, MTRange range) {
+    ((void (*)(id, SEL, const void*, MTRange))objc_msgSend)((id)render_cmd_enc, MT_SEL("setFragmentSamplerStates:withRange:"), samplers, range);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_fragment_sampler_state_lod(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTSamplerState sampler,
-    float lod_min,
-    float lod_max,
-    NSUInteger index
-) {
-    typedef void (*SetFragmentSamplerStateLODFunc)(id, SEL, id, float, float, NSUInteger);
-    ((SetFragmentSamplerStateLODFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setFragmentSamplerState:lodMinClamp:lodMaxClamp:atIndex:"),
-        (id)sampler,
-        lod_min,
-        lod_max,
-        index
-    );
+MT_INLINE void mt_renderCommand_encoder_set_fragment_sampler_state_lod(MTRenderCommandEncoder render_cmd_enc, MTSamplerState sampler, float lod_min, float lod_max, NSUInteger index) {
+    MT_MSG_SEND_4(void, render_cmd_enc, MT_SEL("setFragmentSamplerState:lodMinClamp:lodMaxClamp:atIndex:"), id, sampler, float, lod_min, float, lod_max, NSUInteger, index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_fragment_sampler_states_lod(
-    MTRenderCommandEncoder render_cmd_enc,
-    const MTSamplerState* samplers,
-    const float* lod_min_clamps,
-    const float* lod_max_clamps,
-    MTRange range
-) {
-    typedef void (*SetFragmentSamplerStatesLODArrayFunc)(id, SEL, const id*, const float*, const float*, MTRange);
-    ((SetFragmentSamplerStatesLODArrayFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setFragmentSamplerStates:lodMinClamps:lodMaxClamps:withRange:"),
-        (const id*)samplers,
-        lod_min_clamps,
-        lod_max_clamps,
-        range
-    );
+// Struct arg - explicit cast
+MT_INLINE void mt_renderCommand_encoder_set_fragment_sampler_states_lod(MTRenderCommandEncoder render_cmd_enc, const MTSamplerState* samplers, const float* lod_min_clamps, const float* lod_max_clamps, MTRange range) {
+    ((void (*)(id, SEL, const void*, const float*, const float*, MTRange))objc_msgSend)(
+        (id)render_cmd_enc, MT_SEL("setFragmentSamplerStates:lodMinClamps:lodMaxClamps:withRange:"), samplers, lod_min_clamps, lod_max_clamps, range);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_fragment_visible_function_table(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTVisibleFunctionTable table,
-    NSUInteger index
-) {
-    typedef void (*SetFragmentVisibleFunctionTableFunc)(id, SEL, id, NSUInteger);
-    ((SetFragmentVisibleFunctionTableFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setFragmentVisibleFunctionTable:atBufferIndex:"),
-        (id)table,
-        index
-    );
+// MARK: - Fragment Function Tables
+
+MT_INLINE void mt_renderCommand_encoder_set_fragment_visible_function_table(MTRenderCommandEncoder render_cmd_enc, MTVisibleFunctionTable table, NSUInteger index) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setFragmentVisibleFunctionTable:atBufferIndex:"), id, table, NSUInteger, index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_fragment_visible_function_tables(
-    MTRenderCommandEncoder render_cmd_enc,
-    const MTVisibleFunctionTable* tables,
-    MTRange range
-) {
-    typedef void (*SetFragmentVisibleFunctionTablesFunc)(id, SEL, const id*, MTRange);
-    ((SetFragmentVisibleFunctionTablesFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setFragmentVisibleFunctionTables:withBufferRange:"),
-        (const id*)tables,
-        range
-    );
+// Struct arg - explicit cast
+MT_INLINE void mt_renderCommand_encoder_set_fragment_visible_function_tables(MTRenderCommandEncoder render_cmd_enc, const MTVisibleFunctionTable* tables, MTRange range) {
+    ((void (*)(id, SEL, const void*, MTRange))objc_msgSend)((id)render_cmd_enc, MT_SEL("setFragmentVisibleFunctionTables:withBufferRange:"), tables, range);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_fragment_intersection_function_table(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTIntersectionFunctionTable table,
-    NSUInteger index
-) {
-    typedef void (*SetFragmentIntersectionFunctionTableFunc)(id, SEL, id, NSUInteger);
-    ((SetFragmentIntersectionFunctionTableFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setFragmentIntersectionFunctionTable:atBufferIndex:"),
-        (id)table,
-        index
-    );
+MT_INLINE void mt_renderCommand_encoder_set_fragment_intersection_function_table(MTRenderCommandEncoder render_cmd_enc, MTIntersectionFunctionTable table, NSUInteger index) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setFragmentIntersectionFunctionTable:atBufferIndex:"), id, table, NSUInteger, index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_fragment_intersection_function_tables(
-    MTRenderCommandEncoder render_cmd_enc,
-    const MTIntersectionFunctionTable* tables,
-    MTRange range
-) {
-    typedef void (*SetFragmentIntersectionFunctionTablesFunc)(id, SEL, const id*, MTRange);
-    ((SetFragmentIntersectionFunctionTablesFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setFragmentIntersectionFunctionTables:withBufferRange:"),
-        (const id*)tables,
-        range
-    );
+// Struct arg - explicit cast
+MT_INLINE void mt_renderCommand_encoder_set_fragment_intersection_function_tables(MTRenderCommandEncoder render_cmd_enc, const MTIntersectionFunctionTable* tables, MTRange range) {
+    ((void (*)(id, SEL, const void*, MTRange))objc_msgSend)((id)render_cmd_enc, MT_SEL("setFragmentIntersectionFunctionTables:withBufferRange:"), tables, range);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_fragment_acceleration_structure(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTAccelerationStructure accel_struct,
-    NSUInteger index
-) {
-    typedef void (*SetFragmentAccelerationStructureFunc)(id, SEL, id, NSUInteger);
-    ((SetFragmentAccelerationStructureFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setFragmentAccelerationStructure:atBufferIndex:"),
-        (id)accel_struct,
-        index
-    );
+MT_INLINE void mt_renderCommand_encoder_set_fragment_acceleration_structure(MTRenderCommandEncoder render_cmd_enc, MTAccelerationStructure accel_struct, NSUInteger index) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setFragmentAccelerationStructure:atBufferIndex:"), id, accel_struct, NSUInteger, index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_blend_color(
-    MTRenderCommandEncoder render_cmd_enc,
-    float red,
-    float green,
-    float blue,
-    float alpha
-) {
-    typedef void (*SetBlendColorFunc)(id, SEL, float, float, float, float);
-    ((SetBlendColorFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setBlendColorRed:green:blue:alpha:"),
-        red, green, blue, alpha
-    );
+// MARK: - Blending & Depth/Stencil State
+
+MT_INLINE void mt_renderCommand_encoder_set_blend_color(MTRenderCommandEncoder render_cmd_enc, float red, float green, float blue, float alpha) {
+    MT_MSG_SEND_4(void, render_cmd_enc, MT_SEL("setBlendColorRed:green:blue:alpha:"), float, red, float, green, float, blue, float, alpha);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_depth_stencil_state(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTDepthStencilState state
-) {
-    typedef void (*SetDepthStencilStateFunc)(id, SEL, id);
-    ((SetDepthStencilStateFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setDepthStencilState:"),
-        (id)state
-    );
+MT_INLINE void mt_renderCommand_encoder_set_depth_stencil_state(MTRenderCommandEncoder render_cmd_enc, MTDepthStencilState state) {
+    MT_MSG_SEND_1(void, render_cmd_enc, MT_SEL("setDepthStencilState:"), id, state);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_stencil_reference_value(
-    MTRenderCommandEncoder render_cmd_enc,
-    uint32_t ref_value
-) {
-    typedef void (*SetStencilReferenceValueFunc)(id, SEL, uint32_t);
-    ((SetStencilReferenceValueFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setStencilReferenceValue:"),
-        ref_value
-    );
+MT_INLINE void mt_renderCommand_encoder_set_stencil_reference_value(MTRenderCommandEncoder render_cmd_enc, uint32_t ref_value) {
+    MT_MSG_SEND_1(void, render_cmd_enc, MT_SEL("setStencilReferenceValue:"), uint32_t, ref_value);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_stencil_reference_values(
-    MTRenderCommandEncoder render_cmd_enc,
-    uint32_t front,
-    uint32_t back
-) {
-    typedef void (*SetStencilReferenceValuesFunc)(id, SEL, uint32_t, uint32_t);
-    ((SetStencilReferenceValuesFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setStencilFrontReferenceValue:backReferenceValue:"),
-        front, back
-    );
+MT_INLINE void mt_renderCommand_encoder_set_stencil_reference_values(MTRenderCommandEncoder render_cmd_enc, uint32_t front, uint32_t back) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setStencilFrontReferenceValue:backReferenceValue:"), uint32_t, front, uint32_t, back);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_visibility_result_mode(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTVisibilityResultMode mode,
-    NSUInteger offset
-) {
-    typedef void (*SetVisibilityResultModeFunc)(id, SEL, MTVisibilityResultMode, NSUInteger);
-    ((SetVisibilityResultModeFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setVisibilityResultMode:offset:"),
-        mode, offset
-    );
+// MARK: - Visibility Result
+
+MT_INLINE void mt_renderCommand_encoder_set_visibility_result_mode(MTRenderCommandEncoder render_cmd_enc, MTVisibilityResultMode mode, NSUInteger offset) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setVisibilityResultMode:offset:"), MTVisibilityResultMode, mode, NSUInteger, offset);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_color_store_action(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTStoreAction store_action,
-    NSUInteger color_attachment_index
-) {
-    typedef void (*SetColorStoreActionFunc)(id, SEL, MTStoreAction, NSUInteger);
-    ((SetColorStoreActionFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setColorStoreAction:atIndex:"),
-        store_action, color_attachment_index
-    );
+// MARK: - Store Actions
+
+MT_INLINE void mt_renderCommand_encoder_set_color_store_action(MTRenderCommandEncoder render_cmd_enc, MTStoreAction store_action, NSUInteger color_attachment_index) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setColorStoreAction:atIndex:"), MTStoreAction, store_action, NSUInteger, color_attachment_index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_depth_store_action(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTStoreAction store_action
-) {
-    typedef void (*SetDepthStoreActionFunc)(id, SEL, MTStoreAction);
-    ((SetDepthStoreActionFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setDepthStoreAction:"),
-        store_action
-    );
+MT_INLINE void mt_renderCommand_encoder_set_depth_store_action(MTRenderCommandEncoder render_cmd_enc, MTStoreAction store_action) {
+    MT_MSG_SEND_1(void, render_cmd_enc, MT_SEL("setDepthStoreAction:"), MTStoreAction, store_action);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_stencil_store_action(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTStoreAction store_action
-) {
-    typedef void (*SetStencilStoreActionFunc)(id, SEL, MTStoreAction);
-    ((SetStencilStoreActionFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setStencilStoreAction:"),
-        store_action
-    );
+MT_INLINE void mt_renderCommand_encoder_set_stencil_store_action(MTRenderCommandEncoder render_cmd_enc, MTStoreAction store_action) {
+    MT_MSG_SEND_1(void, render_cmd_enc, MT_SEL("setStencilStoreAction:"), MTStoreAction, store_action);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_color_store_action_options(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTStoreActionOptions options,
-    NSUInteger color_attachment_index
-) {
-    typedef void (*SetColorStoreActionOptionsFunc)(id, SEL, MTStoreActionOptions, NSUInteger);
-    ((SetColorStoreActionOptionsFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setColorStoreActionOptions:atIndex:"),
-        options, color_attachment_index
-    );
+MT_INLINE void mt_renderCommand_encoder_set_color_store_action_options(MTRenderCommandEncoder render_cmd_enc, MTStoreActionOptions options, NSUInteger color_attachment_index) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setColorStoreActionOptions:atIndex:"), MTStoreActionOptions, options, NSUInteger, color_attachment_index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_depth_store_action_options(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTStoreActionOptions options
-) {
-    typedef void (*SetDepthStoreActionOptionsFunc)(id, SEL, MTStoreActionOptions);
-    ((SetDepthStoreActionOptionsFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setDepthStoreActionOptions:"),
-        options
-    );
+MT_INLINE void mt_renderCommand_encoder_set_depth_store_action_options(MTRenderCommandEncoder render_cmd_enc, MTStoreActionOptions options) {
+    MT_MSG_SEND_1(void, render_cmd_enc, MT_SEL("setDepthStoreActionOptions:"), MTStoreActionOptions, options);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_stencil_store_action_options(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTStoreActionOptions options
-) {
-    typedef void (*SetStencilStoreActionOptionsFunc)(id, SEL, MTStoreActionOptions);
-    ((SetStencilStoreActionOptionsFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setStencilStoreActionOptions:"),
-        options
-    );
+MT_INLINE void mt_renderCommand_encoder_set_stencil_store_action_options(MTRenderCommandEncoder render_cmd_enc, MTStoreActionOptions options) {
+    MT_MSG_SEND_1(void, render_cmd_enc, MT_SEL("setStencilStoreActionOptions:"), MTStoreActionOptions, options);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_object_bytes(
-    MTRenderCommandEncoder render_cmd_enc,
-    const void *bytes,
-    NSUInteger length,
-    NSUInteger index
-) {
-    typedef void (*SetObjectBytesFunc)(id, SEL, const void *, NSUInteger, NSUInteger);
-    ((SetObjectBytesFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setObjectBytes:length:atIndex:"),
-        bytes, length, index
-    );
+// MARK: - Object Stage Functions
+
+MT_INLINE void mt_renderCommand_encoder_set_object_bytes(MTRenderCommandEncoder render_cmd_enc, const void *bytes, NSUInteger length, NSUInteger index) {
+    MT_MSG_SEND_3(void, render_cmd_enc, MT_SEL("setObjectBytes:length:atIndex:"), const void*, bytes, NSUInteger, length, NSUInteger, index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_object_buffer(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTBuffer buffer,
-    NSUInteger offset,
-    NSUInteger index
-) {
-    typedef void (*SetObjectBufferFunc)(id, SEL, id, NSUInteger, NSUInteger);
-    ((SetObjectBufferFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setObjectBuffer:offset:atIndex:"),
-        (id)buffer, offset, index
-    );
+MT_INLINE void mt_renderCommand_encoder_set_object_buffer(MTRenderCommandEncoder render_cmd_enc, MTBuffer buffer, NSUInteger offset, NSUInteger index) {
+    MT_MSG_SEND_3(void, render_cmd_enc, MT_SEL("setObjectBuffer:offset:atIndex:"), id, buffer, NSUInteger, offset, NSUInteger, index);
 }
 
-MT_INLINE void mt_renderCommand_encoder_set_object_buffer_offset(
-    MTRenderCommandEncoder render_cmd_enc,
-    NSUInteger offset,
-    NSUInteger index
-) {
-    typedef void (*SetObjectBufferOffsetFunc)(id, SEL, NSUInteger, NSUInteger);
-    ((SetObjectBufferOffsetFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setObjectBufferOffset:atIndex:"),
-        offset, index
-    );
+MT_INLINE void mt_renderCommand_encoder_set_object_buffer_offset(MTRenderCommandEncoder render_cmd_enc, NSUInteger offset, NSUInteger index) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setObjectBufferOffset:atIndex:"), NSUInteger, offset, NSUInteger, index);
 }
 
-//MT_INLINE void mt_renderCommand_encoder_set_object_buffers(
-//    MTRenderCommandEncoder render_cmd_enc,
-//    MTBuffer* _Nullable buffers,
-//    const NSUInteger* offsets,
-//    NSUInteger range_location,
-//    NSUInteger range_length
-//) {
-//    typedef void (*SetObjectBuffersFunc)(id, SEL, id*, NSUInteger*, struct MTRange);
-//    SetObjectBuffersFunc func = (SetObjectBuffersFunc)objc_msgSend;
-//    MTRange range = { range_location, range_length };
-//    func((id)render_cmd_enc,
-//         sel_getUid("setObjectBuffers:offsets:withRange:"),
-//         buffers, (NSUInteger*)offsets, range);
-//}
-
-MT_INLINE void mt_renderCommand_encoder_set_object_texture(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTTexture texture,
-    NSUInteger index
-) {
-    typedef void (*SetObjectTextureFunc)(id, SEL, id, NSUInteger);
-    ((SetObjectTextureFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setObjectTexture:atIndex:"),
-        (id)texture, index
-    );
-}
-//
-//MT_INLINE void mt_renderCommand_encoder_set_object_textures(
-//    MTRenderCommandEncoder render_cmd_enc,
-//    const MTTexture _Nullable *textures,
-//    MTRange range
-//) {
-//    typedef void (*SetObjectTexturesFunc)(id, SEL, const id[], MTRange);
-//    ((SetObjectTexturesFunc)objc_msgSend)(
-//        (id)render_cmd_enc,
-//        sel_getUid("setObjectTextures:withRange:"),
-//        (const id[])textures, range
-//    );
-//}
-
-MT_INLINE void mt_renderCommand_encoder_set_object_sampler_state(
-    MTRenderCommandEncoder render_cmd_enc,
-    MTSamplerState sampler,
-    NSUInteger index
-) {
-    typedef void (*SetObjectSamplerStateFunc)(id, SEL, id, NSUInteger);
-    ((SetObjectSamplerStateFunc)objc_msgSend)(
-        (id)render_cmd_enc,
-        sel_getUid("setObjectSamplerState:atIndex:"),
-        (id)sampler, index
-    );
+MT_INLINE void mt_renderCommand_encoder_set_object_texture(MTRenderCommandEncoder render_cmd_enc, MTTexture texture, NSUInteger index) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setObjectTexture:atIndex:"), id, texture, NSUInteger, index);
 }
 
-// Set the tessellation factor scale on a render command encoder
+MT_INLINE void mt_renderCommand_encoder_set_object_sampler_state(MTRenderCommandEncoder render_cmd_enc, MTSamplerState sampler, NSUInteger index) {
+    MT_MSG_SEND_2(void, render_cmd_enc, MT_SEL("setObjectSamplerState:atIndex:"), id, sampler, NSUInteger, index);
+}
+
+// MARK: - Tessellation
+
 MT_INLINE void mt_renderCommand_encoder_set_tessellation_factor_scale(MTRenderCommandEncoder encoder, float scale) {
-    SEL sel = sel_registerName("setTessellationFactorScale:");
-    ((void (*)(id, SEL, float))objc_msgSend)(encoder, sel, scale);
+    MT_MSG_SEND_1(void, encoder, MT_SEL("setTessellationFactorScale:"), float, scale);
 }

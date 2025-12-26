@@ -7,6 +7,7 @@
 
 #pragma once
 #include <stdint.h>
+#include "MTFoundation/defines.h"
 
 typedef unsigned long NSUInteger;
 

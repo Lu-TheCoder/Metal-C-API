@@ -5,6 +5,8 @@
 //  Created by Lungile Maseko on 2025/06/05.
 //
 #pragma once
+#include <stddef.h>
+#include "MTDevice.h"  // For MTIOCompressionMethod
 
 typedef enum MTIOCompressionStatus {
     MTIOCompressionStatusComplete = 0,

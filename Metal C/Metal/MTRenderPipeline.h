@@ -91,120 +91,119 @@ typedef enum MTTessellationControlPointIndexType {
  *
  * NOTE: Should be released using mtRelease();
  */
-MT_INLINE MTRenderPipelineColorAttachmentDescriptor mt_renderPipeline_color_attachment_descriptor_new(void) {
-    Class cls = objc_getClass("MTLRenderPipelineColorAttachmentDescriptor");
-
-    // [MTLRenderPipelineColorAttachmentDescriptor alloc]
-    SEL allocSel = sel_registerName("alloc");
-    id (*allocFn)(Class, SEL) = (id (*)(Class, SEL))objc_msgSend;
-    id obj = allocFn(cls, allocSel);
-
-    // [[... alloc] init]
-    SEL initSel = sel_registerName("init");
-    id (*initFn)(id, SEL) = (id (*)(id, SEL))objc_msgSend;
-    obj = initFn(obj, initSel);
-
-    return obj;
+MT_INLINE MTRenderPipelineColorAttachmentDescriptor mt_color_attachment_new(void) {
+    Class cls = MT_CLASS("MTLRenderPipelineColorAttachmentDescriptor");
+    id obj = MT_MSG_SEND_CLASS(id, cls, MT_SEL("alloc"));
+    return MT_MSG_SEND(id, obj, MT_SEL("init"));
 }
 
-// pixelFormat property
-MT_INLINE MTPixelFormat mt_render_pipeline_color_attachment_descriptor_get_pixel_format(MTRenderPipelineColorAttachmentDescriptor desc) {
-    SEL sel = sel_getUid("pixelFormat");
-    return ((MTPixelFormat (*)(id, SEL))objc_msgSend)(desc, sel);
+// ============================================================================
+// Color Attachment Properties - Swift-like API
+// ============================================================================
+
+// pixelFormat
+MT_INLINE MTPixelFormat mt_color_attachment_get_pixel_format(MTRenderPipelineColorAttachmentDescriptor desc) {
+    return MT_MSG_SEND(MTPixelFormat, desc, MT_SEL("pixelFormat"));
 }
 
-MT_INLINE void mt_render_pipeline_color_attachment_descriptor_set_pixel_format(MTRenderPipelineColorAttachmentDescriptor desc, MTPixelFormat format) {
-    SEL sel = sel_getUid("setPixelFormat:");
-    ((void (*)(id, SEL, MTPixelFormat))objc_msgSend)(desc, sel, format);
+MT_INLINE void mt_color_attachment_set_pixel_format(MTRenderPipelineColorAttachmentDescriptor desc, MTPixelFormat format) {
+    MT_MSG_SEND_1(void, desc, MT_SEL("setPixelFormat:"), MTPixelFormat, format);
 }
 
-// blendingEnabled property (note the custom getter 'isBlendingEnabled')
-MT_INLINE BOOL mt_render_pipeline_color_attachment_descriptor_is_blending_enabled(MTRenderPipelineColorAttachmentDescriptor desc) {
-    SEL sel = sel_getUid("isBlendingEnabled");
-    return ((BOOL (*)(id, SEL))objc_msgSend)(desc, sel);
+// blendingEnabled
+MT_INLINE BOOL mt_color_attachment_is_blending_enabled(MTRenderPipelineColorAttachmentDescriptor desc) {
+    return MT_MSG_SEND(BOOL, desc, MT_SEL("isBlendingEnabled"));
 }
 
-MT_INLINE void mt_render_pipeline_color_attachment_descriptor_set_blending_enabled(MTRenderPipelineColorAttachmentDescriptor desc, BOOL enabled) {
-    SEL sel = sel_getUid("setBlendingEnabled:");
-    ((void (*)(id, SEL, BOOL))objc_msgSend)(desc, sel, enabled);
+MT_INLINE void mt_color_attachment_set_blending(MTRenderPipelineColorAttachmentDescriptor desc, BOOL enabled) {
+    MT_MSG_SEND_1(void, desc, MT_SEL("setBlendingEnabled:"), BOOL, enabled);
 }
 
-// sourceRGBBlendFactor property
-MT_INLINE MTBlendFactor mt_render_pipeline_color_attachment_descriptor_get_source_rgb_blend_factor(MTRenderPipelineColorAttachmentDescriptor desc) {
-    SEL sel = sel_getUid("sourceRGBBlendFactor");
-    return ((MTBlendFactor (*)(id, SEL))objc_msgSend)(desc, sel);
+// sourceRGBBlendFactor
+MT_INLINE MTBlendFactor mt_color_attachment_get_src_rgb_blend(MTRenderPipelineColorAttachmentDescriptor desc) {
+    return MT_MSG_SEND(MTBlendFactor, desc, MT_SEL("sourceRGBBlendFactor"));
 }
 
-MT_INLINE void mt_render_pipeline_color_attachment_descriptor_set_source_rgb_blend_factor(MTRenderPipelineColorAttachmentDescriptor desc, MTBlendFactor factor) {
-    SEL sel = sel_getUid("setSourceRGBBlendFactor:");
-    ((void (*)(id, SEL, MTBlendFactor))objc_msgSend)(desc, sel, factor);
+MT_INLINE void mt_color_attachment_set_src_rgb_blend(MTRenderPipelineColorAttachmentDescriptor desc, MTBlendFactor factor) {
+    MT_MSG_SEND_1(void, desc, MT_SEL("setSourceRGBBlendFactor:"), MTBlendFactor, factor);
 }
 
-// destinationRGBBlendFactor property
-MT_INLINE MTBlendFactor mt_render_pipeline_color_attachment_descriptor_get_destination_rgb_blend_factor(MTRenderPipelineColorAttachmentDescriptor desc) {
-    SEL sel = sel_getUid("destinationRGBBlendFactor");
-    return ((MTBlendFactor (*)(id, SEL))objc_msgSend)(desc, sel);
+// destinationRGBBlendFactor
+MT_INLINE MTBlendFactor mt_color_attachment_get_dst_rgb_blend(MTRenderPipelineColorAttachmentDescriptor desc) {
+    return MT_MSG_SEND(MTBlendFactor, desc, MT_SEL("destinationRGBBlendFactor"));
 }
 
-MT_INLINE void mt_render_pipeline_color_attachment_descriptor_set_destination_rgb_blend_factor(MTRenderPipelineColorAttachmentDescriptor desc, MTBlendFactor factor) {
-    SEL sel = sel_getUid("setDestinationRGBBlendFactor:");
-    ((void (*)(id, SEL, MTBlendFactor))objc_msgSend)(desc, sel, factor);
+MT_INLINE void mt_color_attachment_set_dst_rgb_blend(MTRenderPipelineColorAttachmentDescriptor desc, MTBlendFactor factor) {
+    MT_MSG_SEND_1(void, desc, MT_SEL("setDestinationRGBBlendFactor:"), MTBlendFactor, factor);
 }
 
-// rgbBlendOperation property
-MT_INLINE MTBlendOperation mt_render_pipeline_color_attachment_descriptor_get_rgb_blend_operation(MTRenderPipelineColorAttachmentDescriptor desc) {
-    SEL sel = sel_getUid("rgbBlendOperation");
-    return ((MTBlendOperation (*)(id, SEL))objc_msgSend)(desc, sel);
+// rgbBlendOperation
+MT_INLINE MTBlendOperation mt_color_attachment_get_rgb_blend_op(MTRenderPipelineColorAttachmentDescriptor desc) {
+    return MT_MSG_SEND(MTBlendOperation, desc, MT_SEL("rgbBlendOperation"));
 }
 
-MT_INLINE void mt_render_pipeline_color_attachment_descriptor_set_rgb_blend_operation(MTRenderPipelineColorAttachmentDescriptor desc, MTBlendOperation operation) {
-    SEL sel = sel_getUid("setRgbBlendOperation:");
-    ((void (*)(id, SEL, MTBlendOperation))objc_msgSend)(desc, sel, operation);
+MT_INLINE void mt_color_attachment_set_rgb_blend_op(MTRenderPipelineColorAttachmentDescriptor desc, MTBlendOperation op) {
+    MT_MSG_SEND_1(void, desc, MT_SEL("setRgbBlendOperation:"), MTBlendOperation, op);
 }
 
-// sourceAlphaBlendFactor property
-MT_INLINE MTBlendFactor mt_render_pipeline_color_attachment_descriptor_get_source_alpha_blend_factor(MTRenderPipelineColorAttachmentDescriptor desc) {
-    SEL sel = sel_getUid("sourceAlphaBlendFactor");
-    return ((MTBlendFactor (*)(id, SEL))objc_msgSend)(desc, sel);
+// sourceAlphaBlendFactor
+MT_INLINE MTBlendFactor mt_color_attachment_get_src_alpha_blend(MTRenderPipelineColorAttachmentDescriptor desc) {
+    return MT_MSG_SEND(MTBlendFactor, desc, MT_SEL("sourceAlphaBlendFactor"));
 }
 
-MT_INLINE void mt_render_pipeline_color_attachment_descriptor_set_source_alpha_blend_factor(MTRenderPipelineColorAttachmentDescriptor desc, MTBlendFactor factor) {
-    SEL sel = sel_getUid("setSourceAlphaBlendFactor:");
-    ((void (*)(id, SEL, MTBlendFactor))objc_msgSend)(desc, sel, factor);
+MT_INLINE void mt_color_attachment_set_src_alpha_blend(MTRenderPipelineColorAttachmentDescriptor desc, MTBlendFactor factor) {
+    MT_MSG_SEND_1(void, desc, MT_SEL("setSourceAlphaBlendFactor:"), MTBlendFactor, factor);
 }
 
-// destinationAlphaBlendFactor property
-MT_INLINE MTBlendFactor mt_render_pipeline_color_attachment_descriptor_get_destination_alpha_blend_factor(MTRenderPipelineColorAttachmentDescriptor desc) {
-    SEL sel = sel_getUid("destinationAlphaBlendFactor");
-    return ((MTBlendFactor (*)(id, SEL))objc_msgSend)(desc, sel);
+// destinationAlphaBlendFactor
+MT_INLINE MTBlendFactor mt_color_attachment_get_dst_alpha_blend(MTRenderPipelineColorAttachmentDescriptor desc) {
+    return MT_MSG_SEND(MTBlendFactor, desc, MT_SEL("destinationAlphaBlendFactor"));
 }
 
-MT_INLINE void mt_render_pipeline_color_attachment_descriptor_set_destination_alpha_blend_factor(MTRenderPipelineColorAttachmentDescriptor desc, MTBlendFactor factor) {
-    SEL sel = sel_getUid("setDestinationAlphaBlendFactor:");
-    ((void (*)(id, SEL, MTBlendFactor))objc_msgSend)(desc, sel, factor);
+MT_INLINE void mt_color_attachment_set_dst_alpha_blend(MTRenderPipelineColorAttachmentDescriptor desc, MTBlendFactor factor) {
+    MT_MSG_SEND_1(void, desc, MT_SEL("setDestinationAlphaBlendFactor:"), MTBlendFactor, factor);
 }
 
-// alphaBlendOperation property
-MT_INLINE MTBlendOperation mt_render_pipeline_color_attachment_descriptor_get_alpha_blend_operation(MTRenderPipelineColorAttachmentDescriptor desc) {
-    SEL sel = sel_getUid("alphaBlendOperation");
-    return ((MTBlendOperation (*)(id, SEL))objc_msgSend)(desc, sel);
+// alphaBlendOperation
+MT_INLINE MTBlendOperation mt_color_attachment_get_alpha_blend_op(MTRenderPipelineColorAttachmentDescriptor desc) {
+    return MT_MSG_SEND(MTBlendOperation, desc, MT_SEL("alphaBlendOperation"));
 }
 
-MT_INLINE void mt_render_pipeline_color_attachment_descriptor_set_alpha_blend_operation(MTRenderPipelineColorAttachmentDescriptor desc, MTBlendOperation operation) {
-    SEL sel = sel_getUid("setAlphaBlendOperation:");
-    ((void (*)(id, SEL, MTBlendOperation))objc_msgSend)(desc, sel, operation);
+MT_INLINE void mt_color_attachment_set_alpha_blend_op(MTRenderPipelineColorAttachmentDescriptor desc, MTBlendOperation op) {
+    MT_MSG_SEND_1(void, desc, MT_SEL("setAlphaBlendOperation:"), MTBlendOperation, op);
 }
 
-// writeMask property
-MT_INLINE MTColorWriteMask mt_render_pipeline_color_attachment_descriptor_get_write_mask(MTRenderPipelineColorAttachmentDescriptor desc) {
-    SEL sel = sel_getUid("writeMask");
-    return ((MTColorWriteMask (*)(id, SEL))objc_msgSend)(desc, sel);
+// writeMask
+MT_INLINE MTColorWriteMask mt_color_attachment_get_write_mask(MTRenderPipelineColorAttachmentDescriptor desc) {
+    return MT_MSG_SEND(MTColorWriteMask, desc, MT_SEL("writeMask"));
 }
 
-MT_INLINE void mt_render_pipeline_color_attachment_descriptor_set_write_mask(MTRenderPipelineColorAttachmentDescriptor desc, MTColorWriteMask mask) {
-    SEL sel = sel_getUid("setWriteMask:");
-    ((void (*)(id, SEL, MTColorWriteMask))objc_msgSend)(desc, sel, mask);
+MT_INLINE void mt_color_attachment_set_write_mask(MTRenderPipelineColorAttachmentDescriptor desc, MTColorWriteMask mask) {
+    MT_MSG_SEND_1(void, desc, MT_SEL("setWriteMask:"), MTColorWriteMask, mask);
 }
+
+// ============================================================================
+// Deprecated aliases for backwards compatibility
+// ============================================================================
+#define mt_renderPipeline_color_attachment_descriptor_new mt_color_attachment_new
+#define mt_render_pipeline_color_attachment_descriptor_get_pixel_format mt_color_attachment_get_pixel_format
+#define mt_render_pipeline_color_attachment_descriptor_set_pixel_format mt_color_attachment_set_pixel_format
+#define mt_render_pipeline_color_attachment_descriptor_is_blending_enabled mt_color_attachment_is_blending_enabled
+#define mt_render_pipeline_color_attachment_descriptor_set_blending_enabled mt_color_attachment_set_blending
+#define mt_render_pipeline_color_attachment_descriptor_get_source_rgb_blend_factor mt_color_attachment_get_src_rgb_blend
+#define mt_render_pipeline_color_attachment_descriptor_set_source_rgb_blend_factor mt_color_attachment_set_src_rgb_blend
+#define mt_render_pipeline_color_attachment_descriptor_get_destination_rgb_blend_factor mt_color_attachment_get_dst_rgb_blend
+#define mt_render_pipeline_color_attachment_descriptor_set_destination_rgb_blend_factor mt_color_attachment_set_dst_rgb_blend
+#define mt_render_pipeline_color_attachment_descriptor_get_rgb_blend_operation mt_color_attachment_get_rgb_blend_op
+#define mt_render_pipeline_color_attachment_descriptor_set_rgb_blend_operation mt_color_attachment_set_rgb_blend_op
+#define mt_render_pipeline_color_attachment_descriptor_get_source_alpha_blend_factor mt_color_attachment_get_src_alpha_blend
+#define mt_render_pipeline_color_attachment_descriptor_set_source_alpha_blend_factor mt_color_attachment_set_src_alpha_blend
+#define mt_render_pipeline_color_attachment_descriptor_get_destination_alpha_blend_factor mt_color_attachment_get_dst_alpha_blend
+#define mt_render_pipeline_color_attachment_descriptor_set_destination_alpha_blend_factor mt_color_attachment_set_dst_alpha_blend
+#define mt_render_pipeline_color_attachment_descriptor_get_alpha_blend_operation mt_color_attachment_get_alpha_blend_op
+#define mt_render_pipeline_color_attachment_descriptor_set_alpha_blend_operation mt_color_attachment_set_alpha_blend_op
+#define mt_render_pipeline_color_attachment_descriptor_get_write_mask mt_color_attachment_get_write_mask
+#define mt_render_pipeline_color_attachment_descriptor_set_write_mask mt_color_attachment_set_write_mask
 
 /**
  * @brief Creates a new MTLRenderPipelineDescriptor class

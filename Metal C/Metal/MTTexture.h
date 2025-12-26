@@ -6,13 +6,12 @@
 //
 
 #pragma once
-#include <objc/message.h>
 #include "MTTypes.h"
 #include "MTUtils.h"
-#include "MTHeap.h"
+#include "MTResource.h"
 #include <stdio.h>
 
-typedef enum MTTextureType{
+typedef enum MTTextureType {
     MTTextureType1D = 0,
     MTTextureType1DArray = 1,
     MTTextureType2D = 2,
@@ -23,7 +22,7 @@ typedef enum MTTextureType{
     MTTextureType3D = 7,
     MTTextureType2DMultisampleArray = 8,
     MTTextureTypeTextureBuffer = 9,
-}MTTextureType;
+} MTTextureType;
 
 typedef enum MTTextureSwizzle : uint8_t {
     MTextureSwizzleZero  = 0,
@@ -34,302 +33,246 @@ typedef enum MTTextureSwizzle : uint8_t {
     MTextureSwizzleAlpha = 5
 } MTTextureSwizzle;
 
-typedef enum MTTextureUsage{
+typedef enum MTTextureUsage {
     MTTextureUsageUnknown = 0,
     MTTextureUsageShaderRead = 1,
     MTTextureUsageShaderWrite = 2,
     MTTextureUsageRenderTarget = 4,
     MTTextureUsagePixelFormatView = 16,
     MTTextureUsageShaderAtomic = 32,
-}MTTextureUsage;
+} MTTextureUsage;
 
 typedef enum MTTextureCompressionType {
     MTTextureCompressionTypeLossless = 0,
     MTTextureCompressionTypeLossy = 1,
-}MTTextureCompressionType;
+} MTTextureCompressionType;
 
 typedef struct MTLTextureSwizzleChannels {
     MTTextureSwizzle red;
     MTTextureSwizzle green;
     MTTextureSwizzle blue;
     MTTextureSwizzle alpha;
-}MTLTextureSwizzleChannels;
+} MTLTextureSwizzleChannels;
 
 typedef void* MTSharedTextureHandle;
 typedef void* MTTextureDescriptor;
-
 typedef void* MTTexture;
+typedef void* MTHeap;
+typedef void* MTDevice;
 
 // MARK: MTSharedTexture Handle
 
 MT_INLINE MTSharedTextureHandle mt_texture_new_shared_texture_handle(MTTexture texture) {
-    SEL sel = sel_getUid("newSharedTextureHandle");
-    typedef id (*NewSharedTextureHandleFunc)(id, SEL);
-    NewSharedTextureHandleFunc func = (NewSharedTextureHandleFunc)objc_msgSend;
-    return func((id)texture, sel);
+    return MT_MSG_SEND(id, texture, MT_SEL("newSharedTextureHandle"));
 }
 
 MT_INLINE MTDevice* mt_sharedTextureHandle_get_device(MTSharedTextureHandle* handle) {
-    SEL sel = sel_registerName("device");
-    MTDevice* (*msgSend)(id, SEL) = (MTDevice* (*)(id, SEL))objc_msgSend;
-    return msgSend((id)handle, sel);
+    return MT_MSG_SEND(MTDevice*, handle, MT_SEL("device"));
 }
 
-// MARK: MTTexureDescriptor
+// MARK: MTTextureDescriptor
 
-MT_INLINE MTTextureDescriptor* mt_texture_descriptor_create(MTPixelFormat pixel_format, NSUInteger width, NSUInteger height, bool mipmapped) {
-    Class descClass = objc_getClass("MTLTextureDescriptor");
-    SEL sel = sel_getUid("texture2DDescriptorWithPixelFormat:width:height:mipmapped:");
-    
-    return ((MTTextureDescriptor* (*)(Class, SEL, MTPixelFormat, NSUInteger, NSUInteger, BOOL))objc_msgSend)(
-        descClass, sel, pixel_format, width, height, mipmapped
-    );
+MT_INLINE MTTextureDescriptor mt_texture_descriptor_create(MTPixelFormat pixel_format, NSUInteger width, NSUInteger height, bool mipmapped) {
+    // 4-arg class method - needs explicit cast
+    return ((id (*)(Class, SEL, MTPixelFormat, NSUInteger, NSUInteger, BOOL))objc_msgSend)(
+        MT_CLASS("MTLTextureDescriptor"), MT_SEL("texture2DDescriptorWithPixelFormat:width:height:mipmapped:"),
+        pixel_format, width, height, mipmapped);
 }
 
 MT_INLINE MTTextureDescriptor mt_texture_cube_descriptor_create(MTPixelFormat pixel_format, NSUInteger size, bool mipmapped) {
-    Class descClass = objc_getClass("MTLTextureDescriptor");
-    SEL sel = sel_getUid("textureCubeDescriptorWithPixelFormat:size:mipmapped:");
-    typedef id (*CubeDescFunc)(Class, SEL, NSUInteger, NSUInteger, BOOL);
-    CubeDescFunc func = (CubeDescFunc)objc_msgSend;
-    return func(descClass, sel, pixel_format, size, mipmapped);
+    return ((id (*)(Class, SEL, MTPixelFormat, NSUInteger, BOOL))objc_msgSend)(MT_CLASS("MTLTextureDescriptor"), MT_SEL("textureCubeDescriptorWithPixelFormat:size:mipmapped:"), pixel_format, size, mipmapped);
 }
 
-MT_INLINE MTTextureDescriptor mt_texture_buffer_descriptor_create(
-    MTPixelFormat pixel_format,
-    NSUInteger width,
-    MTResourceOptions resource_options,
-    MTTextureUsage usage
-) {
-    Class descClass = objc_getClass("MTLTextureDescriptor");
-    SEL sel = sel_getUid("textureBufferDescriptorWithPixelFormat:width:resourceOptions:usage:");
-    typedef id (*BufferDescFunc)(Class, SEL, NSUInteger, NSUInteger, NSUInteger, NSUInteger);
-    BufferDescFunc func = (BufferDescFunc)objc_msgSend;
-    return func(descClass, sel, pixel_format, width, resource_options, usage);
+MT_INLINE MTTextureDescriptor mt_texture_buffer_descriptor_create(MTPixelFormat pixel_format, NSUInteger width, MTResourceOptions resource_options, MTTextureUsage usage) {
+    return ((id (*)(Class, SEL, MTPixelFormat, NSUInteger, MTResourceOptions, MTTextureUsage))objc_msgSend)(MT_CLASS("MTLTextureDescriptor"), MT_SEL("textureBufferDescriptorWithPixelFormat:width:resourceOptions:usage:"), pixel_format, width, resource_options, usage);
 }
 
 MT_INLINE MTTexture mt_texture_new_texture_view_with_format(MTTexture texture, MTPixelFormat pixel_format) {
-    typedef id (*NewTextureViewFunc)(id, SEL, MTPixelFormat);
-    NewTextureViewFunc func = (NewTextureViewFunc)objc_msgSend;
-    return (MTTexture)func((id)texture, sel_getUid("newTextureViewWithPixelFormat:"), pixel_format);
+    return MT_MSG_SEND_1(id, texture, MT_SEL("newTextureViewWithPixelFormat:"), MTPixelFormat, pixel_format);
 }
 
-//TODO: NOT TESTED
-MT_INLINE MTTexture mt_texture_new_texture_view_with_full_desc(
-    MTTexture texture,
-    MTPixelFormat pixel_format,
-    MTTextureType texture_type,
-    MTRange levels,
-    MTRange slices
-) {
-    typedef id (*NewTextureViewFullFunc)(id, SEL, MTPixelFormat, MTTextureType, MTRange, MTRange);
-    NewTextureViewFullFunc func = (NewTextureViewFullFunc)objc_msgSend;
-    return (MTTexture)func((id)texture, sel_getUid("newTextureViewWithPixelFormat:textureType:levels:slices:"), pixel_format, texture_type, levels, slices);
+MT_INLINE MTTexture mt_texture_new_texture_view_with_full_desc(MTTexture texture, MTPixelFormat pixel_format, MTTextureType texture_type, MTRange levels, MTRange slices) {
+    return ((id (*)(id, SEL, MTPixelFormat, MTTextureType, MTRange, MTRange))objc_msgSend)((id)texture, MT_SEL("newTextureViewWithPixelFormat:textureType:levels:slices:"), pixel_format, texture_type, levels, slices);
 }
 
 MT_INLINE void mt_texture_descriptor_set_texture_type(MTTextureDescriptor desc, MTTextureType type) {
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel_getUid("setTextureType:"), type);
+    MT_MSG_SEND_1(void, desc, MT_SEL("setTextureType:"), NSUInteger, type);
 }
 
 MT_INLINE void mt_texture_descriptor_set_pixel_format(MTTextureDescriptor desc, MTPixelFormat type) {
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel_getUid("setPixelFormat:"), type);
+    MT_MSG_SEND_1(void, desc, MT_SEL("setPixelFormat:"), NSUInteger, type);
 }
 
 MT_INLINE void mt_texture_descriptor_set_width(MTTextureDescriptor desc, uintptr_t width) {
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel_getUid("setWidth:"), width);
+    MT_MSG_SEND_1(void, desc, MT_SEL("setWidth:"), NSUInteger, width);
 }
 
 MT_INLINE void mt_texture_descriptor_set_height(MTTextureDescriptor desc, uintptr_t height) {
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel_getUid("setHeight:"), height);
+    MT_MSG_SEND_1(void, desc, MT_SEL("setHeight:"), NSUInteger, height);
 }
 
 MT_INLINE void mt_texture_descriptor_set_depth(MTTextureDescriptor desc, uintptr_t depth) {
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel_getUid("setDepth:"), depth);
+    MT_MSG_SEND_1(void, desc, MT_SEL("setDepth:"), NSUInteger, depth);
 }
 
 MT_INLINE void mt_texture_descriptor_set_mipmap_level_count(MTTextureDescriptor desc, uintptr_t count) {
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel_getUid("setMipmapLevelCount:"), count);
+    MT_MSG_SEND_1(void, desc, MT_SEL("setMipmapLevelCount:"), NSUInteger, count);
 }
 
 MT_INLINE void mt_texture_descriptor_set_sample_count(MTTextureDescriptor desc, uintptr_t count) {
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel_getUid("setSampleCount:"), count);
+    MT_MSG_SEND_1(void, desc, MT_SEL("setSampleCount:"), NSUInteger, count);
 }
 
 MT_INLINE void mt_texture_descriptor_set_array_length(MTTextureDescriptor desc, uintptr_t length) {
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel_getUid("setArrayLength:"), length);
+    MT_MSG_SEND_1(void, desc, MT_SEL("setArrayLength:"), NSUInteger, length);
 }
 
 MT_INLINE void mt_texture_descriptor_set_resource_options(MTTextureDescriptor desc, MTResourceOptions options) {
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel_getUid("setResourceOptions:"), options);
+    MT_MSG_SEND_1(void, desc, MT_SEL("setResourceOptions:"), NSUInteger, options);
 }
 
 MT_INLINE void mt_texture_descriptor_set_cpu_cache_mode(MTTextureDescriptor desc, MTCPUCacheMode mode) {
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel_getUid("setCpuCacheMode:"), mode);
+    MT_MSG_SEND_1(void, desc, MT_SEL("setCpuCacheMode:"), NSUInteger, mode);
 }
 
 MT_INLINE void mt_texture_descriptor_set_storage_mode(MTTextureDescriptor desc, MTStorageMode mode) {
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel_getUid("setStorageMode:"), mode);
+    MT_MSG_SEND_1(void, desc, MT_SEL("setStorageMode:"), NSUInteger, mode);
 }
 
 MT_INLINE void mt_texture_descriptor_set_hazard_tracking_mode(MTTextureDescriptor desc, MTHazardTrackingMode mode) {
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel_getUid("setHazardTrackingMode:"), mode);
+    MT_MSG_SEND_1(void, desc, MT_SEL("setHazardTrackingMode:"), NSUInteger, mode);
 }
 
 MT_INLINE void mt_texture_descriptor_set_usage(MTTextureDescriptor desc, MTTextureUsage usage) {
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel_getUid("setUsage:"), usage);
+    MT_MSG_SEND_1(void, desc, MT_SEL("setUsage:"), NSUInteger, usage);
 }
 
 MT_INLINE void mt_texture_descriptor_set_allow_gpu_optimised_contents(MTTextureDescriptor desc, bool is_allowed) {
-    ((void (*)(id, SEL, BOOL))objc_msgSend)(desc, sel_getUid("setAllowGPUOptimizedContents:"), is_allowed);
+    MT_MSG_SEND_1(void, desc, MT_SEL("setAllowGPUOptimizedContents:"), BOOL, is_allowed);
 }
 
 MT_INLINE void mt_texture_descriptor_set_compression_type(MTTextureDescriptor desc, MTTextureCompressionType type) {
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(desc, sel_getUid("setCompressionType:"), type);
+    MT_MSG_SEND_1(void, desc, MT_SEL("setCompressionType:"), NSUInteger, type);
 }
-// TODO: incomplete
 
+// MARK: MTTexture Operations
 
-// MARK: MTTexture
-
-MT_INLINE void mt_texture_replace_region(
-    void* texture,
-    MTRegion region,
-    uintptr_t mipmap_level,
-    const void* bytes,
-    uintptr_t bytes_per_row
-) {
-    SEL sel = sel_getUid("replaceRegion:mipmapLevel:withBytes:bytesPerRow:");
+// Struct args need explicit casts
+MT_INLINE void mt_texture_replace_region(void* texture, MTRegion region, uintptr_t mipmap_level, const void* bytes, uintptr_t bytes_per_row) {
     ((void (*)(id, SEL, MTRegion, uintptr_t, const void*, uintptr_t))objc_msgSend)(
-        texture, sel, region, mipmap_level, bytes, bytes_per_row
+        (id)texture, MT_SEL("replaceRegion:mipmapLevel:withBytes:bytesPerRow:"), region, mipmap_level, bytes, bytes_per_row
     );
 }
 
-MT_INLINE void mt_texture_replace_region_with_bytes_and_slice(
-    MTTexture texture,
-    MTRegion region,
-    uintptr_t mipmap_level,
-    uintptr_t slice,
-    const void* bytes,
-    uintptr_t bytes_per_row
-) {
-    SEL sel = sel_getUid("replaceRegion:mipmapLevel:slice:withBytes:bytesPerRow:bytesPerImage:");
+MT_INLINE void mt_texture_replace_region_with_bytes_and_slice(MTTexture texture, MTRegion region, uintptr_t mipmap_level, uintptr_t slice, const void* bytes, uintptr_t bytes_per_row) {
     ((void (*)(id, SEL, MTRegion, uintptr_t, uintptr_t, const void*, uintptr_t, uintptr_t))objc_msgSend)(
-        texture, sel, region, mipmap_level, slice, bytes, bytes_per_row, 0
+        (id)texture, MT_SEL("replaceRegion:mipmapLevel:slice:withBytes:bytesPerRow:bytesPerImage:"), region, mipmap_level, slice, bytes, bytes_per_row, 0
     );
 }
 
 // MARK: MTTexture Getters
 
 MT_INLINE uintptr_t mt_texture_get_width(MTTexture texture) {
-    return ((uintptr_t (*)(id, SEL))objc_msgSend)(texture, sel_getUid("width"));
+    return MT_MSG_SEND(uintptr_t, texture, MT_SEL("width"));
 }
 
 MT_INLINE uintptr_t mt_texture_get_height(MTTexture texture) {
-    return ((uintptr_t (*)(id, SEL))objc_msgSend)(texture, sel_getUid("height"));
+    return MT_MSG_SEND(uintptr_t, texture, MT_SEL("height"));
 }
 
 MT_INLINE uintptr_t mt_texture_get_depth(MTTexture texture) {
-    return ((uintptr_t (*)(id, SEL))objc_msgSend)(texture, sel_getUid("depth"));
+    return MT_MSG_SEND(uintptr_t, texture, MT_SEL("depth"));
 }
 
 MT_INLINE uintptr_t mt_texture_get_mipmap_level_count(MTTexture texture) {
-    return ((uintptr_t (*)(id, SEL))objc_msgSend)(texture, sel_getUid("mipmapLevelCount"));
+    return MT_MSG_SEND(uintptr_t, texture, MT_SEL("mipmapLevelCount"));
 }
 
 MT_INLINE uintptr_t mt_texture_get_sample_count(MTTexture texture) {
-    return ((uintptr_t (*)(id, SEL))objc_msgSend)(texture, sel_getUid("sampleCount"));
+    return MT_MSG_SEND(uintptr_t, texture, MT_SEL("sampleCount"));
 }
 
 MT_INLINE uintptr_t mt_texture_get_array_length(MTTexture texture) {
-    return ((uintptr_t (*)(id, SEL))objc_msgSend)(texture, sel_getUid("arrayLength"));
+    return MT_MSG_SEND(uintptr_t, texture, MT_SEL("arrayLength"));
 }
 
 MT_INLINE MTTextureUsage mt_texture_get_usage(MTTexture texture) {
-    return (MTTextureUsage)((uintptr_t (*)(id, SEL))objc_msgSend)(texture, sel_getUid("usage"));
+    return MT_MSG_SEND(MTTextureUsage, texture, MT_SEL("usage"));
 }
 
 MT_INLINE bool mt_texture_is_shareable(MTTexture texture) {
-    return ((bool (*)(id, SEL))objc_msgSend)(texture, sel_getUid("isShareable"));
+    return MT_MSG_SEND(bool, texture, MT_SEL("isShareable"));
 }
 
 MT_INLINE bool mt_texture_is_frame_buffer_only(MTTexture texture) {
-    return ((bool (*)(id, SEL))objc_msgSend)(texture, sel_getUid("isFramebufferOnly"));
+    return MT_MSG_SEND(bool, texture, MT_SEL("isFramebufferOnly"));
 }
 
 MT_INLINE bool mt_texture_is_sparse(MTTexture texture) {
-    return ((bool (*)(id, SEL))objc_msgSend)(texture, sel_getUid("isSparse"));
+    return MT_MSG_SEND(bool, texture, MT_SEL("isSparse"));
 }
 
 MT_INLINE bool mt_texture_is_aliasable(MTTexture texture) {
-    return ((bool (*)(id, SEL))objc_msgSend)(texture, sel_getUid("isAliasable"));
+    return MT_MSG_SEND(bool, texture, MT_SEL("isAliasable"));
 }
 
 MT_INLINE bool mt_texture_allows_gpu_optimised_contents(MTTexture texture) {
-    return ((bool (*)(id, SEL))objc_msgSend)(texture, sel_getUid("allowGPUOptimizedContents"));
+    return MT_MSG_SEND(bool, texture, MT_SEL("allowGPUOptimizedContents"));
 }
 
 MT_INLINE MTTextureCompressionType mt_texture_get_compression_type(MTTexture texture) {
-    return (MTTextureCompressionType)((uintptr_t (*)(id, SEL))objc_msgSend)(texture, sel_getUid("compressionType"));
+    return MT_MSG_SEND(MTTextureCompressionType, texture, MT_SEL("compressionType"));
 }
 
+// Struct returns need explicit casts
 MT_INLINE MTResourceID mt_texture_get_gpu_resource_id(MTTexture texture) {
-    typedef MTResourceID (*ResourceIDGetterFunc)(id, SEL);
-    ResourceIDGetterFunc getter = (ResourceIDGetterFunc)objc_msgSend;
-    return getter(texture, sel_getUid("gpuResourceID"));
+    return ((MTResourceID (*)(id, SEL))objc_msgSend)((id)texture, MT_SEL("gpuResourceID"));
 }
 
 MT_INLINE MTTexture* mt_texture_get_remote_storage_texture(MTTexture* texture) {
-    SEL sel = sel_registerName("remoteStorageTexture");
-    MTTexture* (*msgSend)(id, SEL) = (MTTexture* (*)(id, SEL))objc_msgSend;
-    return msgSend((id)texture, sel);
+    return MT_MSG_SEND(MTTexture*, texture, MT_SEL("remoteStorageTexture"));
 }
 
 MT_INLINE MTLTextureSwizzleChannels mt_texture_get_swizzle_channels(MTTexture texture) {
-    typedef MTLTextureSwizzleChannels (*SwizzleGetterFunc)(id, SEL);
-    SwizzleGetterFunc getter = (SwizzleGetterFunc)objc_msgSend;
-    return getter((id)texture, sel_getUid("swizzle"));
+    return ((MTLTextureSwizzleChannels (*)(id, SEL))objc_msgSend)((id)texture, MT_SEL("swizzle"));
 }
 
 MT_INLINE MTDevice* mt_texture_get_device(MTTexture* texture) {
-    SEL sel = sel_registerName("device");
-    MTDevice* (*msgSend)(id, SEL) = (MTDevice* (*)(id, SEL))objc_msgSend;
-    return msgSend((id)texture, sel);
+    return MT_MSG_SEND(MTDevice*, texture, MT_SEL("device"));
 }
 
 MT_INLINE MTCPUCacheMode mt_texture_get_cpu_cache_mode(MTTexture texture) {
-    return (MTCPUCacheMode)((uintptr_t (*)(id, SEL))objc_msgSend)(texture, sel_getUid("cpuCacheMode"));
+    return MT_MSG_SEND(MTCPUCacheMode, texture, MT_SEL("cpuCacheMode"));
 }
 
 MT_INLINE MTStorageMode mt_texture_get_storage_mode(MTTexture texture) {
-    return (MTStorageMode)((uintptr_t (*)(id, SEL))objc_msgSend)(texture, sel_getUid("storageMode"));
+    return MT_MSG_SEND(MTStorageMode, texture, MT_SEL("storageMode"));
 }
 
 MT_INLINE MTHazardTrackingMode mt_texture_get_hazard_tracking_mode(MTTexture texture) {
-    return (MTHazardTrackingMode)((uintptr_t (*)(id, SEL))objc_msgSend)(texture, sel_getUid("hazardTrackingMode"));
+    return MT_MSG_SEND(MTHazardTrackingMode, texture, MT_SEL("hazardTrackingMode"));
 }
 
 MT_INLINE MTResourceOptions mt_texture_get_resourceOptions(MTTexture texture) {
-    return (MTResourceOptions)((uintptr_t (*)(id, SEL))objc_msgSend)(texture, sel_getUid("resourceOptions"));
+    return MT_MSG_SEND(MTResourceOptions, texture, MT_SEL("resourceOptions"));
 }
 
 MT_INLINE MTHeap* mt_texture_get_heap(MTTexture texture) {
-    typedef MTHeap* (*HeapGetterFunc)(id, SEL);
-    HeapGetterFunc getter = (HeapGetterFunc)objc_msgSend;
-    return getter(texture, sel_getUid("heap"));
+    return MT_MSG_SEND(MTHeap*, texture, MT_SEL("heap"));
 }
 
 MT_INLINE uintptr_t mt_texture_get_heapOffset(MTTexture texture) {
-    return ((uintptr_t (*)(id, SEL))objc_msgSend)(texture, sel_getUid("heapOffset"));
+    return MT_MSG_SEND(uintptr_t, texture, MT_SEL("heapOffset"));
 }
 
 MT_INLINE uintptr_t mt_texture_get_allocatedSize(MTTexture texture) {
-    return ((uintptr_t (*)(id, SEL))objc_msgSend)(texture, sel_getUid("allocatedSize"));
+    return MT_MSG_SEND(uintptr_t, texture, MT_SEL("allocatedSize"));
 }
 
 MT_INLINE uintptr_t mt_texture_get_buffer_bytes_per_row(MTTexture texture) {
-    return ((uintptr_t (*)(id, SEL))objc_msgSend)(texture, sel_getUid("bufferBytesPerRow"));
+    return MT_MSG_SEND(uintptr_t, texture, MT_SEL("bufferBytesPerRow"));
 }
 
 MT_INLINE uintptr_t mt_texture_get_buffer_offset(MTTexture texture) {
-    return ((uintptr_t (*)(id, SEL))objc_msgSend)(texture, sel_getUid("bufferOffset"));
+    return MT_MSG_SEND(uintptr_t, texture, MT_SEL("bufferOffset"));
 }
-// TODO incomplete

@@ -7,32 +7,28 @@
 #pragma once
 #include "MTUtils.h"
 
-typedef enum MTMutability
-{
+typedef enum MTMutability {
     MTLMutabilityDefault   = 0,
     MTLMutabilityMutable   = 1,
     MTLMutabilityImmutable = 2,
-}MTMutability;
+} MTMutability;
 
-
-typedef enum MTShaderValidation
-{
+typedef enum MTShaderValidation {
     MTLShaderValidationDefault = 0,
     MTLShaderValidationEnabled = 1,
     MTLShaderValidationDisabled = 2,
-}MTShaderValidation;
+} MTShaderValidation;
 
 typedef void* MTPipelineBufferDescriptor;
 
 MT_INLINE MTPipelineBufferDescriptor mt_pipeline_buffer_descriptor_create(void) {
-    Class cls = objc_getClass("MTLPipelineBufferDescriptor");
-    return (MTPipelineBufferDescriptor)((id (*)(Class, SEL))objc_msgSend)(cls, sel_getUid("new"));
+    return MT_MSG_SEND_CLASS(id, MT_CLASS("MTLPipelineBufferDescriptor"), MT_SEL("new"));
 }
 
 MT_INLINE void mt_pipeline_buffer_descriptor_set_mutability(MTPipelineBufferDescriptor desc, MTMutability mutability) {
-    ((void (*)(id, SEL, MTMutability))objc_msgSend)((id)desc, sel_getUid("setMutability:"), mutability);
+    MT_MSG_SEND_1(void, desc, MT_SEL("setMutability:"), MTMutability, mutability);
 }
 
 MT_INLINE MTMutability mt_pipeline_buffer_descriptor_get_mutability(MTPipelineBufferDescriptor desc) {
-    return ((MTMutability (*)(id, SEL))objc_msgSend)((id)desc, sel_getUid("mutability"));
+    return MT_MSG_SEND(MTMutability, desc, MT_SEL("mutability"));
 }

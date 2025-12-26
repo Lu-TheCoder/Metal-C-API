@@ -6,6 +6,7 @@
 //
 
 #pragma once
+#include "MTUtils.h"
 
 typedef enum MTVertexFormat {
     MTVertexFormatInvalid = 0,
@@ -62,7 +63,7 @@ typedef enum MTVertexFormat {
     MTVertexFormatHalf = 53,
     MTVertexFormatFloatRG11B10 = 54,
     MTVertexFormatFloatRGB9E5 = 55,
-}MTVertexFormat;
+} MTVertexFormat;
 
 typedef enum MTVertexStepFunction {
     MTVertexStepFunctionConstant = 0,
@@ -70,7 +71,7 @@ typedef enum MTVertexStepFunction {
     MTVertexStepFunctionPerInstance = 2,
     MTVertexStepFunctionPerPatch = 3,
     MTVertexStepFunctionPerPatchControlPoint = 4,
-}MTVertexStepFunction;
+} MTVertexStepFunction;
 
 typedef void* MTVertexBufferLayoutDescriptor;
 typedef void* MTVertexBufferLayoutDescriptorArray;
@@ -79,238 +80,147 @@ typedef void* MTVertexAttributeDescriptorArray;
 typedef void* MTVertexDescriptor;
 
 MT_INLINE MTVertexAttributeDescriptorArray mt_vertexAttribute_new_descriptorArray(void) {
-    Class cls = objc_getClass("MTLVertexAttributeDescriptorArray");
-
-    SEL allocSel = sel_registerName("alloc");
-    id allocated = ((id (*)(Class, SEL))objc_msgSend)(cls, allocSel);
-
-    SEL initSel = sel_registerName("init");
-    return ((id (*)(id, SEL))objc_msgSend)(allocated, initSel);
+    return MT_ALLOC_INIT("MTLVertexAttributeDescriptorArray");
 }
 
-// MARK: -----------------  MTLVertexBufferLayoutDescriptorArray Functions --------------------------
+// MARK: MTLVertexBufferLayoutDescriptorArray Functions
 
 MT_INLINE MTVertexBufferLayoutDescriptor mt_vertex_layout_array_get(MTVertexBufferLayoutDescriptorArray array, NSUInteger index) {
-    SEL sel = sel_registerName("objectAtIndexedSubscript:");
-    typedef MTVertexBufferLayoutDescriptor (*Func)(void*, SEL, NSUInteger);
-    return ((Func)objc_msgSend)(array, sel, index);
+    return MT_MSG_SEND_1(id, array, MT_SEL("objectAtIndexedSubscript:"), NSUInteger, index);
 }
 
 MT_INLINE void mt_vertex_layout_array_set(MTVertexBufferLayoutDescriptorArray array, NSUInteger index, MTVertexBufferLayoutDescriptor desc) {
-    SEL sel = sel_registerName("setObject:atIndexedSubscript:");
-    typedef void (*Func)(void*, SEL, MTVertexBufferLayoutDescriptor, NSUInteger);
-    ((Func)objc_msgSend)(array, sel, desc, index);
+    MT_MSG_SEND_2(void, array, MT_SEL("setObject:atIndexedSubscript:"), id, desc, NSUInteger, index);
 }
 
-// MARK: -----------------  MTLVertexAttributeDescriptorArray Functions --------------------------
+// MARK: MTLVertexAttributeDescriptorArray Functions
 
 MT_INLINE MTVertexAttributeDescriptor mt_vertex_attr_array_get(MTVertexAttributeDescriptorArray array, NSUInteger index) {
-    SEL sel = sel_registerName("objectAtIndexedSubscript:");
-    typedef MTVertexAttributeDescriptor (*Func)(void*, SEL, NSUInteger);
-    return ((Func)objc_msgSend)(array, sel, index);
+    return MT_MSG_SEND_1(id, array, MT_SEL("objectAtIndexedSubscript:"), NSUInteger, index);
 }
 
 MT_INLINE void mt_vertex_attr_array_set(MTVertexAttributeDescriptorArray array, NSUInteger index, MTVertexAttributeDescriptor desc) {
-    SEL sel = sel_registerName("setObject:atIndexedSubscript:");
-    typedef void (*Func)(void*, SEL, MTVertexAttributeDescriptor, NSUInteger);
-    ((Func)objc_msgSend)(array, sel, desc, index);
+    MT_MSG_SEND_2(void, array, MT_SEL("setObject:atIndexedSubscript:"), id, desc, NSUInteger, index);
 }
 
-// MARK: ----------------- MTLVertexDescriptor Functions --------------------------
+// MARK: MTLVertexDescriptor Functions
 
 MT_INLINE MTVertexDescriptor mt_vertex_descriptor_create(void) {
-    Class cls = objc_getClass("MTLVertexDescriptor");
-    SEL sel = sel_registerName("vertexDescriptor");
-    typedef id (*Func)(Class, SEL);
-    return ((Func)objc_msgSend)(cls, sel);
+    return MT_MSG_SEND_CLASS(id, MT_CLASS("MTLVertexDescriptor"), MT_SEL("vertexDescriptor"));
 }
 
 MT_INLINE MTVertexBufferLayoutDescriptorArray mt_vertex_descriptor_get_layouts(MTVertexDescriptor desc) {
-    SEL sel = sel_registerName("layouts");
-    typedef MTVertexBufferLayoutDescriptorArray (*Func)(void*, SEL);
-    return ((Func)objc_msgSend)(desc, sel);
+    return MT_MSG_SEND(id, desc, MT_SEL("layouts"));
 }
 
 MT_INLINE void mt_vertex_descriptor_set_vertex_layout_stride(MTVertexDescriptor desc, NSUInteger index, NSUInteger stride) {
-    SEL layoutSel = sel_registerName("layouts");
-    id layoutArray = ((id (*)(id, SEL))objc_msgSend)(desc, layoutSel);
-
-    SEL getLayout = sel_registerName("objectAtIndexedSubscript:");
-    id layout = ((id (*)(id, SEL, NSUInteger))objc_msgSend)(layoutArray, getLayout, index);
-
-    SEL setStride = sel_registerName("setStride:");
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(layout, setStride, stride);
+    id layoutArray = MT_MSG_SEND(id, desc, MT_SEL("layouts"));
+    id layout = MT_MSG_SEND_1(id, layoutArray, MT_SEL("objectAtIndexedSubscript:"), NSUInteger, index);
+    MT_MSG_SEND_1(void, layout, MT_SEL("setStride:"), NSUInteger, stride);
 }
 
 MT_INLINE void mt_vertex_descriptor_set_vertex_layout_step_rate(MTVertexDescriptor desc, NSUInteger index, NSUInteger stepRate) {
-    SEL layoutSel = sel_registerName("layouts");
-    id layoutArray = ((id (*)(id, SEL))objc_msgSend)(desc, layoutSel);
-
-    SEL getLayout = sel_registerName("objectAtIndexedSubscript:");
-    id layout = ((id (*)(id, SEL, NSUInteger))objc_msgSend)(layoutArray, getLayout, index);
-
-    SEL setStepRate = sel_registerName("setStepRate:");
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(layout, setStepRate, stepRate);
+    id layoutArray = MT_MSG_SEND(id, desc, MT_SEL("layouts"));
+    id layout = MT_MSG_SEND_1(id, layoutArray, MT_SEL("objectAtIndexedSubscript:"), NSUInteger, index);
+    MT_MSG_SEND_1(void, layout, MT_SEL("setStepRate:"), NSUInteger, stepRate);
 }
 
 MT_INLINE void mt_vertex_descriptor_set_vertex_layout_step_function(MTVertexDescriptor desc, NSUInteger index, MTVertexStepFunction stepFunction) {
-    SEL layoutSel = sel_registerName("layouts");
-    id layoutArray = ((id (*)(id, SEL))objc_msgSend)(desc, layoutSel);
-
-    SEL getLayout = sel_registerName("objectAtIndexedSubscript:");
-    id layout = ((id (*)(id, SEL, NSUInteger))objc_msgSend)(layoutArray, getLayout, index);
-
-    SEL setStepFunction = sel_registerName("setStepFunction:");
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(layout, setStepFunction, stepFunction);
+    id layoutArray = MT_MSG_SEND(id, desc, MT_SEL("layouts"));
+    id layout = MT_MSG_SEND_1(id, layoutArray, MT_SEL("objectAtIndexedSubscript:"), NSUInteger, index);
+    MT_MSG_SEND_1(void, layout, MT_SEL("setStepFunction:"), NSUInteger, stepFunction);
 }
 
 MT_INLINE MTVertexAttributeDescriptorArray mt_vertex_descriptor_get_attributes(MTVertexDescriptor desc) {
-    SEL sel = sel_registerName("attributes");
-    typedef MTVertexAttributeDescriptorArray (*Func)(void*, SEL);
-    return ((Func)objc_msgSend)(desc, sel);
+    return MT_MSG_SEND(id, desc, MT_SEL("attributes"));
 }
 
 MT_INLINE void mt_vertex_descriptor_set_vertex_attribute_format(MTVertexDescriptor desc, NSUInteger index, MTVertexFormat format) {
-    SEL attrSel = sel_registerName("attributes");
-    id attrArray = ((id (*)(id, SEL))objc_msgSend)(desc, attrSel);
-
-    SEL getAttr = sel_registerName("objectAtIndexedSubscript:");
-    id attr = ((id (*)(id, SEL, NSUInteger))objc_msgSend)(attrArray, getAttr, index);
-
-    SEL setFormat = sel_registerName("setFormat:");
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(attr, setFormat, format);
+    id attrArray = MT_MSG_SEND(id, desc, MT_SEL("attributes"));
+    id attr = MT_MSG_SEND_1(id, attrArray, MT_SEL("objectAtIndexedSubscript:"), NSUInteger, index);
+    MT_MSG_SEND_1(void, attr, MT_SEL("setFormat:"), NSUInteger, format);
 }
 
 MT_INLINE void mt_vertex_descriptor_set_vertex_attribute_offset(MTVertexDescriptor desc, NSUInteger index, NSUInteger offset) {
-    SEL attrSel = sel_registerName("attributes");
-    id attrArray = ((id (*)(id, SEL))objc_msgSend)(desc, attrSel);
-
-    SEL getAttr = sel_registerName("objectAtIndexedSubscript:");
-    id attr = ((id (*)(id, SEL, NSUInteger))objc_msgSend)(attrArray, getAttr, index);
-
-    SEL setOffset = sel_registerName("setOffset:");
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(attr, setOffset, offset);
+    id attrArray = MT_MSG_SEND(id, desc, MT_SEL("attributes"));
+    id attr = MT_MSG_SEND_1(id, attrArray, MT_SEL("objectAtIndexedSubscript:"), NSUInteger, index);
+    MT_MSG_SEND_1(void, attr, MT_SEL("setOffset:"), NSUInteger, offset);
 }
 
 MT_INLINE void mt_vertex_descriptor_set_vertex_attribute_buffer_index(MTVertexDescriptor desc, NSUInteger index, NSUInteger bufferIndex) {
-    SEL attrSel = sel_registerName("attributes");
-    id attrArray = ((id (*)(id, SEL))objc_msgSend)(desc, attrSel);
-
-    SEL getAttr = sel_registerName("objectAtIndexedSubscript:");
-    id attr = ((id (*)(id, SEL, NSUInteger))objc_msgSend)(attrArray, getAttr, index);
-
-    SEL setBufferIndex = sel_registerName("setBufferIndex:");
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(attr, setBufferIndex, bufferIndex);
+    id attrArray = MT_MSG_SEND(id, desc, MT_SEL("attributes"));
+    id attr = MT_MSG_SEND_1(id, attrArray, MT_SEL("objectAtIndexedSubscript:"), NSUInteger, index);
+    MT_MSG_SEND_1(void, attr, MT_SEL("setBufferIndex:"), NSUInteger, bufferIndex);
 }
 
 MT_INLINE void mt_vertex_descriptor_reset(MTVertexDescriptor desc) {
-    SEL sel = sel_registerName("reset");
-    typedef void (*Func)(void*, SEL);
-    ((Func)objc_msgSend)(desc, sel);
+    MT_MSG_SEND(void, desc, MT_SEL("reset"));
 }
 
-// MARK: ----------------- MTLVertexAttributeDescriptor property Functions --------------------------
+// MARK: MTLVertexAttributeDescriptor property Functions
 
 MT_INLINE MTVertexAttributeDescriptor mt_vertex_descriptor_get_attribute(MTVertexDescriptor desc, NSUInteger index) {
-    SEL sel = sel_registerName("attributes");
-    id attributes = ((id (*)(id, SEL))objc_msgSend)(desc, sel);
-
-    SEL getAttrSel = sel_registerName("objectAtIndexedSubscript:");
-    return ((id (*)(id, SEL, NSUInteger))objc_msgSend)(attributes, getAttrSel, index);
+    id attributes = MT_MSG_SEND(id, desc, MT_SEL("attributes"));
+    return MT_MSG_SEND_1(id, attributes, MT_SEL("objectAtIndexedSubscript:"), NSUInteger, index);
 }
 
 MT_INLINE void mt_vertex_attribute_set_format(MTVertexAttributeDescriptor attr, MTVertexFormat format) {
-    SEL sel = sel_registerName("setFormat:");
-    typedef void (*Func)(void*, SEL, NSUInteger);
-    ((Func)objc_msgSend)(attr, sel, format);
+    MT_MSG_SEND_1(void, attr, MT_SEL("setFormat:"), NSUInteger, format);
 }
 
-
 MT_INLINE void mt_vertex_attribute_set_offset(MTVertexAttributeDescriptor attr, NSUInteger offset) {
-    SEL sel = sel_registerName("setOffset:");
-    typedef void (*Func)(void*, SEL, NSUInteger);
-    ((Func)objc_msgSend)(attr, sel, offset);
+    MT_MSG_SEND_1(void, attr, MT_SEL("setOffset:"), NSUInteger, offset);
 }
 
 MT_INLINE void mt_vertex_attribute_set_buffer_index(MTVertexAttributeDescriptor attr, NSUInteger index) {
-    SEL sel = sel_registerName("setBufferIndex:");
-    typedef void (*Func)(void*, SEL, NSUInteger);
-    ((Func)objc_msgSend)(attr, sel, index);
+    MT_MSG_SEND_1(void, attr, MT_SEL("setBufferIndex:"), NSUInteger, index);
 }
 
 MT_INLINE void mt_vertex_attribute_array_set_format(MTVertexAttributeDescriptorArray arr, NSUInteger index, MTVertexFormat format) {
-    SEL sel = sel_registerName("objectAtIndexedSubscript:");
-    id attr = ((id (*)(id, SEL, NSUInteger))objc_msgSend)(arr, sel, index);
-
-    SEL setFormat = sel_registerName("setFormat:");
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(attr, setFormat, format);
+    id attr = MT_MSG_SEND_1(id, arr, MT_SEL("objectAtIndexedSubscript:"), NSUInteger, index);
+    MT_MSG_SEND_1(void, attr, MT_SEL("setFormat:"), NSUInteger, format);
 }
 
 MT_INLINE void mt_vertex_attribute_array_set_offset(MTVertexAttributeDescriptorArray arr, NSUInteger index, NSUInteger offset) {
-    SEL sel = sel_registerName("objectAtIndexedSubscript:");
-    id attr = ((id (*)(id, SEL, NSUInteger))objc_msgSend)(arr, sel, index);
-
-    SEL setOffset = sel_registerName("setOffset:");
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(attr, setOffset, offset);
+    id attr = MT_MSG_SEND_1(id, arr, MT_SEL("objectAtIndexedSubscript:"), NSUInteger, index);
+    MT_MSG_SEND_1(void, attr, MT_SEL("setOffset:"), NSUInteger, offset);
 }
 
 MT_INLINE void mt_vertex_attribute_array_set_buffer_index(MTVertexAttributeDescriptorArray arr, NSUInteger index, NSUInteger bufferIndex) {
-    SEL sel = sel_registerName("objectAtIndexedSubscript:");
-    id attr = ((id (*)(id, SEL, NSUInteger))objc_msgSend)(arr, sel, index);
-
-    SEL setBufferIndex = sel_registerName("setBufferIndex:");
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(attr, setBufferIndex, bufferIndex);
+    id attr = MT_MSG_SEND_1(id, arr, MT_SEL("objectAtIndexedSubscript:"), NSUInteger, index);
+    MT_MSG_SEND_1(void, attr, MT_SEL("setBufferIndex:"), NSUInteger, bufferIndex);
 }
 
-
-// MARK: ----------------- MTLVertexBufferLayoutDescriptor property Functions --------------------------
+// MARK: MTLVertexBufferLayoutDescriptor property Functions
 
 MT_INLINE MTVertexBufferLayoutDescriptor mt_vertex_descriptor_get_layout(MTVertexDescriptor desc, NSUInteger index) {
-    SEL sel = sel_registerName("layouts");
-    id layouts = ((id (*)(id, SEL))objc_msgSend)(desc, sel);
-
-    SEL getLayoutSel = sel_registerName("objectAtIndexedSubscript:");
-    return ((id (*)(id, SEL, NSUInteger))objc_msgSend)(layouts, getLayoutSel, index);
+    id layouts = MT_MSG_SEND(id, desc, MT_SEL("layouts"));
+    return MT_MSG_SEND_1(id, layouts, MT_SEL("objectAtIndexedSubscript:"), NSUInteger, index);
 }
 
 MT_INLINE void mt_vertex_layout_set_stride(MTVertexBufferLayoutDescriptor layout, NSUInteger stride) {
-    SEL sel = sel_registerName("setStride:");
-    typedef void (*Func)(void*, SEL, NSUInteger);
-    ((Func)objc_msgSend)(layout, sel, stride);
+    MT_MSG_SEND_1(void, layout, MT_SEL("setStride:"), NSUInteger, stride);
 }
 
 MT_INLINE void mt_vertex_layout_set_step_function(MTVertexBufferLayoutDescriptor layout, MTVertexStepFunction stepFunction) {
-    SEL sel = sel_registerName("setStepFunction:");
-    typedef void (*Func)(void*, SEL, NSUInteger);
-    ((Func)objc_msgSend)(layout, sel, stepFunction);
+    MT_MSG_SEND_1(void, layout, MT_SEL("setStepFunction:"), NSUInteger, stepFunction);
 }
 
 MT_INLINE void mt_vertex_layout_set_step_rate(MTVertexBufferLayoutDescriptor layout, NSUInteger stepRate) {
-    SEL sel = sel_registerName("setStepRate:");
-    typedef void (*Func)(void*, SEL, NSUInteger);
-    ((Func)objc_msgSend)(layout, sel, stepRate);
+    MT_MSG_SEND_1(void, layout, MT_SEL("setStepRate:"), NSUInteger, stepRate);
 }
 
 MT_INLINE void mt_vertex_layout_array_set_stride(MTVertexBufferLayoutDescriptorArray arr, NSUInteger index, NSUInteger stride) {
-    SEL sel = sel_registerName("objectAtIndexedSubscript:");
-    id layout = ((id (*)(id, SEL, NSUInteger))objc_msgSend)(arr, sel, index);
-
-    SEL setStride = sel_registerName("setStride:");
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(layout, setStride, stride);
+    id layout = MT_MSG_SEND_1(id, arr, MT_SEL("objectAtIndexedSubscript:"), NSUInteger, index);
+    MT_MSG_SEND_1(void, layout, MT_SEL("setStride:"), NSUInteger, stride);
 }
 
 MT_INLINE void mt_vertex_layout_array_set_step_rate(MTVertexBufferLayoutDescriptorArray arr, NSUInteger index, NSUInteger stepRate) {
-    SEL sel = sel_registerName("objectAtIndexedSubscript:");
-    id layout = ((id (*)(id, SEL, NSUInteger))objc_msgSend)(arr, sel, index);
-
-    SEL setStepRate = sel_registerName("setStepRate:");
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(layout, setStepRate, stepRate);
+    id layout = MT_MSG_SEND_1(id, arr, MT_SEL("objectAtIndexedSubscript:"), NSUInteger, index);
+    MT_MSG_SEND_1(void, layout, MT_SEL("setStepRate:"), NSUInteger, stepRate);
 }
 
 MT_INLINE void mt_vertex_layout_array_set_step_function(MTVertexBufferLayoutDescriptorArray arr, NSUInteger index, MTVertexStepFunction stepFunction) {
-    SEL sel = sel_registerName("objectAtIndexedSubscript:");
-    id layout = ((id (*)(id, SEL, NSUInteger))objc_msgSend)(arr, sel, index);
-
-    SEL setStepFunction = sel_registerName("setStepFunction:");
-    ((void (*)(id, SEL, NSUInteger))objc_msgSend)(layout, setStepFunction, stepFunction);
+    id layout = MT_MSG_SEND_1(id, arr, MT_SEL("objectAtIndexedSubscript:"), NSUInteger, index);
+    MT_MSG_SEND_1(void, layout, MT_SEL("setStepFunction:"), NSUInteger, stepFunction);
 }
